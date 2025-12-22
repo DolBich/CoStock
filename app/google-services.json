@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "501284306233",
+    "project_id": "my-project-d52d5",
+    "storage_bucket": "my-project-d52d5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:501284306233:android:7b0061b72fcbfee1e1bce8",
+        "android_client_info": {
+          "package_name": "com.DolBichCorp.CoStock"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDeg8o6WTgVL0SI7qelrl5BcHenZfnUnMo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

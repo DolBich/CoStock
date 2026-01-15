@@ -1,59 +1,93 @@
-# Miscellaneous
+# ============================
+# System & IDE
+# ============================
 *.class
 *.log
 *.pyc
 *.swp
 .DS_Store
 .atom/
-.build/
 .buildlog/
 .history
 .svn/
 .swiftpm/
 migrate_working_dir/
+Thumbs.db
 
-# IntelliJ related
 *.iml
 *.ipr
 *.iws
 .idea/
+.vscode/
 
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
-
-# Flutter/Dart/Pub related
+# ============================
+# Flutter & Dart (Корень проекта)
+# ============================
 **/doc/api/
-**/ios/Flutter/.last_build_id
 .dart_tool/
+.flutter-plugins
 .flutter-plugins-dependencies
 .pub-cache/
 .pub/
-/build/
 /coverage/
+*.symbols
+*.map.json
 
-# Symbolication related
-app.*.symbols
+# ВАЖНО: Главное правило для всех папок сборки
+build/
 
-# Obfuscation related
-app.*.map.json
+# ============================
+# Android & Gradle (Ключевые исправления)
+# ============================
+# Игнорируем папку .gradle ВЕЗДЕ (в корне и внутри android/)
+.gradle/
+# Игнорируем local.properties ВЕЗДЕ (в корне и внутри android/)
+local.properties
 
-# Android Studio will place build artifacts here
-/android/app/debug
-/android/app/profile
-/android/app/release
-gradle-wrapper.jar
-/.gradle
-/captures/
-/gradlew
-/gradlew.bat
-/local.properties
-GeneratedPluginRegistrant.java
+# Другие файлы Gradle/Android
 .cxx/
+captures/
+gradlew
+gradlew.bat
 
-# Remember to never publicly share your keystore.
-# See https://flutter.dev/to/reference-keystore
+# Ключи подписи - НЕ КОММИТИТЬ!
 key.properties
 **/*.keystore
 **/*.jks
+
+# Кеш и история сборки Gradle
+**/buildOutputCleanup.lock
+**/executionHistory.bin
+**/executionHistory.lock
+**/fileHashes.lock
+**/fileHashes.bin
+**/outputFiles.bin
+**/resourceHashesCache.bin
+
+# ============================
+# iOS & macOS
+# ============================
+ios/Flutter/.last_build_id
+ios/Flutter/Flutter.framework/
+ios/Flutter/App.framework/
+ios/Flutter/Generated.xcconfig
+ios/Flutter/app-flutter-assets/
+ios/Flutter/flutter_export_environment.sh
+
+ios/Pods/
+ios/**/.symlinks/
+ios/**/profile/
+ios/**/xcuserdata/
+
+**/*.mode1v3
+**/*.mode2v3
+**/*.moved-aside
+**/*.pbxuser
+**/*.perspectivev3
+
+# ============================
+# Firebase - расскомментить при необходимости
+# ============================
+# android/app/google-services.json
+# ios/Runner/GoogleService-Info.plist
+# lib/firebase_options.dart

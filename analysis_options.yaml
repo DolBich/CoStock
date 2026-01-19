@@ -2,10 +2,43 @@ include: package:flutter_lints/flutter.yaml
 
 linter:
   rules:
-    always_declare_return_types: true
+    avoid_print: true # Запрещает использование print() в продакшене
+    avoid_catches_without_on_clauses: true # Запрещает пустые catch-блоки
+    avoid_renaming_method_parameters: true # Сохраняет имена параметров при переопределении
+    avoid_unused_constructor_parameters: true # Предупреждает о неиспользуемых параметрах конструктора
+    prefer_final_fields: true # Рекомендует final для полей, которые не меняются
+    prefer_final_locals: true # Рекомендует final для локальных переменных
+    use_key_in_widget_constructors: true # Требует ключи в конструкторах виджетов
+
+    always_declare_return_types: true # Требует явного указания возвращаемого типа
+    always_use_package_imports: true # Запрещает относительные импорты пакетов
+    annotate_overrides: true # Требует аннотацию @override
+    curly_braces_in_flow_control_structures: true # Требует фигурные скобки в условиях/циклах
+    prefer_const_constructors: true # Рекомендует const конструкторы
+    prefer_const_declarations: true # Рекомендует const для констант
+    prefer_single_quotes: true # Рекомендует одинарные кавычки
+    library_prefixes: true # Требует префиксы для импортов с as
+
+    prefer_const_constructors_in_immutables: true # Const конструкторы для immutable виджетов
+    avoid_redundant_argument_values: true # Запрещает избыточные значения аргументов
+    prefer_expression_function_bodies: true # Рекомендует краткую форму функций
+    use_named_constants: true # Рекомендует именованные константы вместо магических чисел
+    use_build_context_synchronously: true # Проверяет безопасное использование BuildContext
+
+    avoid_unnecessary_containers: true # Запрещает лишние Container
+    prefer_is_empty: true # Рекомендует .isEmpty вместо .length == 0
+    prefer_iterable_whereType: true # Рекомендует whereType вместо where с as
+    unnecessary_const: true # Запрещает избыточный const
+    unnecessary_new: true # Запрещает избыточный new
+    unnecessary_this: true # Запрещает избыточный this
+
+    unnecessary_null_checks: true # Запрещает избыточные null-проверки
+    unnecessary_nullable_for_final_variable_declarations: true # Запрещает nullable для final
+
     always_put_control_body_on_new_line: false
-    always_use_package_imports: true
-    annotate_overrides: true
     avoid_bool_literals_in_conditional_expressions: true
     avoid_empty_else: true
-    
+    avoid_field_initializers_in_const_classes: true
+    avoid_init_to_null: true
+    avoid_return_types_on_setters: true
+    avoid_setters_without_getters: true

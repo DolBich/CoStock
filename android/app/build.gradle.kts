@@ -6,10 +6,30 @@ plugins {
     id("com.google.gms.google-services")
 }
 
+val keystoreProperties = java.util.Properties()
+val keystorePropertiesFile = rootProject.file("key.properties")
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(java.io.FileInputStream(keystorePropertiesFile))
+} else {
+    println("Предупреждение: Файл key.properties не найден. Релизная сборка не будет подписана.")
+}
+
+
 android {
     namespace = "com.example.co_stock"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
+
+    signingConfigs {
+        create("release") {
+            if (keystorePropertiesFile.exists()) {
+                keyAlias = keystoreProperties["keyAlias"] as String
+                keyPassword = keystoreProperties["keyPassword"] as String
+                storeFile = file(keystoreProperties["storeFile"] as String)
+                storePassword = keystoreProperties["storePassword"] as String
+            }
+        }
+    }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -33,9 +53,19 @@ android {
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            // ====================================================
+            // ИСПОЛЬЗОВАНИЕ КОНФИГУРАЦИИ ПОДПИСИ (заменить строку signingConfig)
+            // ====================================================
+            // Для release сборки необходимо иметь файл key.properties
+            signingConfig = signingConfigs.getByName("release")
+
+            // Дополнительные настройки для релиза (минификация, etc.)
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"), /// Базовые правила оптимизации от Google
+                "proguard-rules.pro" /// Наши правила для Flutter, нативных библиотек и своего кода
+            )
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.example.co_stock
+package com.DolBichCorp.CoStock
 
 import io.flutter.embedding.android.FlutterActivity
 

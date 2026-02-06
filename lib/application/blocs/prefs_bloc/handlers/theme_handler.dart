@@ -1,16 +1,5 @@
 part of '../prefs_bloc.dart';
 
-/// Существующие варианты систем построения тем
-enum ThemeSystemVariant {
-  seeded(AppThemeSeeded()),
-  classic(AppThemeClassic());
-
-  final AppThemeSystem system;
-
-  const ThemeSystemVariant(this.system);
-}
-
-
 /// Этот класс управляет темами.
 /// Систему тем можно сменить через [themeSystem]
 class ThemeHandler {

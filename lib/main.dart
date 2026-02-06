@@ -1,9 +1,20 @@
 import 'package:co_stock/application/blocs/prefs_bloc/prefs_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
+
+  runApp(
+    EasyLocalization(
+      supportedLocales: [],
+      path: 'assets/translations',
+      fallbackLocale: Locale('ru', 'RU'),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -12,9 +23,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (_) => PrefsBloc()),
-      ],
+      providers: [BlocProvider(create: (_) => PrefsBloc())],
       child: const _App(),
     );
   }
@@ -25,17 +34,18 @@ class _App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<PrefsBloc, PrefsState>(builder: (context, state){
-      return MaterialApp(
-        title: 'Flutter Demo',
-        theme: state.themeData,
-        themeMode: state.themeMode,
-        home: const MyHomePage(title: 'Flutter Demo Home Page'),
-      );
-    });
+    return BlocBuilder<PrefsBloc, PrefsState>(
+      builder: (context, state) {
+        return MaterialApp(
+          title: 'Flutter Demo',
+          theme: state.themeData,
+          themeMode: state.themeMode,
+          home: const MyHomePage(title: 'Flutter Demo Home Page'),
+        );
+      },
+    );
   }
 }
-
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});

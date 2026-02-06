@@ -1,5 +1,5 @@
 import 'package:co_stock/domain/extensions/color_ext.dart';
-import 'package:co_stock/presentation/theme/app_theme_system.dart';
+import 'package:co_stock/presentation/prefs/theme/app_theme_system.dart';
 import 'package:flutter/material.dart';
 
 /// Система тем основанная на [seed]

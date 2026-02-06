@@ -1,6 +1,6 @@
-import 'package:co_stock/presentation/theme/app_theme_classic.dart';
-import 'package:co_stock/presentation/theme/app_theme_seeded.dart';
-import 'package:co_stock/presentation/theme/app_theme_system.dart';
+import 'package:co_stock/presentation/prefs/locale/locale_data.dart';
+import 'package:co_stock/presentation/prefs/theme/app_theme_seeded.dart';
+import 'package:co_stock/presentation/prefs/theme/app_theme_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -18,22 +18,28 @@ part 'prefs_bloc.freezed.dart';
 class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
   PrefsBloc() : super(PrefsState.initial()) {
     on<_Init>(_onInit);
+
+    /// Theme
     on<_SetThemeMode>(_onSetThemeMode);
     on<_SetSeedColor>(_onSetSeedColor);
     on<_ChangeThemeSystem>(_changeThemeSystem);
+
+    /// Locale
+    on<_ChangeLocale>(_changeLocale);
   }
 
   void _onInit(_Init event, Emitter<PrefsState> emit) {
     // TODO: загрузка из SharedPreferences
   }
 
+  ///
+  /// Theme
+  ///
   void _changeThemeSystem(_ChangeThemeSystem event, Emitter<PrefsState> emit) {
     ThemeHandler.themeSystem = event.themeSystem;
 
     emit(
-      state.copyWith(
-        themeData: ThemeHandler.buildTheme(mode: state.themeMode),
-      ),
+      state.copyWith(themeData: ThemeHandler.buildTheme(mode: state.themeMode)),
     );
   }
 
@@ -55,5 +61,12 @@ class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
         themeData: ThemeHandler.buildTheme(mode: state.themeMode),
       ),
     );
+  }
+
+  ///
+  /// Locale
+  ///
+  void _changeLocale(_ChangeLocale event, Emitter<PrefsState> emit) {
+    emit(state.copyWith(appLocale: event.appLocale));
   }
 }

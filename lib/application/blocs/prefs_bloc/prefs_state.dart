@@ -6,8 +6,10 @@ sealed class PrefsState with _$PrefsState {
     required ThemeMode themeMode,
     required Color seedColor,
     required ThemeData themeData,
+    required AppLocale appLocale,
   }) = _PrefsState;
 
+  /// TODO: притягивать все эти значения из настроек в pref_ref
   factory PrefsState.initial() {
     return PrefsState(
       themeMode: ThemeMode.system,
@@ -15,6 +17,7 @@ sealed class PrefsState with _$PrefsState {
       themeData: ThemeHandler.buildTheme(
         mode: ThemeMode.system,
       ),
+      appLocale: AppLocale.ru
     );
   }
 }

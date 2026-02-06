@@ -7,4 +7,6 @@ sealed class PrefsEvent with _$PrefsEvent {
   const factory PrefsEvent.setThemeMode(ThemeMode mode) = _SetThemeMode;
 
   const factory PrefsEvent.setSeedColor(Color seed) = _SetSeedColor;
+
+  const factory PrefsEvent.changeThemeSystem(ThemeSystemVariant themeSystem) = _ChangeThemeSystem;
 }

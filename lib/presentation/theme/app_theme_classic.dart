@@ -2,6 +2,14 @@ import 'package:co_stock/domain/extensions/color_ext.dart';
 import 'package:co_stock/presentation/theme/app_theme_system.dart';
 import 'package:flutter/material.dart';
 
+/// Система тем основанная на ручном выборе всех цветов
+/// Для расширения нужно унаследовать от этого класса другие варианты
+/// Например [class AppThemeNewYear extends AppThemeClassic]
+/// А дальше разработать систему смены конкретных видов тем
+/// Этот подход даёт большие возможности и очень тонкую настройку
+/// Но добавление каждой новой темы крайне муторное и при этом
+/// трубет полного тестирования всего приложения, чтобы убедиться, что везде
+/// всё выглядит как мы хотим
 class AppThemeClassic extends AppThemeSystem {
   const AppThemeClassic();
   // Основные цвета оранжевая палитра)

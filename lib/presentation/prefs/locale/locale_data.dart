@@ -20,9 +20,12 @@ enum AppLocale {
     ),
   );
 
+  const AppLocale(this.localeData);
   final LocaleData localeData;
 
-  const AppLocale(this.localeData);
+  static List<Locale> get supportedLocales => values.map((e) => e.locale).toList();
+
+  static Locale get fallbackLocale => ru.locale;
 
   Locale get locale => localeData.locale;
 

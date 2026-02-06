@@ -29,7 +29,9 @@ enum AppLocale {
 
   Locale get locale => localeData.locale;
 
-  AppLocale fromLocale(Locale locale) =>
+  static AppLocale? byName(String name) => values.firstWhere((v) => v.name == name);
+
+  static AppLocale fromLocale(Locale locale) =>
       values.firstWhere((v) => v.locale == locale);
 }
 

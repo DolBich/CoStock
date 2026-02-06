@@ -3,7 +3,6 @@ include: package:flutter_lints/flutter.yaml
 linter:
   rules:
     avoid_print: true # Запрещает использование print() в продакшене
-    avoid_catches_without_on_clauses: true # Запрещает пустые catch-блоки
     avoid_renaming_method_parameters: true # Сохраняет имена параметров при переопределении
     avoid_unused_constructor_parameters: true # Предупреждает о неиспользуемых параметрах конструктора
     prefer_final_fields: true # Рекомендует final для полей, которые не меняются

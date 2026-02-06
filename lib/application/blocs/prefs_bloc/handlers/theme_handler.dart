@@ -3,14 +3,21 @@ part of '../prefs_bloc.dart';
 /// Этот класс управляет темами.
 /// Систему тем можно сменить через [themeSystem]
 class ThemeHandler {
-  static ThemeSystemVariant themeSystem = ThemeSystemVariant.seeded;
-  
-  static ThemeData buildTheme({required ThemeMode mode}) {
-    return _buildClassicTheme(mode);
+  static void init({
+    required ThemeSystemVariant themeSysVar,
+    required ThemeMode mode,
+    required Color seedColor,
+  }) {
+    themeSystem = themeSysVar;
+    themeMode = mode;
+    AppThemeSeeded.seed = seedColor;
   }
 
-  static ThemeData _buildClassicTheme(ThemeMode mode) {
-    return switch (mode) {
+  static ThemeSystemVariant themeSystem = ThemeSystemVariant.seeded;
+  static ThemeMode themeMode = ThemeMode.system;
+
+  static ThemeData buildTheme() {
+    return switch (themeMode) {
       ThemeMode.light => themeSystem.system.lightTheme,
       ThemeMode.dark => themeSystem.system.darkTheme,
       ThemeMode.system => _getSystemTheme(),

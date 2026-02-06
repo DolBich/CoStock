@@ -1,3 +1,4 @@
+import 'package:co_stock/domain/local_storage_impl/local_storage_service.dart';
 import 'package:co_stock/presentation/prefs/locale/locale_data.dart';
 import 'package:co_stock/presentation/prefs/theme/app_theme_seeded.dart';
 import 'package:co_stock/presentation/prefs/theme/app_theme_system.dart';
@@ -26,10 +27,24 @@ class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
 
     /// Locale
     on<_ChangeLocale>(_changeLocale);
+
+    add(const PrefsEvent.init());
   }
 
-  void _onInit(_Init event, Emitter<PrefsState> emit) {
-    // TODO: загрузка из SharedPreferences
+  Future<void> _onInit(_Init event, Emitter<PrefsState> emit) async {
+    final locale = await LocalStorageService.getLocale();
+    final themeSysVar = await LocalStorageService.getThemeSysVar();
+    final themeMode = await LocalStorageService.getThemeMode();
+    final colorSeed = await LocalStorageService.getThemeSeed();
+
+    emit(
+      PrefsState.initial(
+        locale: locale,
+        themeSysVar: themeSysVar,
+        themeMode: themeMode,
+        colorSeed: colorSeed,
+      )
+    );
   }
 
   ///
@@ -37,36 +52,31 @@ class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
   ///
   void _changeThemeSystem(_ChangeThemeSystem event, Emitter<PrefsState> emit) {
     ThemeHandler.themeSystem = event.themeSystem;
+    LocalStorageService.saveThemeSysVar(event.themeSystem);
 
-    emit(
-      state.copyWith(themeData: ThemeHandler.buildTheme(mode: state.themeMode)),
-    );
+    emit(state.copyWith(themeData: ThemeHandler.buildTheme()));
   }
 
-  void _onSetThemeMode(_SetThemeMode event, Emitter<PrefsState> emit) {
-    emit(
-      state.copyWith(
-        themeMode: event.mode,
-        themeData: ThemeHandler.buildTheme(mode: event.mode),
-      ),
-    );
+  Future<void> _onSetThemeMode(_SetThemeMode event, Emitter<PrefsState> emit) async {
+    ThemeHandler.themeMode = event.mode;
+    LocalStorageService.saveThemeMode(event.mode);
+
+    emit(state.copyWith(themeData: ThemeHandler.buildTheme()));
   }
 
-  void _onSetSeedColor(_SetSeedColor event, Emitter<PrefsState> emit) {
+  Future<void> _onSetSeedColor(_SetSeedColor event, Emitter<PrefsState> emit) async {
     AppThemeSeeded.seed = event.seed;
+    LocalStorageService.saveThemeSeed(event.seed);
 
-    emit(
-      state.copyWith(
-        seedColor: event.seed,
-        themeData: ThemeHandler.buildTheme(mode: state.themeMode),
-      ),
-    );
+    emit(state.copyWith(themeData: ThemeHandler.buildTheme()));
   }
 
   ///
   /// Locale
   ///
-  void _changeLocale(_ChangeLocale event, Emitter<PrefsState> emit) {
+  Future<void> _changeLocale(_ChangeLocale event, Emitter<PrefsState> emit) async {
+    LocalStorageService.saveLocale(event.appLocale);
+
     emit(state.copyWith(appLocale: event.appLocale));
   }
 }

@@ -3,21 +3,35 @@ part of 'prefs_bloc.dart';
 @freezed
 sealed class PrefsState with _$PrefsState {
   const factory PrefsState({
-    required ThemeMode themeMode,
-    required Color seedColor,
-    required ThemeData themeData,
     required AppLocale appLocale,
+    required ThemeData themeData,
   }) = _PrefsState;
 
-  /// TODO: притягивать все эти значения из настроек в pref_ref
-  factory PrefsState.initial() {
+  factory PrefsState.initial({
+    AppLocale? locale,
+    ThemeSystemVariant? themeSysVar,
+    ThemeMode? themeMode,
+    Color? colorSeed,
+}) {
+    ThemeHandler.init(
+      themeSysVar: themeSysVar ?? ThemeSystemVariant.seeded,
+      mode: themeMode ?? ThemeMode.system,
+      seedColor: colorSeed ?? AppThemeSeeded.defaultSeed,
+    );
+
     return PrefsState(
-      themeMode: ThemeMode.system,
-      seedColor: AppThemeSeeded.defaultSeed,
-      themeData: ThemeHandler.buildTheme(
-        mode: ThemeMode.system,
-      ),
-      appLocale: AppLocale.ru
+      appLocale: locale ?? AppLocale.ru,
+      themeData: ThemeHandler.buildTheme(),
     );
   }
+}
+
+extension PrefsStateExt on PrefsState {
+  ThemeMode get themeMode => ThemeHandler.themeMode;
+
+  Color get seedColor => AppThemeSeeded.seed;
+
+  ThemeSystemVariant get themeSysVar => ThemeHandler.themeSystem;
+
+  Locale get getLocale => appLocale.locale;
 }

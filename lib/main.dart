@@ -122,6 +122,8 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: .center,
           children: [
             const Text('You have pushed the button this many times:'),
+            Image.asset('assets/images/logos/co_stock_logo.png'),
+            Image.asset('assets/images/logos/co_stock_logo_transparent.png'),
             Text(
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,

@@ -44,6 +44,7 @@ class _App extends StatelessWidget {
           title: 'Flutter Demo',
           theme: state.themeData,
           themeMode: state.themeMode,
+          locale: state.getLocale,
           home: const MyHomePage(title: 'Flutter Demo Home Page'),
         );
       },

@@ -1,0 +1,15 @@
+flutter_launcher_icons:
+  android: true
+  ios: true
+  web:
+    generate: true
+  windows:
+    generate: true
+  macos:
+    generate: true
+  linux:
+    generate: true
+  image_path: "assets/images/icons/co_stock_icon_1024.png"
+  adaptive_icon_foreground_padding: 20
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/images/icons/co_stock_foreground_icon.png"

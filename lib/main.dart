@@ -41,7 +41,7 @@ class _App extends StatelessWidget {
     return BlocBuilder<PrefsBloc, PrefsState>(
       builder: (context, state) {
         return MaterialApp(
-          title: 'Flutter Demo',
+          title: 'CoStock',
           theme: state.themeData,
           themeMode: state.themeMode,
           locale: state.getLocale,

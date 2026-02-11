@@ -1,4 +1,4 @@
-import 'package:co_stock/domain/local_storage_impl/local_storage_service.dart';
+import 'package:co_stock/data/local_storage/local_storage_impl/local_storage_service.dart';
 import 'package:co_stock/presentation/prefs/locale/locale_data.dart';
 import 'package:co_stock/presentation/prefs/theme/app_theme_seeded.dart';
 import 'package:co_stock/presentation/prefs/theme/app_theme_system.dart';

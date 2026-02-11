@@ -1,7 +1,7 @@
-import 'package:co_stock/domain/bases/i_local_storage.dart';
+import 'package:co_stock/data/local_storage/i_local_storage.dart';
+import 'package:co_stock/data/local_storage/local_storage_impl/local_storage_keys.dart';
 import 'package:co_stock/domain/extensions/color_ext.dart';
 import 'package:co_stock/domain/extensions/iterable_ext.dart';
-import 'package:co_stock/domain/local_storage_impl/local_storage_keys.dart';
 import 'package:co_stock/presentation/prefs/locale/locale_data.dart';
 import 'package:co_stock/presentation/prefs/theme/app_theme_system.dart';
 import 'package:flutter/material.dart';

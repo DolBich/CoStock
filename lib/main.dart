@@ -1,6 +1,6 @@
 import 'package:co_stock/application/blocs/prefs_bloc/prefs_bloc.dart';
-import 'package:co_stock/domain/bases/i_local_storage.dart';
-import 'package:co_stock/domain/local_storage_impl/shared_preferences_storage.dart';
+import 'package:co_stock/data/local_storage/i_local_storage.dart';
+import 'package:co_stock/data/local_storage/local_storage_impl/shared_preferences_storage.dart';
 import 'package:co_stock/presentation/prefs/locale/locale_data.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';

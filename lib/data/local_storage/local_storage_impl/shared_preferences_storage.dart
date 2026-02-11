@@ -1,4 +1,4 @@
-import 'package:co_stock/domain/bases/i_local_storage.dart';
+import 'package:co_stock/data/local_storage/i_local_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPreferencesManager implements ILocalStorage {

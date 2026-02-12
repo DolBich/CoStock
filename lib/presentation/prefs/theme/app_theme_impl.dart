@@ -1,6 +1,6 @@
 import 'package:co_stock/domain/extensions/color_ext.dart';
 import 'package:co_stock/presentation/prefs/theme/app_theme_system.dart';
-import 'package:co_stock/presentation/prefs/theme/theme_mode_config.dart';
+import 'package:co_stock/presentation/prefs/theme/theme_config.dart';
 import 'package:flutter/material.dart';
 
 /// Система тем основанная на ручном выборе всех цветов
@@ -11,8 +11,6 @@ import 'package:flutter/material.dart';
 /// Но добавление каждой новой темы крайне муторное и при этом
 /// трубет полного тестирования всего приложения, чтобы убедиться, что везде
 /// всё выглядит как
-// static const Color divider = Color(0xFFEEEEEE); // Цвет разделителей
-// static const Color onSurface = Color(0xFF212121);
 class AppThemeImpl extends AppThemeSystem {
   const AppThemeImpl._internal();
 
@@ -20,7 +18,7 @@ class AppThemeImpl extends AppThemeSystem {
 
   static const AppThemeImpl _instance = AppThemeImpl._internal();
 
-  static ThemeModeConfig config = ThemeModeConfig.classic();
+  static ThemeConfig config = ThemeConfig.classic();
 
   // Основные цвета оранжевая палитра
   static const Color primaryColor = Color(0xFFFF8A00);

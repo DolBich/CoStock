@@ -1,7 +1,7 @@
 import 'package:co_stock/data/local_storage/local_storage_impl/local_storage_service.dart';
 import 'package:co_stock/presentation/prefs/locale/locale_data.dart';
 import 'package:co_stock/presentation/prefs/theme/app_theme_impl.dart';
-import 'package:co_stock/presentation/prefs/theme/theme_mode_config.dart';
+import 'package:co_stock/presentation/prefs/theme/theme_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';

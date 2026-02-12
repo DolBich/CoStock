@@ -16,7 +16,7 @@ sealed class PrefsState with _$PrefsState {
     ThemeHandler.init(
       useSeed: useSeed ?? false,
       mode: themeMode ?? ThemeMode.system,
-      seedColor: colorSeed ?? ThemeModeConfig.defaultSeed,
+      seedColor: colorSeed ?? ThemeConfig.defaultSeed,
     );
 
     return PrefsState(
@@ -29,7 +29,7 @@ sealed class PrefsState with _$PrefsState {
 extension PrefsStateExt on PrefsState {
   ThemeMode get themeMode => ThemeHandler.themeMode;
 
-  ThemeModeConfig get themeConfig => AppThemeImpl.config;
+  ThemeConfig get themeConfig => AppThemeImpl.config;
 
   Color get seedColor => themeConfig.seed;
 

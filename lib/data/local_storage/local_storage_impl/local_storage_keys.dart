@@ -1,6 +1,6 @@
 enum LocalStorageKeys {
   locale,
-  themeSysVar,
+  useSeed,
   themeMode,
   themeSeed,
 }

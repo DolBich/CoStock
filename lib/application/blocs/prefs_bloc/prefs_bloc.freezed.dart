@@ -55,14 +55,14 @@ extension PrefsEventPatterns on PrefsEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Init value)?  init,TResult Function( _SetThemeMode value)?  setThemeMode,TResult Function( _SetSeedColor value)?  setSeedColor,TResult Function( _ChangeThemeSystem value)?  changeThemeSystem,TResult Function( _ChangeLocale value)?  changeLocale,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Init value)?  init,TResult Function( _SetThemeMode value)?  setThemeMode,TResult Function( _SetSeedColor value)?  setSeedColor,TResult Function( _ChangeUseSeed value)?  changeUseSeed,TResult Function( _ChangeLocale value)?  changeLocale,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case _Init() when init != null:
 return init(_that);case _SetThemeMode() when setThemeMode != null:
 return setThemeMode(_that);case _SetSeedColor() when setSeedColor != null:
-return setSeedColor(_that);case _ChangeThemeSystem() when changeThemeSystem != null:
-return changeThemeSystem(_that);case _ChangeLocale() when changeLocale != null:
+return setSeedColor(_that);case _ChangeUseSeed() when changeUseSeed != null:
+return changeUseSeed(_that);case _ChangeLocale() when changeLocale != null:
 return changeLocale(_that);case _:
   return orElse();
 
@@ -81,14 +81,14 @@ return changeLocale(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Init value)  init,required TResult Function( _SetThemeMode value)  setThemeMode,required TResult Function( _SetSeedColor value)  setSeedColor,required TResult Function( _ChangeThemeSystem value)  changeThemeSystem,required TResult Function( _ChangeLocale value)  changeLocale,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Init value)  init,required TResult Function( _SetThemeMode value)  setThemeMode,required TResult Function( _SetSeedColor value)  setSeedColor,required TResult Function( _ChangeUseSeed value)  changeUseSeed,required TResult Function( _ChangeLocale value)  changeLocale,}){
 final _that = this;
 switch (_that) {
 case _Init():
 return init(_that);case _SetThemeMode():
 return setThemeMode(_that);case _SetSeedColor():
-return setSeedColor(_that);case _ChangeThemeSystem():
-return changeThemeSystem(_that);case _ChangeLocale():
+return setSeedColor(_that);case _ChangeUseSeed():
+return changeUseSeed(_that);case _ChangeLocale():
 return changeLocale(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
@@ -103,14 +103,14 @@ return changeLocale(_that);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Init value)?  init,TResult? Function( _SetThemeMode value)?  setThemeMode,TResult? Function( _SetSeedColor value)?  setSeedColor,TResult? Function( _ChangeThemeSystem value)?  changeThemeSystem,TResult? Function( _ChangeLocale value)?  changeLocale,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Init value)?  init,TResult? Function( _SetThemeMode value)?  setThemeMode,TResult? Function( _SetSeedColor value)?  setSeedColor,TResult? Function( _ChangeUseSeed value)?  changeUseSeed,TResult? Function( _ChangeLocale value)?  changeLocale,}){
 final _that = this;
 switch (_that) {
 case _Init() when init != null:
 return init(_that);case _SetThemeMode() when setThemeMode != null:
 return setThemeMode(_that);case _SetSeedColor() when setSeedColor != null:
-return setSeedColor(_that);case _ChangeThemeSystem() when changeThemeSystem != null:
-return changeThemeSystem(_that);case _ChangeLocale() when changeLocale != null:
+return setSeedColor(_that);case _ChangeUseSeed() when changeUseSeed != null:
+return changeUseSeed(_that);case _ChangeLocale() when changeLocale != null:
 return changeLocale(_that);case _:
   return null;
 
@@ -128,13 +128,13 @@ return changeLocale(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  init,TResult Function( ThemeMode mode)?  setThemeMode,TResult Function( Color seed)?  setSeedColor,TResult Function( ThemeSystemVariant themeSystem)?  changeThemeSystem,TResult Function( AppLocale appLocale)?  changeLocale,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  init,TResult Function( ThemeMode mode)?  setThemeMode,TResult Function( Color seed)?  setSeedColor,TResult Function( bool useSeed)?  changeUseSeed,TResult Function( AppLocale appLocale)?  changeLocale,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Init() when init != null:
 return init();case _SetThemeMode() when setThemeMode != null:
 return setThemeMode(_that.mode);case _SetSeedColor() when setSeedColor != null:
-return setSeedColor(_that.seed);case _ChangeThemeSystem() when changeThemeSystem != null:
-return changeThemeSystem(_that.themeSystem);case _ChangeLocale() when changeLocale != null:
+return setSeedColor(_that.seed);case _ChangeUseSeed() when changeUseSeed != null:
+return changeUseSeed(_that.useSeed);case _ChangeLocale() when changeLocale != null:
 return changeLocale(_that.appLocale);case _:
   return orElse();
 
@@ -153,13 +153,13 @@ return changeLocale(_that.appLocale);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  init,required TResult Function( ThemeMode mode)  setThemeMode,required TResult Function( Color seed)  setSeedColor,required TResult Function( ThemeSystemVariant themeSystem)  changeThemeSystem,required TResult Function( AppLocale appLocale)  changeLocale,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  init,required TResult Function( ThemeMode mode)  setThemeMode,required TResult Function( Color seed)  setSeedColor,required TResult Function( bool useSeed)  changeUseSeed,required TResult Function( AppLocale appLocale)  changeLocale,}) {final _that = this;
 switch (_that) {
 case _Init():
 return init();case _SetThemeMode():
 return setThemeMode(_that.mode);case _SetSeedColor():
-return setSeedColor(_that.seed);case _ChangeThemeSystem():
-return changeThemeSystem(_that.themeSystem);case _ChangeLocale():
+return setSeedColor(_that.seed);case _ChangeUseSeed():
+return changeUseSeed(_that.useSeed);case _ChangeLocale():
 return changeLocale(_that.appLocale);}
 }
 /// A variant of `when` that fallback to returning `null`
@@ -174,13 +174,13 @@ return changeLocale(_that.appLocale);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  init,TResult? Function( ThemeMode mode)?  setThemeMode,TResult? Function( Color seed)?  setSeedColor,TResult? Function( ThemeSystemVariant themeSystem)?  changeThemeSystem,TResult? Function( AppLocale appLocale)?  changeLocale,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  init,TResult? Function( ThemeMode mode)?  setThemeMode,TResult? Function( Color seed)?  setSeedColor,TResult? Function( bool useSeed)?  changeUseSeed,TResult? Function( AppLocale appLocale)?  changeLocale,}) {final _that = this;
 switch (_that) {
 case _Init() when init != null:
 return init();case _SetThemeMode() when setThemeMode != null:
 return setThemeMode(_that.mode);case _SetSeedColor() when setSeedColor != null:
-return setSeedColor(_that.seed);case _ChangeThemeSystem() when changeThemeSystem != null:
-return changeThemeSystem(_that.themeSystem);case _ChangeLocale() when changeLocale != null:
+return setSeedColor(_that.seed);case _ChangeUseSeed() when changeUseSeed != null:
+return changeUseSeed(_that.useSeed);case _ChangeLocale() when changeLocale != null:
 return changeLocale(_that.appLocale);case _:
   return null;
 
@@ -356,43 +356,43 @@ as Color,
 /// @nodoc
 
 
-class _ChangeThemeSystem implements PrefsEvent {
-  const _ChangeThemeSystem(this.themeSystem);
+class _ChangeUseSeed implements PrefsEvent {
+  const _ChangeUseSeed(this.useSeed);
   
 
- final  ThemeSystemVariant themeSystem;
+ final  bool useSeed;
 
 /// Create a copy of PrefsEvent
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-_$ChangeThemeSystemCopyWith<_ChangeThemeSystem> get copyWith => __$ChangeThemeSystemCopyWithImpl<_ChangeThemeSystem>(this, _$identity);
+_$ChangeUseSeedCopyWith<_ChangeUseSeed> get copyWith => __$ChangeUseSeedCopyWithImpl<_ChangeUseSeed>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ChangeThemeSystem&&(identical(other.themeSystem, themeSystem) || other.themeSystem == themeSystem));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ChangeUseSeed&&(identical(other.useSeed, useSeed) || other.useSeed == useSeed));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,themeSystem);
+int get hashCode => Object.hash(runtimeType,useSeed);
 
 @override
 String toString() {
-  return 'PrefsEvent.changeThemeSystem(themeSystem: $themeSystem)';
+  return 'PrefsEvent.changeUseSeed(useSeed: $useSeed)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class _$ChangeThemeSystemCopyWith<$Res> implements $PrefsEventCopyWith<$Res> {
-  factory _$ChangeThemeSystemCopyWith(_ChangeThemeSystem value, $Res Function(_ChangeThemeSystem) _then) = __$ChangeThemeSystemCopyWithImpl;
+abstract mixin class _$ChangeUseSeedCopyWith<$Res> implements $PrefsEventCopyWith<$Res> {
+  factory _$ChangeUseSeedCopyWith(_ChangeUseSeed value, $Res Function(_ChangeUseSeed) _then) = __$ChangeUseSeedCopyWithImpl;
 @useResult
 $Res call({
- ThemeSystemVariant themeSystem
+ bool useSeed
 });
 
 
@@ -400,19 +400,19 @@ $Res call({
 
 }
 /// @nodoc
-class __$ChangeThemeSystemCopyWithImpl<$Res>
-    implements _$ChangeThemeSystemCopyWith<$Res> {
-  __$ChangeThemeSystemCopyWithImpl(this._self, this._then);
+class __$ChangeUseSeedCopyWithImpl<$Res>
+    implements _$ChangeUseSeedCopyWith<$Res> {
+  __$ChangeUseSeedCopyWithImpl(this._self, this._then);
 
-  final _ChangeThemeSystem _self;
-  final $Res Function(_ChangeThemeSystem) _then;
+  final _ChangeUseSeed _self;
+  final $Res Function(_ChangeUseSeed) _then;
 
 /// Create a copy of PrefsEvent
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? themeSystem = null,}) {
-  return _then(_ChangeThemeSystem(
-null == themeSystem ? _self.themeSystem : themeSystem // ignore: cast_nullable_to_non_nullable
-as ThemeSystemVariant,
+@pragma('vm:prefer-inline') $Res call({Object? useSeed = null,}) {
+  return _then(_ChangeUseSeed(
+null == useSeed ? _self.useSeed : useSeed // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 

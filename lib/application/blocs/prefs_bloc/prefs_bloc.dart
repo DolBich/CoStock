@@ -1,7 +1,7 @@
 import 'package:co_stock/data/local_storage/local_storage_impl/local_storage_service.dart';
 import 'package:co_stock/presentation/prefs/locale/locale_data.dart';
-import 'package:co_stock/presentation/prefs/theme/app_theme_seeded.dart';
-import 'package:co_stock/presentation/prefs/theme/app_theme_system.dart';
+import 'package:co_stock/presentation/prefs/theme/app_theme_impl.dart';
+import 'package:co_stock/presentation/prefs/theme/theme_mode_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -23,7 +23,7 @@ class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
     /// Theme
     on<_SetThemeMode>(_onSetThemeMode);
     on<_SetSeedColor>(_onSetSeedColor);
-    on<_ChangeThemeSystem>(_changeThemeSystem);
+    on<_ChangeUseSeed>(_changeUseSeed);
 
     /// Locale
     on<_ChangeLocale>(_changeLocale);
@@ -33,14 +33,14 @@ class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
 
   Future<void> _onInit(_Init event, Emitter<PrefsState> emit) async {
     final locale = await LocalStorageService.getLocale();
-    final themeSysVar = await LocalStorageService.getThemeSysVar();
+    final useSeed = await LocalStorageService.getUseSeed();
     final themeMode = await LocalStorageService.getThemeMode();
     final colorSeed = await LocalStorageService.getThemeSeed();
 
     emit(
       PrefsState.initial(
         locale: locale,
-        themeSysVar: themeSysVar,
+        useSeed: useSeed,
         themeMode: themeMode,
         colorSeed: colorSeed,
       )
@@ -50,9 +50,9 @@ class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
   ///
   /// Theme
   ///
-  void _changeThemeSystem(_ChangeThemeSystem event, Emitter<PrefsState> emit) {
-    ThemeHandler.themeSystem = event.themeSystem;
-    LocalStorageService.saveThemeSysVar(event.themeSystem);
+  void _changeUseSeed(_ChangeUseSeed event, Emitter<PrefsState> emit) {
+    ThemeHandler.changeThemeConfig(useSeed: event.useSeed);
+    LocalStorageService.saveUseSeed(event.useSeed);
 
     emit(state.copyWith(themeData: ThemeHandler.buildTheme()));
   }
@@ -65,7 +65,7 @@ class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
   }
 
   Future<void> _onSetSeedColor(_SetSeedColor event, Emitter<PrefsState> emit) async {
-    AppThemeSeeded.seed = event.seed;
+    ThemeHandler.changeThemeConfig(seed: event.seed);
     LocalStorageService.saveThemeSeed(event.seed);
 
     emit(state.copyWith(themeData: ThemeHandler.buildTheme()));

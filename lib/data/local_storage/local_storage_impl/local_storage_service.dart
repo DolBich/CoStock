@@ -3,7 +3,6 @@ import 'package:co_stock/data/local_storage/local_storage_impl/local_storage_key
 import 'package:co_stock/domain/extensions/color_ext.dart';
 import 'package:co_stock/domain/extensions/iterable_ext.dart';
 import 'package:co_stock/presentation/prefs/locale/locale_data.dart';
-import 'package:co_stock/presentation/prefs/theme/app_theme_system.dart';
 import 'package:flutter/material.dart';
 
 class LocalStorageService {
@@ -77,17 +76,17 @@ class LocalStorageService {
     return ColorExt.fromJsonOrNull(map);
   }
 
-  static Future<void> saveThemeSysVar(ThemeSystemVariant themeSysVar) async {
+  static Future<void> saveUseSeed(bool useSeed) async {
     await saveData(
-      key: LocalStorageKeys.themeSysVar.name,
-      value: themeSysVar.name,
+      key: LocalStorageKeys.useSeed.name,
+      value: useSeed,
     );
   }
 
-  static Future<ThemeSystemVariant?> getThemeSysVar() async {
-    final str = await getData<String>(key: LocalStorageKeys.themeSysVar.name);
-    if (str == null) return null;
+  static Future<bool?> getUseSeed() async {
+    final useSeed = await getData<bool>(key: LocalStorageKeys.useSeed.name);
+    if (useSeed == null) return null;
 
-    return ThemeSystemVariant.byName(str);
+    return useSeed;
   }
 }

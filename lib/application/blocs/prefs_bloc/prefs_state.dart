@@ -9,14 +9,14 @@ sealed class PrefsState with _$PrefsState {
 
   factory PrefsState.initial({
     AppLocale? locale,
-    ThemeSystemVariant? themeSysVar,
+    bool? useSeed,
     ThemeMode? themeMode,
     Color? colorSeed,
 }) {
     ThemeHandler.init(
-      themeSysVar: themeSysVar ?? ThemeSystemVariant.seeded,
+      useSeed: useSeed ?? false,
       mode: themeMode ?? ThemeMode.system,
-      seedColor: colorSeed ?? AppThemeSeeded.defaultSeed,
+      seedColor: colorSeed ?? ThemeModeConfig.defaultSeed,
     );
 
     return PrefsState(
@@ -29,9 +29,11 @@ sealed class PrefsState with _$PrefsState {
 extension PrefsStateExt on PrefsState {
   ThemeMode get themeMode => ThemeHandler.themeMode;
 
-  Color get seedColor => AppThemeSeeded.seed;
+  ThemeModeConfig get themeConfig => AppThemeImpl.config;
 
-  ThemeSystemVariant get themeSysVar => ThemeHandler.themeSystem;
+  Color get seedColor => themeConfig.seed;
+
+  bool get useSeed => themeConfig.useSeed;
 
   Locale get getLocale => appLocale.locale;
 }

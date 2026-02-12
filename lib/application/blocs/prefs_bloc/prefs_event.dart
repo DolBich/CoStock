@@ -10,7 +10,7 @@ sealed class PrefsEvent with _$PrefsEvent {
 
   const factory PrefsEvent.setSeedColor(Color seed) = _SetSeedColor;
 
-  const factory PrefsEvent.changeThemeSystem(ThemeSystemVariant themeSystem) = _ChangeThemeSystem;
+  const factory PrefsEvent.changeUseSeed(bool useSeed) = _ChangeUseSeed;
 
   /// Localization
   const factory PrefsEvent.changeLocale(AppLocale appLocale) = _ChangeLocale;

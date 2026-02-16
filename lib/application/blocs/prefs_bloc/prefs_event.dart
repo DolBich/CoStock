@@ -14,4 +14,7 @@ sealed class PrefsEvent with _$PrefsEvent {
 
   /// Localization
   const factory PrefsEvent.changeLocale(AppLocale appLocale) = _ChangeLocale;
+
+  /// Repositories
+  const factory PrefsEvent.changeRepo() = _ChangeRepo;
 }

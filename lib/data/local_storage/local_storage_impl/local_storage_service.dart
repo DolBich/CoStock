@@ -36,7 +36,10 @@ class LocalStorageService {
   /// Частные случаи
   ///
 
+  ///
   /// Locale
+  ///
+
   static Future<void> saveLocale(AppLocale locale) async {
     await saveData(key: LocalStorageKeys.locale.name, value: locale.name);
   }
@@ -48,7 +51,10 @@ class LocalStorageService {
     return AppLocale.byName(str);
   }
 
+  ///
   /// Theme
+  ///
+
   static Future<void> saveThemeMode(ThemeMode mode) async {
     await saveData(key: LocalStorageKeys.themeMode.name, value: mode.name);
   }
@@ -77,10 +83,7 @@ class LocalStorageService {
   }
 
   static Future<void> saveUseSeed(bool useSeed) async {
-    await saveData(
-      key: LocalStorageKeys.useSeed.name,
-      value: useSeed,
-    );
+    await saveData(key: LocalStorageKeys.useSeed.name, value: useSeed);
   }
 
   static Future<bool?> getUseSeed() async {
@@ -88,5 +91,20 @@ class LocalStorageService {
     if (useSeed == null) return null;
 
     return useSeed;
+  }
+
+  ///
+  /// Repositories
+  ///
+
+  static Future<void> saveUseMock(bool useMock) async {
+    await saveData(key: LocalStorageKeys.useMock.name, value: useMock);
+  }
+
+  static Future<bool?> getUseMock() async {
+    final useMock = await getData<bool>(key: LocalStorageKeys.useMock.name);
+    if (useMock == null) return null;
+
+    return useMock;
   }
 }

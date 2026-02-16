@@ -28,6 +28,9 @@ class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
     /// Locale
     on<_ChangeLocale>(_changeLocale);
 
+    /// Repositories
+    on<_ChangeRepo>(_changeRepo);
+
     add(const PrefsEvent.init());
   }
 
@@ -43,7 +46,7 @@ class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
         useSeed: useSeed,
         themeMode: themeMode,
         colorSeed: colorSeed,
-      )
+      ),
     );
   }
 
@@ -57,14 +60,20 @@ class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
     emit(state.copyWith(themeData: ThemeHandler.buildTheme()));
   }
 
-  Future<void> _onSetThemeMode(_SetThemeMode event, Emitter<PrefsState> emit) async {
+  Future<void> _onSetThemeMode(
+    _SetThemeMode event,
+    Emitter<PrefsState> emit,
+  ) async {
     ThemeHandler.themeMode = event.mode;
     LocalStorageService.saveThemeMode(event.mode);
 
     emit(state.copyWith(themeData: ThemeHandler.buildTheme()));
   }
 
-  Future<void> _onSetSeedColor(_SetSeedColor event, Emitter<PrefsState> emit) async {
+  Future<void> _onSetSeedColor(
+    _SetSeedColor event,
+    Emitter<PrefsState> emit,
+  ) async {
     ThemeHandler.changeThemeConfig(seed: event.seed);
     LocalStorageService.saveThemeSeed(event.seed);
 
@@ -74,9 +83,22 @@ class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
   ///
   /// Locale
   ///
-  Future<void> _changeLocale(_ChangeLocale event, Emitter<PrefsState> emit) async {
+  Future<void> _changeLocale(
+    _ChangeLocale event,
+    Emitter<PrefsState> emit,
+  ) async {
     LocalStorageService.saveLocale(event.appLocale);
 
     emit(state.copyWith(appLocale: event.appLocale));
+  }
+
+  ///
+  /// Repositories
+  ///
+
+  Future<void> _changeRepo(_ChangeRepo event, Emitter<PrefsState> emit) async {
+    LocalStorageService.saveUseMock(!state.useMock);
+
+    emit(state.copyWith(useMock: !state.useMock));
   }
 }

@@ -55,7 +55,7 @@ extension PrefsEventPatterns on PrefsEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Init value)?  init,TResult Function( _SetThemeMode value)?  setThemeMode,TResult Function( _SetSeedColor value)?  setSeedColor,TResult Function( _ChangeUseSeed value)?  changeUseSeed,TResult Function( _ChangeLocale value)?  changeLocale,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Init value)?  init,TResult Function( _SetThemeMode value)?  setThemeMode,TResult Function( _SetSeedColor value)?  setSeedColor,TResult Function( _ChangeUseSeed value)?  changeUseSeed,TResult Function( _ChangeLocale value)?  changeLocale,TResult Function( _ChangeRepo value)?  changeRepo,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case _Init() when init != null:
@@ -63,7 +63,8 @@ return init(_that);case _SetThemeMode() when setThemeMode != null:
 return setThemeMode(_that);case _SetSeedColor() when setSeedColor != null:
 return setSeedColor(_that);case _ChangeUseSeed() when changeUseSeed != null:
 return changeUseSeed(_that);case _ChangeLocale() when changeLocale != null:
-return changeLocale(_that);case _:
+return changeLocale(_that);case _ChangeRepo() when changeRepo != null:
+return changeRepo(_that);case _:
   return orElse();
 
 }
@@ -81,7 +82,7 @@ return changeLocale(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Init value)  init,required TResult Function( _SetThemeMode value)  setThemeMode,required TResult Function( _SetSeedColor value)  setSeedColor,required TResult Function( _ChangeUseSeed value)  changeUseSeed,required TResult Function( _ChangeLocale value)  changeLocale,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Init value)  init,required TResult Function( _SetThemeMode value)  setThemeMode,required TResult Function( _SetSeedColor value)  setSeedColor,required TResult Function( _ChangeUseSeed value)  changeUseSeed,required TResult Function( _ChangeLocale value)  changeLocale,required TResult Function( _ChangeRepo value)  changeRepo,}){
 final _that = this;
 switch (_that) {
 case _Init():
@@ -89,7 +90,8 @@ return init(_that);case _SetThemeMode():
 return setThemeMode(_that);case _SetSeedColor():
 return setSeedColor(_that);case _ChangeUseSeed():
 return changeUseSeed(_that);case _ChangeLocale():
-return changeLocale(_that);}
+return changeLocale(_that);case _ChangeRepo():
+return changeRepo(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -103,7 +105,7 @@ return changeLocale(_that);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Init value)?  init,TResult? Function( _SetThemeMode value)?  setThemeMode,TResult? Function( _SetSeedColor value)?  setSeedColor,TResult? Function( _ChangeUseSeed value)?  changeUseSeed,TResult? Function( _ChangeLocale value)?  changeLocale,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Init value)?  init,TResult? Function( _SetThemeMode value)?  setThemeMode,TResult? Function( _SetSeedColor value)?  setSeedColor,TResult? Function( _ChangeUseSeed value)?  changeUseSeed,TResult? Function( _ChangeLocale value)?  changeLocale,TResult? Function( _ChangeRepo value)?  changeRepo,}){
 final _that = this;
 switch (_that) {
 case _Init() when init != null:
@@ -111,7 +113,8 @@ return init(_that);case _SetThemeMode() when setThemeMode != null:
 return setThemeMode(_that);case _SetSeedColor() when setSeedColor != null:
 return setSeedColor(_that);case _ChangeUseSeed() when changeUseSeed != null:
 return changeUseSeed(_that);case _ChangeLocale() when changeLocale != null:
-return changeLocale(_that);case _:
+return changeLocale(_that);case _ChangeRepo() when changeRepo != null:
+return changeRepo(_that);case _:
   return null;
 
 }
@@ -128,14 +131,15 @@ return changeLocale(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  init,TResult Function( ThemeMode mode)?  setThemeMode,TResult Function( Color seed)?  setSeedColor,TResult Function( bool useSeed)?  changeUseSeed,TResult Function( AppLocale appLocale)?  changeLocale,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  init,TResult Function( ThemeMode mode)?  setThemeMode,TResult Function( Color seed)?  setSeedColor,TResult Function( bool useSeed)?  changeUseSeed,TResult Function( AppLocale appLocale)?  changeLocale,TResult Function()?  changeRepo,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Init() when init != null:
 return init();case _SetThemeMode() when setThemeMode != null:
 return setThemeMode(_that.mode);case _SetSeedColor() when setSeedColor != null:
 return setSeedColor(_that.seed);case _ChangeUseSeed() when changeUseSeed != null:
 return changeUseSeed(_that.useSeed);case _ChangeLocale() when changeLocale != null:
-return changeLocale(_that.appLocale);case _:
+return changeLocale(_that.appLocale);case _ChangeRepo() when changeRepo != null:
+return changeRepo();case _:
   return orElse();
 
 }
@@ -153,14 +157,15 @@ return changeLocale(_that.appLocale);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  init,required TResult Function( ThemeMode mode)  setThemeMode,required TResult Function( Color seed)  setSeedColor,required TResult Function( bool useSeed)  changeUseSeed,required TResult Function( AppLocale appLocale)  changeLocale,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  init,required TResult Function( ThemeMode mode)  setThemeMode,required TResult Function( Color seed)  setSeedColor,required TResult Function( bool useSeed)  changeUseSeed,required TResult Function( AppLocale appLocale)  changeLocale,required TResult Function()  changeRepo,}) {final _that = this;
 switch (_that) {
 case _Init():
 return init();case _SetThemeMode():
 return setThemeMode(_that.mode);case _SetSeedColor():
 return setSeedColor(_that.seed);case _ChangeUseSeed():
 return changeUseSeed(_that.useSeed);case _ChangeLocale():
-return changeLocale(_that.appLocale);}
+return changeLocale(_that.appLocale);case _ChangeRepo():
+return changeRepo();}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -174,14 +179,15 @@ return changeLocale(_that.appLocale);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  init,TResult? Function( ThemeMode mode)?  setThemeMode,TResult? Function( Color seed)?  setSeedColor,TResult? Function( bool useSeed)?  changeUseSeed,TResult? Function( AppLocale appLocale)?  changeLocale,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  init,TResult? Function( ThemeMode mode)?  setThemeMode,TResult? Function( Color seed)?  setSeedColor,TResult? Function( bool useSeed)?  changeUseSeed,TResult? Function( AppLocale appLocale)?  changeLocale,TResult? Function()?  changeRepo,}) {final _that = this;
 switch (_that) {
 case _Init() when init != null:
 return init();case _SetThemeMode() when setThemeMode != null:
 return setThemeMode(_that.mode);case _SetSeedColor() when setSeedColor != null:
 return setSeedColor(_that.seed);case _ChangeUseSeed() when changeUseSeed != null:
 return changeUseSeed(_that.useSeed);case _ChangeLocale() when changeLocale != null:
-return changeLocale(_that.appLocale);case _:
+return changeLocale(_that.appLocale);case _ChangeRepo() when changeRepo != null:
+return changeRepo();case _:
   return null;
 
 }
@@ -486,9 +492,41 @@ as AppLocale,
 }
 
 /// @nodoc
+
+
+class _ChangeRepo implements PrefsEvent {
+  const _ChangeRepo();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ChangeRepo);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'PrefsEvent.changeRepo()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
 mixin _$PrefsState {
 
- AppLocale get appLocale; ThemeData get themeData;
+ AppLocale get appLocale; ThemeData get themeData; bool get useMock;
 /// Create a copy of PrefsState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -499,16 +537,16 @@ $PrefsStateCopyWith<PrefsState> get copyWith => _$PrefsStateCopyWithImpl<PrefsSt
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PrefsState&&(identical(other.appLocale, appLocale) || other.appLocale == appLocale)&&(identical(other.themeData, themeData) || other.themeData == themeData));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PrefsState&&(identical(other.appLocale, appLocale) || other.appLocale == appLocale)&&(identical(other.themeData, themeData) || other.themeData == themeData)&&(identical(other.useMock, useMock) || other.useMock == useMock));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,appLocale,themeData);
+int get hashCode => Object.hash(runtimeType,appLocale,themeData,useMock);
 
 @override
 String toString() {
-  return 'PrefsState(appLocale: $appLocale, themeData: $themeData)';
+  return 'PrefsState(appLocale: $appLocale, themeData: $themeData, useMock: $useMock)';
 }
 
 
@@ -519,7 +557,7 @@ abstract mixin class $PrefsStateCopyWith<$Res>  {
   factory $PrefsStateCopyWith(PrefsState value, $Res Function(PrefsState) _then) = _$PrefsStateCopyWithImpl;
 @useResult
 $Res call({
- AppLocale appLocale, ThemeData themeData
+ AppLocale appLocale, ThemeData themeData, bool useMock
 });
 
 
@@ -536,11 +574,12 @@ class _$PrefsStateCopyWithImpl<$Res>
 
 /// Create a copy of PrefsState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? appLocale = null,Object? themeData = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? appLocale = null,Object? themeData = null,Object? useMock = null,}) {
   return _then(_self.copyWith(
 appLocale: null == appLocale ? _self.appLocale : appLocale // ignore: cast_nullable_to_non_nullable
 as AppLocale,themeData: null == themeData ? _self.themeData : themeData // ignore: cast_nullable_to_non_nullable
-as ThemeData,
+as ThemeData,useMock: null == useMock ? _self.useMock : useMock // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
@@ -622,10 +661,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( AppLocale appLocale,  ThemeData themeData)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( AppLocale appLocale,  ThemeData themeData,  bool useMock)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _PrefsState() when $default != null:
-return $default(_that.appLocale,_that.themeData);case _:
+return $default(_that.appLocale,_that.themeData,_that.useMock);case _:
   return orElse();
 
 }
@@ -643,10 +682,10 @@ return $default(_that.appLocale,_that.themeData);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( AppLocale appLocale,  ThemeData themeData)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( AppLocale appLocale,  ThemeData themeData,  bool useMock)  $default,) {final _that = this;
 switch (_that) {
 case _PrefsState():
-return $default(_that.appLocale,_that.themeData);}
+return $default(_that.appLocale,_that.themeData,_that.useMock);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -660,10 +699,10 @@ return $default(_that.appLocale,_that.themeData);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( AppLocale appLocale,  ThemeData themeData)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( AppLocale appLocale,  ThemeData themeData,  bool useMock)?  $default,) {final _that = this;
 switch (_that) {
 case _PrefsState() when $default != null:
-return $default(_that.appLocale,_that.themeData);case _:
+return $default(_that.appLocale,_that.themeData,_that.useMock);case _:
   return null;
 
 }
@@ -675,11 +714,12 @@ return $default(_that.appLocale,_that.themeData);case _:
 
 
 class _PrefsState implements PrefsState {
-  const _PrefsState({required this.appLocale, required this.themeData});
+  const _PrefsState({required this.appLocale, required this.themeData, required this.useMock});
   
 
 @override final  AppLocale appLocale;
 @override final  ThemeData themeData;
+@override final  bool useMock;
 
 /// Create a copy of PrefsState
 /// with the given fields replaced by the non-null parameter values.
@@ -691,16 +731,16 @@ _$PrefsStateCopyWith<_PrefsState> get copyWith => __$PrefsStateCopyWithImpl<_Pre
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PrefsState&&(identical(other.appLocale, appLocale) || other.appLocale == appLocale)&&(identical(other.themeData, themeData) || other.themeData == themeData));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PrefsState&&(identical(other.appLocale, appLocale) || other.appLocale == appLocale)&&(identical(other.themeData, themeData) || other.themeData == themeData)&&(identical(other.useMock, useMock) || other.useMock == useMock));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,appLocale,themeData);
+int get hashCode => Object.hash(runtimeType,appLocale,themeData,useMock);
 
 @override
 String toString() {
-  return 'PrefsState(appLocale: $appLocale, themeData: $themeData)';
+  return 'PrefsState(appLocale: $appLocale, themeData: $themeData, useMock: $useMock)';
 }
 
 
@@ -711,7 +751,7 @@ abstract mixin class _$PrefsStateCopyWith<$Res> implements $PrefsStateCopyWith<$
   factory _$PrefsStateCopyWith(_PrefsState value, $Res Function(_PrefsState) _then) = __$PrefsStateCopyWithImpl;
 @override @useResult
 $Res call({
- AppLocale appLocale, ThemeData themeData
+ AppLocale appLocale, ThemeData themeData, bool useMock
 });
 
 
@@ -728,11 +768,12 @@ class __$PrefsStateCopyWithImpl<$Res>
 
 /// Create a copy of PrefsState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? appLocale = null,Object? themeData = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? appLocale = null,Object? themeData = null,Object? useMock = null,}) {
   return _then(_PrefsState(
 appLocale: null == appLocale ? _self.appLocale : appLocale // ignore: cast_nullable_to_non_nullable
 as AppLocale,themeData: null == themeData ? _self.themeData : themeData // ignore: cast_nullable_to_non_nullable
-as ThemeData,
+as ThemeData,useMock: null == useMock ? _self.useMock : useMock // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 

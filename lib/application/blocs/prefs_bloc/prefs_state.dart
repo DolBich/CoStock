@@ -5,6 +5,7 @@ sealed class PrefsState with _$PrefsState {
   const factory PrefsState({
     required AppLocale appLocale,
     required ThemeData themeData,
+    required bool useMock,
   }) = _PrefsState;
 
   factory PrefsState.initial({
@@ -12,6 +13,7 @@ sealed class PrefsState with _$PrefsState {
     bool? useSeed,
     ThemeMode? themeMode,
     Color? colorSeed,
+    bool? useMock,
 }) {
     ThemeHandler.init(
       useSeed: useSeed ?? false,
@@ -22,6 +24,7 @@ sealed class PrefsState with _$PrefsState {
     return PrefsState(
       appLocale: locale ?? AppLocale.ru,
       themeData: ThemeHandler.buildTheme(),
+      useMock: useMock ?? true,
     );
   }
 }

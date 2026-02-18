@@ -88,7 +88,6 @@ class LocalStorageService {
 
   static Future<bool?> getUseSeed() async {
     final useSeed = await getData<bool>(key: LocalStorageKeys.useSeed.name);
-    if (useSeed == null) return null;
 
     return useSeed;
   }
@@ -103,8 +102,22 @@ class LocalStorageService {
 
   static Future<bool?> getUseMock() async {
     final useMock = await getData<bool>(key: LocalStorageKeys.useMock.name);
-    if (useMock == null) return null;
 
     return useMock;
+  }
+
+  /// Profile
+  static Future<void> saveAuth(String id) async {
+    await saveData(key: LocalStorageKeys.userId.name, value: id);
+  }
+
+  static Future<void> removeAuth() async {
+    await removeData(key: LocalStorageKeys.userId.name);
+  }
+
+  static Future<String?> getAuth() async {
+    final id = await getData<String>(key: LocalStorageKeys.userId.name);
+
+    return id;
   }
 }

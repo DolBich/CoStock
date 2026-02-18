@@ -16,7 +16,7 @@ class ThemeHandler {
         seed: seed,
         useSeed: useSeed,
       );
-  static ThemeMode themeMode = ThemeMode.system;
+  static ThemeMode themeMode = ThemeMode.light;
 
   static ThemeData buildTheme() {
     return switch (themeMode) {

@@ -1,5 +1,10 @@
 extension IterableExt<T> on Iterable<T> {
-  T firstWhereOrNull(bool Function(T) test) {
-      return firstWhere(test, orElse: null);
+  T? firstWhereOrNull(bool Function(T) test) {
+    try {
+      return firstWhere(test);
+    } on StateError {
+      return null;
+    }
+
   }
 }

@@ -3,8 +3,18 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'app_errors.freezed.dart';
 
-enum AuthErrorType { serverError, invalidCredentials, tokenExpired }
-enum NetworkErrorType { timeout, noInternet, serverError }
+enum AuthErrorType {
+  identifier,
+  password,
+  loginAlreadyExists,
+  phoneAlreadyRegistered,
+  emailAlreadyRegistered,
+  lastDetail,
+}
+
+enum ServerErrorType { internet, server, timeout, notFound }
+
+enum ClientErrorType { state, smth }
 
 @freezed
 sealed class AppError with _$AppError implements Exception {
@@ -13,35 +23,53 @@ sealed class AppError with _$AppError implements Exception {
   const factory AppError.auth({required AuthErrorType type, String? msg}) =
       _AuthError;
 
-  const factory AppError.network({
-    required NetworkErrorType type,
-    String? message,
-  }) = _NetworkError;
+  const factory AppError.server({required ServerErrorType type, String? msg}) =
+      _ServerError;
 
-  String get userMessage => when(
-    auth: (type, msg) => _authMessage(type, msg),
-    network: (type, msg) => _networkMessage(type, msg),
-  );
+  const factory AppError.client({required ClientErrorType type, String? msg}) =
+      _ClientError;
 
-  String _authMessage(AuthErrorType type, String? msg) {
+  String get userMessage =>
+      when(auth: _authMessage, server: _serverMessage, client: _clientMessage);
+
+  String _includeMsg(String? msg) => msg != null ? ': $msg' : '';
+
+  String _clientMessage(ClientErrorType type, String? msg) {
     switch (type) {
-      case AuthErrorType.serverError:
-        return 'Authentication server error${msg != null ? ': $msg' : ''}';
-      case AuthErrorType.invalidCredentials:
-        return 'Invalid email or password';
-      case AuthErrorType.tokenExpired:
-        return 'Session expired. Please log in again.';
+      case .state:
+        return 'Client error${_includeMsg(msg)}';
+      case .smth:
+        return 'Something went wrong${_includeMsg(msg)}';
     }
   }
 
-  String _networkMessage(NetworkErrorType type, String? msg) {
+  String _authMessage(AuthErrorType type, String? msg) {
     switch (type) {
-      case NetworkErrorType.timeout:
+      case .identifier:
+        return 'Такой пользователь не найден';
+      case .password:
+        return 'Неверный пароль';
+      case .loginAlreadyExists:
+        return 'Этот логин уже занят';
+      case .phoneAlreadyRegistered:
+        return 'Этот телефон уже был зарегистрирован на другом аккаунте';
+      case .emailAlreadyRegistered:
+        return 'Эта почта уже была зарегистрирована на другом аккаунте';
+      case .lastDetail:
+        return 'Это последняя информация для авторизации на ваш аккаунт. Если Её удалить вы уже не сможете авторизоваться. Для удаления зарегистрируйте любой другой способ авторизации.';
+    }
+  }
+
+  String _serverMessage(ServerErrorType type, String? msg) {
+    switch (type) {
+      case .timeout:
         return 'Connection timeout. Check your internet.';
-      case NetworkErrorType.noInternet:
+      case .internet:
         return 'No internet connection.';
-      case NetworkErrorType.serverError:
+      case .server:
         return 'Server error (${msg ?? 'unknown'})';
+      case .notFound:
+        return 'Данные на сервере не найдены';
     }
   }
 }

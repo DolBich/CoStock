@@ -4,4 +4,5 @@ enum LocalStorageKeys {
   themeMode,
   themeSeed,
   useMock,
+  userId,
 }

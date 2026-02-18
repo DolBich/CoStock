@@ -17,7 +17,7 @@ sealed class PrefsState with _$PrefsState {
 }) {
     ThemeHandler.init(
       useSeed: useSeed ?? false,
-      mode: themeMode ?? ThemeMode.system,
+      mode: themeMode ?? ThemeMode.light,
       seedColor: colorSeed ?? ThemeConfig.defaultSeed,
     );
 

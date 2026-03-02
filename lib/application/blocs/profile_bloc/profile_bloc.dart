@@ -86,38 +86,23 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         return;
       }
     }
-
-    final res = await _authRepository.checkRegAccount(
+    final updateRes = await _authRepository.updateDetail(
       method: .login,
-      identifier: login,
+      detail: login,
+      id: userId,
     );
 
-    res.fold(
+    updateRes.fold(
       (f) {
         f.report();
         emit(state.copyWith(isLoading: false));
         return;
       },
-      (u) async {
-        final updateRes = await _authRepository.updateDetail(
-          method: .login,
-          detail: login,
-          id: userId,
-        );
-
-        updateRes.fold(
-          (f) {
-            f.report();
-            emit(state.copyWith(isLoading: false));
-            return;
-          },
-          (u) {
-            emit(
-              state
-                  .setDetail(method: .login, value: login)
-                  .copyWith(isLoading: false),
-            );
-          },
+      (u) {
+        emit(
+          state
+              .setDetail(method: .login, value: login)
+              .copyWith(isLoading: false),
         );
       },
     );
@@ -154,37 +139,23 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       }
     }
 
-    final res = await _authRepository.checkRegAccount(
+    final updateRes = await _authRepository.updateDetail(
       method: .phone,
-      identifier: phone,
+      detail: phone,
+      id: userId,
     );
 
-    res.fold(
+    updateRes.fold(
       (f) {
         f.report();
         emit(state.copyWith(isLoading: false));
         return;
       },
-      (u) async {
-        final updateRes = await _authRepository.updateDetail(
-          method: .phone,
-          detail: phone,
-          id: userId,
-        );
-
-        updateRes.fold(
-          (f) {
-            f.report();
-            emit(state.copyWith(isLoading: false));
-            return;
-          },
-          (u) {
-            emit(
-              state
-                  .setDetail(method: .phone, value: phone)
-                  .copyWith(isLoading: false),
-            );
-          },
+      (u) {
+        emit(
+          state
+              .setDetail(method: .phone, value: phone)
+              .copyWith(isLoading: false),
         );
       },
     );
@@ -221,37 +192,23 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       }
     }
 
-    final res = await _authRepository.checkRegAccount(
+    final updateRes = await _authRepository.updateDetail(
       method: .email,
-      identifier: email,
+      detail: email,
+      id: userId,
     );
 
-    res.fold(
+    updateRes.fold(
       (f) {
         f.report();
         emit(state.copyWith(isLoading: false));
         return;
       },
-      (u) async {
-        final updateRes = await _authRepository.updateDetail(
-          method: .email,
-          detail: email,
-          id: userId,
-        );
-
-        updateRes.fold(
-          (f) {
-            f.report();
-            emit(state.copyWith(isLoading: false));
-            return;
-          },
-          (u) {
-            emit(
-              state
-                  .setDetail(method: .email, value: email)
-                  .copyWith(isLoading: false),
-            );
-          },
+      (u) {
+        emit(
+          state
+              .setDetail(method: .email, value: email)
+              .copyWith(isLoading: false),
         );
       },
     );

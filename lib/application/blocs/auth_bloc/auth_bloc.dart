@@ -253,61 +253,44 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     emit(state.withDetailLoading(event.method, true));
 
-    final checkResult = await _authRepository.checkRegAccount(
+    final detail = state.detail(event.method);
+    final updateResult = await _authRepository.updateDetail(
       method: event.method,
-      identifier: state.detail(event.method),
+      detail: detail,
+      id: userId,
     );
 
-    checkResult.fold(
+    updateResult.fold(
       (failure) {
         ErrorManager().reportError(failure);
         emit(state.withDetailError(event.method, failure.userMessage));
       },
-      (_) async {
-        final detail = state.detail(event.method);
-        final updateResult = await _authRepository.updateDetail(
-          method: event.method,
-          detail: detail,
-          id: userId,
+      (_) {
+        final user = state.user;
+        if (user == null) {
+          ErrorManager().reportError(
+            const AppError.client(type: .state, msg: 'No user'),
+          );
+          emit(state.withDetailError(event.method, 'No user'));
+          return;
+        }
+        final updatedUser = user.copyWith(
+          email: event.method == .email ? some(detail) : null,
+          phone: event.method == .phone ? some(detail) : null,
+          login: event.method == .login ? some(detail) : null,
         );
 
-        updateResult.fold(
-          (failure) {
-            ErrorManager().reportError(failure);
-            emit(state.withDetailError(event.method, failure.userMessage));
-          },
-          (_) {
-            final user = state.user;
-            if (user == null) {
-              ErrorManager().reportError(
-                const AppError.client(type: .state, msg: 'No user'),
-              );
-              emit(state.withDetailError(event.method, 'No user'));
-              return;
-            }
-            final updatedUser = user.copyWith(
-              email: event.method == .email ? some(detail) : null,
-              phone: event.method == .phone ? some(detail) : null,
-              login: event.method == .login ? some(detail) : null,
-            );
+        final newFields = Map<AuthMethod, FieldState>.from(state.fields)
+          ..remove(event.method);
 
-            final newFields = Map<AuthMethod, FieldState>.from(state.fields)
-              ..remove(event.method);
+        final nextStep = newFields.isEmpty
+            ? AuthStep.authenticated
+            : AuthStep.registerDetails;
 
-            final nextStep = newFields.isEmpty
-                ? AuthStep.authenticated
-                : AuthStep.registerDetails;
-
-            emit(
-              state
-                  .withDetailLoading(event.method, false)
-                  .copyWith(
-                    user: updatedUser,
-                    fields: newFields,
-                    step: nextStep,
-                  ),
-            );
-          },
+        emit(
+          state
+              .withDetailLoading(event.method, false)
+              .copyWith(user: updatedUser, fields: newFields, step: nextStep),
         );
       },
     );

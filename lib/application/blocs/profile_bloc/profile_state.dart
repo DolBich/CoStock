@@ -32,4 +32,15 @@ extension ProfileStateExt on ProfileState {
       )
     );
   }
+
+  String? detailFromMethod(AuthMethod method) {
+    switch(method) {
+      case .phone:
+        return user?.phone;
+      case .email:
+        return user?.email;
+      case .login:
+        return user?.login;
+    }
+  }
 }

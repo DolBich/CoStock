@@ -76,17 +76,6 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
     emit(state.copyWith(isLoading: true));
 
-    if (identifier == null) {
-      if (state.canDeleteInfo) {
-        await _deleteDetail(method, userId, emit);
-        return;
-      } else {
-        ErrorManager().reportError(const .auth(type: .lastDetail));
-        emit(state.copyWith(isLoading: false));
-        return;
-      }
-    }
-
     final updateRes = await _authRepository.updateDetail(
       method: method,
       detail: identifier,
@@ -105,29 +94,6 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
               .setDetail(method: method, value: identifier)
               .copyWith(isLoading: false),
         );
-      },
-    );
-  }
-
-  Future<void> _deleteDetail(
-    AuthMethod method,
-    String id,
-    Emitter<ProfileState> emit,
-  ) async {
-    final res = await _authRepository.updateDetail(
-      method: method,
-      detail: null,
-      id: id,
-    );
-
-    res.fold(
-      (f) {
-        f.report();
-        emit(state.copyWith(isLoading: false));
-        return;
-      },
-      (u) {
-        emit(state.setDetail(method: method).copyWith(isLoading: false));
       },
     );
   }

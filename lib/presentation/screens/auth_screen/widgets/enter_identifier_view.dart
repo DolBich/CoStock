@@ -31,7 +31,9 @@ class _EnterIdentifierView extends StatelessWidget {
   Widget get _identifierField {
     return BlocBuilder<AuthBloc, AuthState>(
       buildWhen: (p, c) =>
-          p.method != c.method || p.step != c.step,
+          p.method != c.method ||
+          p.step != c.step ||
+          p.fields.length != c.fields.length,
       builder: (context, state) {
         final bloc = context.read<AuthBloc>();
         final method = state.method;
@@ -40,7 +42,7 @@ class _EnterIdentifierView extends StatelessWidget {
           hintText: method.text,
           keyboardType: method.textInputType,
           inputFormatters: method.textInputFormatters,
-          selector: (s) => s.fields[s.method]!,
+          selector: (s) => s.fields[s.method] ?? const FieldState(),
           onChanged: (newField) {
             bloc.add(.updateField(field: .identifier, value: newField));
           },
@@ -104,10 +106,10 @@ class _EnterIdentifierView extends StatelessWidget {
       builder: (context, state) {
         final bloc = context.read<AuthBloc>();
         final showPassword = state.step == .enterPassword;
-        final identifierField = state.fields[state.method]!;
+        final identifierField = state.fields[state.method];
         final canSubmit =
             !state.isLoading &&
-            identifierField.isValid &&
+            (identifierField?.isValid ?? false) &&
             (!showPassword || (state.passwordField.isValid));
 
         return ElevatedButton(

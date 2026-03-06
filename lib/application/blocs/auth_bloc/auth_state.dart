@@ -87,7 +87,11 @@ extension AuthStateExt on AuthState {
         );
       case .identifier:
         final updatedFields = Map<AuthMethod, FieldState>.from(fields);
-        final currentField = updatedFields[method]!;
+        final currentField = updatedFields[method];
+        if(currentField == null) {
+          log('[.identifier] currentField == null - WTF!?');
+          return base;
+        }
         updatedFields[method] = currentField.copyWith(
           isLoading: isLoading ?? currentField.isLoading,
           error: error ?? currentField.error,
@@ -95,7 +99,11 @@ extension AuthStateExt on AuthState {
         return base.copyWith(fields: updatedFields);
       case .email:
         final updatedFields = Map<AuthMethod, FieldState>.from(fields);
-        final currentField = updatedFields[AuthMethod.email]!;
+        final currentField = updatedFields[AuthMethod.email];
+        if(currentField == null) {
+          log('[.email] currentField == null - WTF!?');
+          return base;
+        }
         updatedFields[.email] = currentField.copyWith(
           isLoading: isLoading ?? currentField.isLoading,
           error: error ?? currentField.error,
@@ -103,7 +111,11 @@ extension AuthStateExt on AuthState {
         return base.copyWith(fields: updatedFields);
       case .phone:
         final updatedFields = Map<AuthMethod, FieldState>.from(fields);
-        final currentField = updatedFields[AuthMethod.phone]!;
+        final currentField = updatedFields[AuthMethod.phone];
+        if(currentField == null) {
+          log('[.phone] currentField == null - WTF!?');
+          return base;
+        }
         updatedFields[.phone] = currentField.copyWith(
           isLoading: isLoading ?? currentField.isLoading,
           error: error ?? currentField.error,
@@ -111,7 +123,11 @@ extension AuthStateExt on AuthState {
         return base.copyWith(fields: updatedFields);
       case .login:
         final updatedFields = Map<AuthMethod, FieldState>.from(fields);
-        final currentField = updatedFields[AuthMethod.login]!;
+        final currentField = updatedFields[AuthMethod.login];
+        if(currentField == null) {
+          log('[.login] currentField == null - WTF!?');
+          return base;
+        }
         updatedFields[.login] = currentField.copyWith(
           isLoading: isLoading ?? currentField.isLoading,
           error: error ?? currentField.error,

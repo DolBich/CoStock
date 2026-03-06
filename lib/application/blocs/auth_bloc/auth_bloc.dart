@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:async/async.dart';
 import 'package:co_stock/application/handlers/event_transformers.dart';
 import 'package:co_stock/data/local_storage/local_storage_impl/local_storage_service.dart';
@@ -316,6 +318,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           emit(state.withDetailError(event.method, 'No user'));
           return;
         }
+
         final updatedUser = user.copyWith(
           email: event.method == .email ? some(detail) : null,
           phone: event.method == .phone ? some(detail) : null,

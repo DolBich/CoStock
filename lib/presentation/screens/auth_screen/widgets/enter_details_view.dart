@@ -77,7 +77,7 @@ class __DetailFieldState extends State<_DetailField> {
   void _trySubmit() {
     final bloc = context.read<AuthBloc>();
     final state = bloc.state;
-    final field = state.fields[widget.method]!;
+    final field = state.fields[widget.method] ?? const FieldState();
 
     if (_checker(state, field)) {
       bloc.add(.registerDetail(method: widget.method));
@@ -99,27 +99,28 @@ class __DetailFieldState extends State<_DetailField> {
     });
   }
 
-  bool _checker(AuthState state, FieldState field) =>
-      !state.isLoading && field.isValid && !field.isLoading;
+  bool _checker(AuthState state, FieldState? field) =>
+      (field?.isValid ?? false) && !(field?.isLoading ?? true);
 
   @override
   Widget build(BuildContext context) {
+    final method = widget.method;
     return BlocBuilder<AuthBloc, AuthState>(
-      buildWhen: (previous, current) =>
-          previous.fields[widget.method] != current.fields[widget.method],
+      buildWhen: (p, c) =>
+          p.fields[method] != c.fields[method] ||
+          p.fields.length != c.fields.length,
       builder: (context, state) {
-        final method = widget.method;
         return BlocTextField<AuthBloc, AuthState>(
           hintText: method.text,
           keyboardType: method.textInputType,
           inputFormatters: method.textInputFormatters,
-          selector: (s) => s.fields[method]!,
+          selector: (s) => s.fields[method] ?? const FieldState(),
           onChanged: _onTextChanged,
           instantValidator: method.getInstantValidator,
           finalValidator: method.getFinalValidator,
           focusNode: _focusNode,
           onFieldSubmitted: (_) => _trySubmit(),
-          textInputAction: TextInputAction.done,
+          textInputAction: .done,
         );
       },
     );

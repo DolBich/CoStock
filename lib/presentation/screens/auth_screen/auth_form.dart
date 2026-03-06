@@ -4,7 +4,7 @@ class AuthForm extends StatelessWidget {
   const AuthForm({super.key});
 
   void _listener(BuildContext context, AuthState state) {
-    if (state.step == AuthStep.authenticated) {
+    if (state.step == .authenticated) {
       context.router.replaceAll([MyHomeRoute()]);
     }
   }
@@ -26,22 +26,7 @@ class AuthForm extends StatelessWidget {
                     alignment: .topCenter,
                     child: ConstrainedBox(
                       constraints: const BoxConstraints(maxWidth: 400),
-                      child: AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 300),
-                        transitionBuilder: (child, animation) {
-                          return FadeTransition(
-                            opacity: animation,
-                            child: SlideTransition(
-                              position: Tween<Offset>(
-                                begin: const Offset(0.1, 0.0),
-                                end: .zero,
-                              ).animate(animation),
-                              child: child,
-                            ),
-                          );
-                        },
-                        child: _buildFields(),
-                      ),
+                      child: _buildFields(),
                     ),
                   ),
                 ),
@@ -55,22 +40,44 @@ class AuthForm extends StatelessWidget {
   }
 
   Widget _buildFields() {
-    return  BlocConsumer<AuthBloc, AuthState>(
+    return BlocConsumer<AuthBloc, AuthState>(
       listenWhen: (p, c) => p.step != c.step,
       listener: _listener,
       buildWhen: (p, c) => p.step != c.step || p.isLoading != c.isLoading,
       builder: (context, state) {
+        final Widget fields;
         switch (state.step) {
           case .enterName:
-            return const _EnterNameView(key: ValueKey('enterName'));
+            fields = const _EnterNameView(key: ValueKey('enterName'));
           case .enterIdentifier:
           case .enterPassword:
-            return const _EnterIdentifierView(key: ValueKey('enterIdentifier'));
+            fields = const _EnterIdentifierView(
+              key: ValueKey('enterIdentifier'),
+            );
           case .registerDetails:
-            return const _RegisterDetailsView(key: ValueKey('registerDetails'));
+            fields = const _RegisterDetailsView(
+              key: ValueKey('registerDetails'),
+            );
           case .authenticated:
-            return const SizedBox.shrink(key: ValueKey('authenticated'));
+            fields = const SizedBox.shrink(key: ValueKey('authenticated'));
         }
+
+        return AnimatedSwitcher(
+          duration: const Duration(milliseconds: 300),
+          transitionBuilder: (child, animation) {
+            return FadeTransition(
+              opacity: animation,
+              child: SlideTransition(
+                position: Tween<Offset>(
+                  begin: const Offset(0.1, 0.0),
+                  end: .zero,
+                ).animate(animation),
+                child: child,
+              ),
+            );
+          },
+          child: fields,
+        );
       },
     );
   }
@@ -108,4 +115,3 @@ class AuthForm extends StatelessWidget {
     );
   }
 }
-

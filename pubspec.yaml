@@ -22,6 +22,7 @@ dependencies:
   fpdart: ^1.2.0
   rxdart: ^0.28.0
   auto_route: ^11.1.0
+  async: ^2.13.0
 
 dev_dependencies:
   flutter_test:

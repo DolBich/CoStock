@@ -1,5 +1,8 @@
+import 'package:async/async.dart';
+import 'package:co_stock/application/handlers/event_transformers.dart';
 import 'package:co_stock/data/repositories/repo_di/injector_manager.dart';
 import 'package:co_stock/data/repositories/repos/auth_repo/i_auth_repo.dart';
+import 'package:co_stock/domain/bases/cancel_token.dart';
 import 'package:co_stock/domain/bases/session_manager.dart';
 import 'package:co_stock/domain/errors/app_errors.dart';
 import 'package:co_stock/domain/errors/error_manager.dart';
@@ -18,9 +21,18 @@ part 'profile_bloc.freezed.dart';
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   ProfileBloc() : super(ProfileState.initial()) {
     on<_Init>(_init);
-    on<_ChangeLogin>((e, m) => _updateDetail(e.login, .login, m));
-    on<_ChangePhone>((e, m) => _updateDetail(e.phone, .phone, m));
-    on<_ChangeEmail>((e, m) => _updateDetail(e.email, .email, m));
+    on<_ChangeLogin>(
+      (e, m) => _updateDetail(e.login, .login, m),
+      transformer: restartable(),
+    );
+    on<_ChangePhone>(
+      (e, m) => _updateDetail(e.phone, .phone, m),
+      transformer: restartable(),
+    );
+    on<_ChangeEmail>(
+      (e, m) => _updateDetail(e.email, .email, m),
+      transformer: restartable(),
+    );
     on<_ChangePassword>(_changePassword);
     on<_ChangeName>(_changeName);
 
@@ -29,6 +41,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   }
 
   late final IAuthRepository _authRepository;
+
+  final Map<AuthMethod, CancelableOperation> _cancelableOps = {};
 
   Future<void> _init(_Init event, Emitter<ProfileState> emit) async {
     final id = SessionManager.id;
@@ -56,6 +70,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     );
   }
 
+  /// Для этого метода воспользоваться в UI _DetailField
   Future<void> _updateDetail(
     String? identifier,
     AuthMethod method,
@@ -74,21 +89,49 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       return;
     }
 
+    await _cancelableOps[method]?.cancel();
+
+    final cancelToken = CancelToken();
+
+    final operation = CancelableOperation.fromFuture(
+      _performUpdate(identifier, method, emit, userId, cancelToken),
+      onCancel: cancelToken.cancel,
+    );
+
+    _cancelableOps[method] = operation;
+
+    await operation.valueOrCancellation();
+
+    if (_cancelableOps[method] == operation) {
+      _cancelableOps.remove(method);
+    }
+  }
+
+  Future<void> _performUpdate(
+    String? identifier,
+    AuthMethod method,
+    Emitter<ProfileState> emit,
+    String userId,
+    CancelToken cancelToken,
+  ) async {
     emit(state.copyWith(isLoading: true));
 
     final updateRes = await _authRepository.updateDetail(
       method: method,
       detail: identifier,
       id: userId,
+      cancelToken: cancelToken,
     );
 
+    if (cancelToken.isCancelled) return;
+    if (updateRes == null) return; // отменено в репозитории
+
     updateRes.fold(
-      (f) {
-        f.report();
+      (failure) {
+        failure.report();
         emit(state.copyWith(isLoading: false));
-        return;
       },
-      (u) {
+      (_) {
         emit(
           state
               .setDetail(method: method, value: identifier)

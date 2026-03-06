@@ -1,4 +1,5 @@
 import 'package:co_stock/data/repositories/repos/auth_repo/i_auth_repo.dart';
+import 'package:co_stock/domain/bases/cancel_token.dart';
 import 'package:co_stock/domain/errors/app_errors.dart';
 import 'package:co_stock/domain/screens_entities/auth_screen/auth_method.dart';
 import 'package:co_stock/domain/screens_entities/user_screen/user.dart';
@@ -36,13 +37,19 @@ class FirebaseAuthRepository extends IAuthRepository {
   }
 
   @override
-  Future<Either<AppError, Unit>> updateEmail({required String id, required String? email}) {
+  Future<Either<AppError, Unit>> updateName({required String id, required String name}) {
+    // TODO: implement updateName
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Either<AppError, Unit>?> updateEmail({required String id, required String? email, CancelToken? cancelToken}) {
     // TODO: implement updateEmail
     throw UnimplementedError();
   }
 
   @override
-  Future<Either<AppError, Unit>> updateLogin({required String id, required String? login}) {
+  Future<Either<AppError, Unit>?> updateLogin({required String id, required String? login, CancelToken? cancelToken}) {
     // TODO: implement updateLogin
     throw UnimplementedError();
   }
@@ -54,14 +61,8 @@ class FirebaseAuthRepository extends IAuthRepository {
   }
 
   @override
-  Future<Either<AppError, Unit>> updatePhone({required String id, required String? phone}) {
+  Future<Either<AppError, Unit>?> updatePhone({required String id, required String? phone, CancelToken? cancelToken}) {
     // TODO: implement updatePhone
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<Either<AppError, Unit>> updateName({required String id, required String name}) {
-    // TODO: implement updateName
     throw UnimplementedError();
   }
 

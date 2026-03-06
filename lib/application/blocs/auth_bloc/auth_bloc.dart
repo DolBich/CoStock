@@ -1,8 +1,10 @@
+import 'package:async/async.dart';
+import 'package:co_stock/application/handlers/event_transformers.dart';
 import 'package:co_stock/data/local_storage/local_storage_impl/local_storage_service.dart';
 import 'package:co_stock/data/repositories/repo_di/injector_manager.dart';
 import 'package:co_stock/data/repositories/repos/auth_repo/i_auth_repo.dart';
+import 'package:co_stock/domain/bases/cancel_token.dart';
 import 'package:co_stock/domain/bases/session_manager.dart';
-import 'package:co_stock/domain/errors/app_errors.dart';
 import 'package:co_stock/domain/errors/error_manager.dart';
 import 'package:co_stock/domain/screens_entities/auth_screen/auth_field.dart';
 import 'package:co_stock/domain/screens_entities/auth_screen/auth_method.dart';
@@ -29,7 +31,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<_ChangeMethod>(_onChangeMethod);
     on<_SubmitIdentifier>(_onSubmitIdentifier);
     on<_SubmitPassword>(_onSubmitPassword);
-    on<_RegisterDetail>(_onRegisterDetail);
+    on<_RegisterDetail>(
+      _onRegisterDetail,
+      transformer: restartableByKey((event) => event.method),
+    );
     on<_ToggleIdentifier>(_onToggleIdentifier);
     on<_ChangeName>(_onChangeName);
     on<_SkipDetails>(_onSkipDetails);
@@ -238,6 +243,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
   }
 
+  /// [restartableByKey] - при вызове второго события подряд он отменит первый
+  /// Тут при отмене он просто отключает [Emitter]
+  /// Т.е. мы получим ответ от репозитория, но не внедрим его в State
+  /// [CancelableOperation] - обёртка для [CancelToken], чтобы через него
+  /// отменить токен
+  /// [CancelToken] - работает на уровне репозитория, если пришла отмена, то там
+  /// проверяется [isCanceled] и не выполняет код, возвращает null (экономит трафик)
+  final Map<AuthMethod, CancelableOperation> _cancelableOps = {};
+
   Future<void> _onRegisterDetail(
     _RegisterDetail event,
     Emitter<AuthState> emit,
@@ -245,12 +259,36 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final userId = state.user?.id;
     if (userId == null) {
       ErrorManager().reportError(
-        const AppError.client(type: .state, msg: 'No user id'),
+        const .client(type: .state, msg: 'No user id'),
       );
       emit(state.withDetailError(event.method, 'No user id'));
       return;
     }
 
+    await _cancelableOps[event.method]?.cancel();
+
+    final cancelToken = CancelToken();
+
+    final operation = CancelableOperation.fromFuture(
+      _performUpdate(event, emit, userId, cancelToken),
+      onCancel: cancelToken.cancel,
+    );
+
+    _cancelableOps[event.method] = operation;
+
+    await operation.valueOrCancellation();
+
+    if (_cancelableOps[event.method] == operation) {
+      _cancelableOps.remove(event.method);
+    }
+  }
+
+  Future<void> _performUpdate(
+    _RegisterDetail event,
+    Emitter<AuthState> emit,
+    String userId,
+    CancelToken cancelToken,
+  ) async {
     emit(state.withDetailLoading(event.method, true));
 
     final detail = state.detail(event.method);
@@ -258,7 +296,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       method: event.method,
       detail: detail,
       id: userId,
+      cancelToken: cancelToken,
     );
+
+    if (cancelToken.isCancelled) return;
+    if (updateResult == null) return; // отменено в репозитории
 
     updateResult.fold(
       (failure) {
@@ -269,7 +311,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         final user = state.user;
         if (user == null) {
           ErrorManager().reportError(
-            const AppError.client(type: .state, msg: 'No user'),
+            const .client(type: .state, msg: 'No user'),
           );
           emit(state.withDetailError(event.method, 'No user'));
           return;

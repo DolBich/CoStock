@@ -1,5 +1,6 @@
 import 'package:co_stock/data/repositories/repos/auth_repo/i_auth_repo.dart';
 import 'package:co_stock/data/repositories/repos/i_repository.dart';
+import 'package:co_stock/domain/bases/cancel_token.dart';
 import 'package:co_stock/domain/errors/app_errors.dart';
 import 'package:co_stock/domain/extensions/iterable_ext.dart';
 import 'package:co_stock/domain/screens_entities/auth_screen/auth_method.dart';
@@ -90,11 +91,13 @@ class MockAuthRepository  extends IAuthRepository  with MockRepoDelay {
   }
 
   @override
-  Future<Either<AppError, Unit>> updateEmail({
+  Future<Either<AppError, Unit>?> updateEmail({
     required String id,
     required String? email,
+    CancelToken? cancelToken,
   }) async {
-    await delay();
+    final cancel = await cancelableDelay(cancelToken);
+    if(cancel) return null;
 
     final user = savedUsers[id];
     if (user == null) {
@@ -118,11 +121,13 @@ class MockAuthRepository  extends IAuthRepository  with MockRepoDelay {
   }
 
   @override
-  Future<Either<AppError, Unit>> updateLogin({
+  Future<Either<AppError, Unit>?> updateLogin({
     required String id,
     required String? login,
+    CancelToken? cancelToken,
   }) async {
-    await delay();
+    final cancel = await cancelableDelay(cancelToken);
+    if(cancel) return null;
 
     final user = savedUsers[id];
     if (user == null) {
@@ -164,11 +169,13 @@ class MockAuthRepository  extends IAuthRepository  with MockRepoDelay {
   }
 
   @override
-  Future<Either<AppError, Unit>> updatePhone({
+  Future<Either<AppError, Unit>?> updatePhone({
     required String id,
     required String? phone,
+    CancelToken? cancelToken,
   }) async {
-    await delay();
+    final cancel = await cancelableDelay(cancelToken);
+    if(cancel) return null;
 
     final user = savedUsers[id];
     if (user == null) {

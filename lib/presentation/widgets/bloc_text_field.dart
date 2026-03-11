@@ -1,11 +1,14 @@
+import 'dart:async';
+
 import 'package:co_stock/domain/errors/validation/validation_rule.dart';
 import 'package:co_stock/domain/widget_entities/field_state.dart';
 import 'package:co_stock/presentation/prefs/theme/app_theme_impl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 
-class BlocTextField<B extends StateStreamable<S>, S> extends StatelessWidget {
+class BlocTextField<B extends StateStreamable<S>, S> extends StatefulWidget {
   final String? hintText;
   final TextInputType keyboardType;
   final List<TextInputFormatter>? inputFormatters;
@@ -38,20 +41,80 @@ class BlocTextField<B extends StateStreamable<S>, S> extends StatelessWidget {
   });
 
   @override
+  State<BlocTextField<B, S>> createState() => _BlocTextFieldState<B, S>();
+}
+
+class _BlocTextFieldState<B extends StateStreamable<S>, S>
+    extends State<BlocTextField<B, S>> {
+  late FocusNode _focusNode;
+  late KeyboardVisibilityController _keyboardVisibilityController;
+  late StreamSubscription<bool> _keyboardSubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode = widget.focusNode ?? FocusNode();
+    _focusNode.addListener(_onFocusChange);
+
+    _keyboardVisibilityController = KeyboardVisibilityController();
+    _keyboardSubscription = _keyboardVisibilityController.onChange.listen((
+      isVisible,
+    ) {
+      if (!isVisible) {
+        _performFinalValidation(); // клавиатура скрыта — валидируем
+      }
+    });
+  }
+
+  void _onFocusChange() {
+    if (!_focusNode.hasFocus) {
+      _performFinalValidation();
+    }
+  }
+
+  void _performFinalValidation() {
+    if (widget.finalValidator == null) return;
+
+    final state = context.read<B>().state;
+    final field = widget.selector(state);
+
+    final error = widget.finalValidator!.validate(field.value);
+
+    // Вызываем onChanged только если ошибка изменилась
+    if (field.error != error) {
+      final newField = field.copyWith(error: error);
+      widget.onChanged(newField);
+    }
+  }
+
+  @override
+  void dispose() {
+    _focusNode.removeListener(_onFocusChange);
+    if (widget.focusNode == null) {
+      // dispose только если создали сами
+      _focusNode.dispose();
+    }
+    _keyboardSubscription.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     bool firstTime = true;
     return BlocBuilder<B, S>(
-      buildWhen: (p, c) => selector(p) != selector(c),
+      buildWhen: (p, c) => widget.selector(p) != widget.selector(c),
       builder: (context, state) {
         final FieldState field;
         if (firstTime) {
-          field = selector(state).copyWith(
-            instantValidator: instantValidator,
-            finalValidator: finalValidator,
-          );
+          field = widget
+              .selector(state)
+              .copyWith(
+                instantValidator: widget.instantValidator,
+                finalValidator: widget.finalValidator,
+              );
           firstTime = false;
         } else {
-          field = selector(state);
+          field = widget.selector(state);
         }
 
         /// --- ОТОБРАЖЕНИЕ ОШИБОК И УСПЕХА ---
@@ -115,53 +178,49 @@ class BlocTextField<B extends StateStreamable<S>, S> extends StatelessWidget {
             ),
           );
         }
+
         /// --- ОТОБРАЖЕНИЕ ГРАНИЦЫ ----
 
         return TextFormField(
+          focusNode: _focusNode,
           initialValue: field.value,
           decoration: InputDecoration(
-            hintText: hintText,
+            hintText: widget.hintText,
             errorText: isError ? helperText : null,
             helperText: helperText,
             helperStyle: helperColor != null
                 ? TextStyle(color: helperColor)
                 : null,
-            errorMaxLines: errorMaxLines,
+            errorMaxLines: widget.errorMaxLines,
             suffixIcon: suffixIcon,
             enabledBorder: enabledBorder,
             focusedBorder: focusedBorder,
           ),
-          keyboardType: keyboardType,
-          inputFormatters: inputFormatters,
-          obscureText: obscureText,
-          autofocus: autofocus,
-          focusNode: focusNode,
-          textInputAction: textInputAction,
+          keyboardType: widget.keyboardType,
+          inputFormatters: widget.inputFormatters,
+          obscureText: widget.obscureText,
+          autofocus: widget.autofocus,
+          textInputAction: widget.textInputAction,
           onChanged: (value) {
             /// Мгновенная валидация
             String? error;
-            if (instantValidator != null) {
-              error = instantValidator!.validate(value);
+            if (widget.instantValidator != null) {
+              error = widget.instantValidator!.validate(value);
             }
             final newField = field.copyWith(
               value: value,
-              error: error, // сбрасываем серверную ошибку при изменении
+              error: error,
               hasInteracted: true,
-              isLoading: false, // сбрасываем загрузку при изменении
+              isLoading: false,
             );
-            onChanged(newField);
+            widget.onChanged(newField);
           },
           onEditingComplete: () {
-            /// Финальная валидация
-            String? error;
-            if (finalValidator != null) {
-              error = finalValidator!.validate(field.value);
-            }
-            final newField = field.copyWith(error: error);
-            onChanged(newField);
+            // Просто убираем фокус — финальная валидация сработает в слушателе
             FocusScope.of(context).unfocus();
+            // onFieldSubmitted вызывается автоматически после onEditingComplete
           },
-          onFieldSubmitted: onFieldSubmitted,
+          onFieldSubmitted: widget.onFieldSubmitted,
         );
       },
     );

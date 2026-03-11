@@ -377,10 +377,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   void _onUpdateField(_UpdateField event, Emitter<AuthState> emit) {
-    final newField = event.value.copyWith(
-      availabilityStatus: AvailabilityStatus.unknown,
-      error: null,
-    );
+    final newField = event.value;
+
     switch (event.field) {
       case .name:
         emit(state.copyWith(nameField: newField));

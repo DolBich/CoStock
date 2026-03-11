@@ -23,6 +23,7 @@ dependencies:
   rxdart: ^0.28.0
   auto_route: ^11.1.0
   async: ^2.13.0
+  flutter_keyboard_visibility: ^6.0.0
 
 dev_dependencies:
   flutter_test:

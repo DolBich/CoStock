@@ -11,12 +11,7 @@ class FirebaseAuthRepository extends IAuthRepository {
     // TODO: implement checkAuthAccount
     throw UnimplementedError();
   }
-
-  @override
-  Future<Either<AppError, Unit>> checkRegAccount({required AuthMethod method, required String identifier}) {
-    // TODO: implement checkRegAccount
-    throw UnimplementedError();
-  }
+  
 
   @override
   Future<Either<AppError, User>> getCurrentUser({required String id}) {
@@ -63,6 +58,12 @@ class FirebaseAuthRepository extends IAuthRepository {
   @override
   Future<Either<AppError, Unit>?> updatePhone({required String id, required String? phone, CancelToken? cancelToken}) {
     // TODO: implement updatePhone
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Either<AppError, Unit>?> checkRegAccount({required AuthMethod method, required String identifier, CancelToken? cancelToken}) {
+    // TODO: implement checkRegAccount
     throw UnimplementedError();
   }
 

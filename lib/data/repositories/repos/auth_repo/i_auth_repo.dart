@@ -11,9 +11,10 @@ abstract class IAuthRepository implements IRepository {
     required String identifier,
   });
 
-  Future<Either<AppError, Unit>> checkRegAccount({
+  Future<Either<AppError, Unit>?> checkRegAccount({
     required AuthMethod method,
     required String identifier,
+    CancelToken? cancelToken,
   });
 
   Future<Either<AppError, User>> login({

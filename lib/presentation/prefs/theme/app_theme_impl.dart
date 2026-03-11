@@ -21,7 +21,7 @@ class AppThemeImpl extends AppThemeSystem {
   static ThemeConfig config = ThemeConfig.classic();
 
   // Основные цвета оранжевая палитра
-  static const Color primaryColor = Color(0xFFFF8A00);
+  static const Color primary = Color(0xFFFF8A00);
   static const Color primaryLight = Color(0xFFFFB74D);
   static const Color primaryDark = Color(0xFFF57C00);
 
@@ -96,7 +96,7 @@ class AppThemeImpl extends AppThemeSystem {
   }
 
   static const ColorScheme _lightColorSchemeUnseeded = ColorScheme.light(
-    primary: primaryColor,
+    primary: primary,
     onPrimary: onPrimary,
     primaryContainer: primaryLight,
     onPrimaryContainer: textPrimary,

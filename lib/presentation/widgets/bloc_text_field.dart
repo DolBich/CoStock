@@ -1,5 +1,6 @@
 import 'package:co_stock/domain/errors/validation/validation_rule.dart';
 import 'package:co_stock/domain/widget_entities/field_state.dart';
+import 'package:co_stock/presentation/prefs/theme/app_theme_impl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -53,26 +54,82 @@ class BlocTextField<B extends StateStreamable<S>, S> extends StatelessWidget {
           field = selector(state);
         }
 
+        /// --- ОТОБРАЖЕНИЕ ОШИБОК И УСПЕХА ---
+        String? helperText;
+        Color? helperColor;
+        Widget? suffixIcon;
+        bool isError = true;
+        const double iconSize = 20;
+        if (field.isLoading) {
+          suffixIcon = const Padding(
+            padding: .all(8.0),
+            child: CircularProgressIndicator(strokeWidth: 2),
+          );
+        } else if (field.availabilityStatus == .available) {
+          helperText = field.availabilityStatus.toText;
+          helperColor = AppThemeImpl.success;
+          suffixIcon = const Icon(
+            Icons.check_circle,
+            color: AppThemeImpl.success,
+            size: iconSize,
+          );
+          isError = false;
+        } else if (field.error != null &&
+            field.hasInteracted &&
+            field.value.isNotEmpty) {
+          helperText = field.error;
+          helperColor = AppThemeImpl.error;
+          suffixIcon = const Icon(
+            Icons.error_outline,
+            color: AppThemeImpl.error,
+            size: iconSize,
+          );
+        } else if (field.availabilityStatus == .unavailable) {
+          helperText = field.availabilityStatus.toText;
+          helperColor = AppThemeImpl.error;
+          suffixIcon = const Icon(
+            Icons.error_outline,
+            color: AppThemeImpl.error,
+            size: iconSize,
+          );
+        }
+
+        /// --- ОТОБРАЖЕНИЕ ОШИБОК И УСПЕХА ---
+
+        /// --- ОТОБРАЖЕНИЕ ГРАНИЦЫ ----
+        final theme = Theme.of(context);
+        final inputTheme = theme.inputDecorationTheme;
+
+        InputBorder? enabledBorder;
+        InputBorder? focusedBorder;
+
+        if (!isError) {
+          enabledBorder = inputTheme.enabledBorder?.copyWith(
+            borderSide: inputTheme.enabledBorder?.borderSide.copyWith(
+              color: AppThemeImpl.success,
+            ),
+          );
+          focusedBorder = inputTheme.focusedBorder?.copyWith(
+            borderSide: inputTheme.focusedBorder?.borderSide.copyWith(
+              color: AppThemeImpl.success,
+            ),
+          );
+        }
+        /// --- ОТОБРАЖЕНИЕ ГРАНИЦЫ ----
+
         return TextFormField(
           initialValue: field.value,
           decoration: InputDecoration(
             hintText: hintText,
-            errorText: field.hasInteracted ? field.error : null,
-            errorMaxLines: errorMaxLines,
-            suffixIcon: field.isLoading
-                ? const SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    ),
-                  )
-                : (field.error != null &&
-                      field.hasInteracted &&
-                      field.value.isNotEmpty)
-                ? const Icon(Icons.error_outline, color: Colors.red, size: 20)
+            errorText: isError ? helperText : null,
+            helperText: helperText,
+            helperStyle: helperColor != null
+                ? TextStyle(color: helperColor)
                 : null,
+            errorMaxLines: errorMaxLines,
+            suffixIcon: suffixIcon,
+            enabledBorder: enabledBorder,
+            focusedBorder: focusedBorder,
           ),
           keyboardType: keyboardType,
           inputFormatters: inputFormatters,

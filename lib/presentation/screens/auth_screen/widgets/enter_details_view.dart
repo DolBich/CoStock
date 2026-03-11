@@ -94,7 +94,7 @@ class __DetailFieldState extends State<_DetailField> {
       final currentState = context.read<AuthBloc>().state;
       final currentField = currentState.fields[widget.method]!;
       if (_checker(currentState, currentField)) {
-        bloc.add(.registerDetail(method: widget.method));
+        bloc.add(.checkDetail(widget.method));
       }
     });
   }
@@ -106,9 +106,7 @@ class __DetailFieldState extends State<_DetailField> {
   Widget build(BuildContext context) {
     final method = widget.method;
     return BlocBuilder<AuthBloc, AuthState>(
-      buildWhen: (p, c) =>
-          p.fields[method] != c.fields[method] ||
-          p.fields.length != c.fields.length,
+      buildWhen: (p, c) => p.fields.length != c.fields.length,
       builder: (context, state) {
         return BlocTextField<AuthBloc, AuthState>(
           hintText: method.text,

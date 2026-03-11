@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:co_stock/domain/errors/app_errors.dart';
 
@@ -13,7 +14,10 @@ class ErrorManager {
 
   Stream<AppError> get errors => _errorController.stream;
 
-  void reportError(AppError error) => _errorController.add(error);
+  void reportError(AppError error) {
+    if(error.msg != null) log(error.userMessage);
+    _errorController.add(error);
+  }
 
   void dispose() => _errorController.close();
 }

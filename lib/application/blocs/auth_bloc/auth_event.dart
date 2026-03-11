@@ -27,4 +27,6 @@ sealed class AuthEvent with _$AuthEvent {
     required AuthField field,
     required FieldState value,
   }) = _UpdateField;
+
+  const factory AuthEvent.checkDetail(AuthMethod method) = _CheckDetail;
 }

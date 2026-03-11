@@ -116,7 +116,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   ) async {
     emit(state.copyWith(isLoading: true));
 
-    final updateRes = await _authRepository.updateDetail(
+    final res = await _authRepository.updateDetail(
       method: method,
       detail: identifier,
       id: userId,
@@ -124,11 +124,11 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     );
 
     if (cancelToken.isCancelled) return;
-    if (updateRes == null) return; // отменено в репозитории
+    if (res == null) return; // отменено в репозитории
 
-    updateRes.fold(
-      (failure) {
-        failure.report();
+    res.fold(
+      (f) {
+        f.report();
         emit(state.copyWith(isLoading: false));
       },
       (_) {

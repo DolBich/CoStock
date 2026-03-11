@@ -68,8 +68,10 @@ extension AuthStateExt on AuthState {
     required AuthField field,
     bool? isLoading,
     String? error,
+    AvailabilityStatus? status,
   }) {
     final base = copyWith(isLoading: isLoading ?? this.isLoading);
+    AuthMethod method = this.method;
     switch (field) {
       case .name:
         return base.copyWith(
@@ -86,61 +88,48 @@ extension AuthStateExt on AuthState {
           ),
         );
       case .identifier:
-        final updatedFields = Map<AuthMethod, FieldState>.from(fields);
-        final currentField = updatedFields[method];
-        if(currentField == null) {
-          log('[.identifier] currentField == null - WTF!?');
-          return base;
-        }
-        updatedFields[method] = currentField.copyWith(
-          isLoading: isLoading ?? currentField.isLoading,
-          error: error ?? currentField.error,
-        );
-        return base.copyWith(fields: updatedFields);
       case .email:
-        final updatedFields = Map<AuthMethod, FieldState>.from(fields);
-        final currentField = updatedFields[AuthMethod.email];
-        if(currentField == null) {
-          log('[.email] currentField == null - WTF!?');
-          return base;
-        }
-        updatedFields[.email] = currentField.copyWith(
-          isLoading: isLoading ?? currentField.isLoading,
-          error: error ?? currentField.error,
-        );
-        return base.copyWith(fields: updatedFields);
       case .phone:
-        final updatedFields = Map<AuthMethod, FieldState>.from(fields);
-        final currentField = updatedFields[AuthMethod.phone];
-        if(currentField == null) {
-          log('[.phone] currentField == null - WTF!?');
-          return base;
-        }
-        updatedFields[.phone] = currentField.copyWith(
-          isLoading: isLoading ?? currentField.isLoading,
-          error: error ?? currentField.error,
-        );
-        return base.copyWith(fields: updatedFields);
       case .login:
-        final updatedFields = Map<AuthMethod, FieldState>.from(fields);
-        final currentField = updatedFields[AuthMethod.login];
-        if(currentField == null) {
-          log('[.login] currentField == null - WTF!?');
-          return base;
-        }
-        updatedFields[.login] = currentField.copyWith(
-          isLoading: isLoading ?? currentField.isLoading,
-          error: error ?? currentField.error,
-        );
-        return base.copyWith(fields: updatedFields);
+      method = field.toMethod ?? this.method;
     }
+    return _updateField(
+      base: base,
+      method: method,
+      isLoading: isLoading,
+      error: error,
+      status: status,
+    );
+  }
+
+  AuthState _updateField({
+    required AuthState base,
+    required AuthMethod method,
+    bool? isLoading,
+    String? error,
+    AvailabilityStatus? status,
+  }) {
+    final updatedFields = Map<AuthMethod, FieldState>.from(fields);
+    final currentField = updatedFields[method];
+    if (currentField == null) {
+      ErrorManager().reportError(
+        .client(
+          type: .state,
+          msg: '[${method.name}] currentField == null - WTF!?',
+        ),
+      );
+      return base;
+    }
+    updatedFields[method] = currentField.copyWith(
+      isLoading: isLoading ?? currentField.isLoading,
+      error: error ?? currentField.error,
+      availabilityStatus: status ?? currentField.availabilityStatus,
+    );
+    return base.copyWith(fields: updatedFields);
   }
 
   AuthState withIdentifierLoading(bool loading) {
-    return withFieldState(
-      field: .identifier,
-      isLoading: loading,
-    );
+    return withFieldState(field: .identifier, isLoading: loading);
   }
 
   AuthState withIdentifierError(String error) {
@@ -148,29 +137,20 @@ extension AuthStateExt on AuthState {
       field: .identifier,
       error: error,
       isLoading: false,
+      status: .unavailable,
     );
   }
 
   AuthState withPasswordLoading(bool loading) {
-    return withFieldState(
-      field: .password,
-      isLoading: loading,
-    );
+    return withFieldState(field: .password, isLoading: loading);
   }
 
   AuthState withPasswordError(String error) {
-    return withFieldState(
-      field: .password,
-      error: error,
-      isLoading: false,
-    );
+    return withFieldState(field: .password, error: error, isLoading: false);
   }
 
   AuthState withDetailLoading(AuthMethod method, bool loading) {
-    return withFieldState(
-      field: method.toField,
-      isLoading: loading,
-    );
+    return withFieldState(field: method.toField, isLoading: loading);
   }
 
   AuthState withDetailError(AuthMethod method, String error) {
@@ -178,6 +158,15 @@ extension AuthStateExt on AuthState {
       field: method.toField,
       error: error,
       isLoading: false,
+      status: .unavailable,
+    );
+  }
+
+  AuthState withDetailSuccess(AuthMethod method) {
+    return withFieldState(
+      field: method.toField,
+      isLoading: false,
+      status: .available,
     );
   }
 

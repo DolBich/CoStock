@@ -55,7 +55,7 @@ extension AuthEventPatterns on AuthEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Init value)?  init,TResult Function( _ChangeMode value)?  changeMode,TResult Function( _ChangeMethod value)?  changeMethod,TResult Function( _SubmitIdentifier value)?  submitIdentifier,TResult Function( _SubmitPassword value)?  submitPassword,TResult Function( _RegisterDetail value)?  registerDetail,TResult Function( _ToggleIdentifier value)?  toggleIdentifier,TResult Function( _ChangeName value)?  changeName,TResult Function( _SkipDetails value)?  skipDetails,TResult Function( _UpdateField value)?  updateField,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Init value)?  init,TResult Function( _ChangeMode value)?  changeMode,TResult Function( _ChangeMethod value)?  changeMethod,TResult Function( _SubmitIdentifier value)?  submitIdentifier,TResult Function( _SubmitPassword value)?  submitPassword,TResult Function( _RegisterDetail value)?  registerDetail,TResult Function( _ToggleIdentifier value)?  toggleIdentifier,TResult Function( _ChangeName value)?  changeName,TResult Function( _SkipDetails value)?  skipDetails,TResult Function( _UpdateField value)?  updateField,TResult Function( _CheckDetail value)?  checkDetail,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case _Init() when init != null:
@@ -68,7 +68,8 @@ return registerDetail(_that);case _ToggleIdentifier() when toggleIdentifier != n
 return toggleIdentifier(_that);case _ChangeName() when changeName != null:
 return changeName(_that);case _SkipDetails() when skipDetails != null:
 return skipDetails(_that);case _UpdateField() when updateField != null:
-return updateField(_that);case _:
+return updateField(_that);case _CheckDetail() when checkDetail != null:
+return checkDetail(_that);case _:
   return orElse();
 
 }
@@ -86,7 +87,7 @@ return updateField(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Init value)  init,required TResult Function( _ChangeMode value)  changeMode,required TResult Function( _ChangeMethod value)  changeMethod,required TResult Function( _SubmitIdentifier value)  submitIdentifier,required TResult Function( _SubmitPassword value)  submitPassword,required TResult Function( _RegisterDetail value)  registerDetail,required TResult Function( _ToggleIdentifier value)  toggleIdentifier,required TResult Function( _ChangeName value)  changeName,required TResult Function( _SkipDetails value)  skipDetails,required TResult Function( _UpdateField value)  updateField,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Init value)  init,required TResult Function( _ChangeMode value)  changeMode,required TResult Function( _ChangeMethod value)  changeMethod,required TResult Function( _SubmitIdentifier value)  submitIdentifier,required TResult Function( _SubmitPassword value)  submitPassword,required TResult Function( _RegisterDetail value)  registerDetail,required TResult Function( _ToggleIdentifier value)  toggleIdentifier,required TResult Function( _ChangeName value)  changeName,required TResult Function( _SkipDetails value)  skipDetails,required TResult Function( _UpdateField value)  updateField,required TResult Function( _CheckDetail value)  checkDetail,}){
 final _that = this;
 switch (_that) {
 case _Init():
@@ -99,7 +100,8 @@ return registerDetail(_that);case _ToggleIdentifier():
 return toggleIdentifier(_that);case _ChangeName():
 return changeName(_that);case _SkipDetails():
 return skipDetails(_that);case _UpdateField():
-return updateField(_that);}
+return updateField(_that);case _CheckDetail():
+return checkDetail(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -113,7 +115,7 @@ return updateField(_that);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Init value)?  init,TResult? Function( _ChangeMode value)?  changeMode,TResult? Function( _ChangeMethod value)?  changeMethod,TResult? Function( _SubmitIdentifier value)?  submitIdentifier,TResult? Function( _SubmitPassword value)?  submitPassword,TResult? Function( _RegisterDetail value)?  registerDetail,TResult? Function( _ToggleIdentifier value)?  toggleIdentifier,TResult? Function( _ChangeName value)?  changeName,TResult? Function( _SkipDetails value)?  skipDetails,TResult? Function( _UpdateField value)?  updateField,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Init value)?  init,TResult? Function( _ChangeMode value)?  changeMode,TResult? Function( _ChangeMethod value)?  changeMethod,TResult? Function( _SubmitIdentifier value)?  submitIdentifier,TResult? Function( _SubmitPassword value)?  submitPassword,TResult? Function( _RegisterDetail value)?  registerDetail,TResult? Function( _ToggleIdentifier value)?  toggleIdentifier,TResult? Function( _ChangeName value)?  changeName,TResult? Function( _SkipDetails value)?  skipDetails,TResult? Function( _UpdateField value)?  updateField,TResult? Function( _CheckDetail value)?  checkDetail,}){
 final _that = this;
 switch (_that) {
 case _Init() when init != null:
@@ -126,7 +128,8 @@ return registerDetail(_that);case _ToggleIdentifier() when toggleIdentifier != n
 return toggleIdentifier(_that);case _ChangeName() when changeName != null:
 return changeName(_that);case _SkipDetails() when skipDetails != null:
 return skipDetails(_that);case _UpdateField() when updateField != null:
-return updateField(_that);case _:
+return updateField(_that);case _CheckDetail() when checkDetail != null:
+return checkDetail(_that);case _:
   return null;
 
 }
@@ -143,7 +146,7 @@ return updateField(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  init,TResult Function( AuthMode mode)?  changeMode,TResult Function( AuthMethod method)?  changeMethod,TResult Function()?  submitIdentifier,TResult Function()?  submitPassword,TResult Function( AuthMethod method)?  registerDetail,TResult Function()?  toggleIdentifier,TResult Function()?  changeName,TResult Function()?  skipDetails,TResult Function( AuthField field,  FieldState value)?  updateField,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  init,TResult Function( AuthMode mode)?  changeMode,TResult Function( AuthMethod method)?  changeMethod,TResult Function()?  submitIdentifier,TResult Function()?  submitPassword,TResult Function( AuthMethod method)?  registerDetail,TResult Function()?  toggleIdentifier,TResult Function()?  changeName,TResult Function()?  skipDetails,TResult Function( AuthField field,  FieldState value)?  updateField,TResult Function( AuthMethod method)?  checkDetail,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Init() when init != null:
 return init();case _ChangeMode() when changeMode != null:
@@ -155,7 +158,8 @@ return registerDetail(_that.method);case _ToggleIdentifier() when toggleIdentifi
 return toggleIdentifier();case _ChangeName() when changeName != null:
 return changeName();case _SkipDetails() when skipDetails != null:
 return skipDetails();case _UpdateField() when updateField != null:
-return updateField(_that.field,_that.value);case _:
+return updateField(_that.field,_that.value);case _CheckDetail() when checkDetail != null:
+return checkDetail(_that.method);case _:
   return orElse();
 
 }
@@ -173,7 +177,7 @@ return updateField(_that.field,_that.value);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  init,required TResult Function( AuthMode mode)  changeMode,required TResult Function( AuthMethod method)  changeMethod,required TResult Function()  submitIdentifier,required TResult Function()  submitPassword,required TResult Function( AuthMethod method)  registerDetail,required TResult Function()  toggleIdentifier,required TResult Function()  changeName,required TResult Function()  skipDetails,required TResult Function( AuthField field,  FieldState value)  updateField,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  init,required TResult Function( AuthMode mode)  changeMode,required TResult Function( AuthMethod method)  changeMethod,required TResult Function()  submitIdentifier,required TResult Function()  submitPassword,required TResult Function( AuthMethod method)  registerDetail,required TResult Function()  toggleIdentifier,required TResult Function()  changeName,required TResult Function()  skipDetails,required TResult Function( AuthField field,  FieldState value)  updateField,required TResult Function( AuthMethod method)  checkDetail,}) {final _that = this;
 switch (_that) {
 case _Init():
 return init();case _ChangeMode():
@@ -185,7 +189,8 @@ return registerDetail(_that.method);case _ToggleIdentifier():
 return toggleIdentifier();case _ChangeName():
 return changeName();case _SkipDetails():
 return skipDetails();case _UpdateField():
-return updateField(_that.field,_that.value);}
+return updateField(_that.field,_that.value);case _CheckDetail():
+return checkDetail(_that.method);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -199,7 +204,7 @@ return updateField(_that.field,_that.value);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  init,TResult? Function( AuthMode mode)?  changeMode,TResult? Function( AuthMethod method)?  changeMethod,TResult? Function()?  submitIdentifier,TResult? Function()?  submitPassword,TResult? Function( AuthMethod method)?  registerDetail,TResult? Function()?  toggleIdentifier,TResult? Function()?  changeName,TResult? Function()?  skipDetails,TResult? Function( AuthField field,  FieldState value)?  updateField,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  init,TResult? Function( AuthMode mode)?  changeMode,TResult? Function( AuthMethod method)?  changeMethod,TResult? Function()?  submitIdentifier,TResult? Function()?  submitPassword,TResult? Function( AuthMethod method)?  registerDetail,TResult? Function()?  toggleIdentifier,TResult? Function()?  changeName,TResult? Function()?  skipDetails,TResult? Function( AuthField field,  FieldState value)?  updateField,TResult? Function( AuthMethod method)?  checkDetail,}) {final _that = this;
 switch (_that) {
 case _Init() when init != null:
 return init();case _ChangeMode() when changeMode != null:
@@ -211,7 +216,8 @@ return registerDetail(_that.method);case _ToggleIdentifier() when toggleIdentifi
 return toggleIdentifier();case _ChangeName() when changeName != null:
 return changeName();case _SkipDetails() when skipDetails != null:
 return skipDetails();case _UpdateField() when updateField != null:
-return updateField(_that.field,_that.value);case _:
+return updateField(_that.field,_that.value);case _CheckDetail() when checkDetail != null:
+return checkDetail(_that.method);case _:
   return null;
 
 }
@@ -684,6 +690,72 @@ $FieldStateCopyWith<$Res> get value {
     return _then(_self.copyWith(value: value));
   });
 }
+}
+
+/// @nodoc
+
+
+class _CheckDetail implements AuthEvent {
+  const _CheckDetail(this.method);
+  
+
+ final  AuthMethod method;
+
+/// Create a copy of AuthEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$CheckDetailCopyWith<_CheckDetail> get copyWith => __$CheckDetailCopyWithImpl<_CheckDetail>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CheckDetail&&(identical(other.method, method) || other.method == method));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,method);
+
+@override
+String toString() {
+  return 'AuthEvent.checkDetail(method: $method)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$CheckDetailCopyWith<$Res> implements $AuthEventCopyWith<$Res> {
+  factory _$CheckDetailCopyWith(_CheckDetail value, $Res Function(_CheckDetail) _then) = __$CheckDetailCopyWithImpl;
+@useResult
+$Res call({
+ AuthMethod method
+});
+
+
+
+
+}
+/// @nodoc
+class __$CheckDetailCopyWithImpl<$Res>
+    implements _$CheckDetailCopyWith<$Res> {
+  __$CheckDetailCopyWithImpl(this._self, this._then);
+
+  final _CheckDetail _self;
+  final $Res Function(_CheckDetail) _then;
+
+/// Create a copy of AuthEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? method = null,}) {
+  return _then(_CheckDetail(
+null == method ? _self.method : method // ignore: cast_nullable_to_non_nullable
+as AuthMethod,
+  ));
+}
+
+
 }
 
 /// @nodoc

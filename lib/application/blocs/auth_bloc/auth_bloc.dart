@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:async/async.dart';
 import 'package:co_stock/application/handlers/event_transformers.dart';
 import 'package:co_stock/data/local_storage/local_storage_impl/local_storage_service.dart';
@@ -7,6 +5,7 @@ import 'package:co_stock/data/repositories/repo_di/injector_manager.dart';
 import 'package:co_stock/data/repositories/repos/auth_repo/i_auth_repo.dart';
 import 'package:co_stock/domain/bases/cancel_token.dart';
 import 'package:co_stock/domain/bases/session_manager.dart';
+import 'package:co_stock/domain/errors/app_errors.dart';
 import 'package:co_stock/domain/errors/error_manager.dart';
 import 'package:co_stock/domain/screens_entities/auth_screen/auth_field.dart';
 import 'package:co_stock/domain/screens_entities/auth_screen/auth_method.dart';
@@ -41,6 +40,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<_ChangeName>(_onChangeName);
     on<_SkipDetails>(_onSkipDetails);
     on<_UpdateField>(_onUpdateField);
+    on<_CheckDetail>(
+      _checkDetail,
+      transformer: restartableByKey((e) => e.method),
+    );
 
     _authRepository = InjectorManager().current.authRepository;
     add(const AuthEvent.init());
@@ -53,10 +56,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       return;
     }
 
-    final result = await _authRepository.getCurrentUser(id: savedId);
-    result.fold(
-      (failure) {
-        ErrorManager().reportError(failure);
+    final res = await _authRepository.getCurrentUser(id: savedId);
+
+    res.fold(
+      (f) {
+        f.report();
         emit(state.copyWith(isLoading: false));
       },
       (user) {
@@ -115,15 +119,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   Future<void> _submitAuthIdentifier(Emitter<AuthState> emit) async {
-    final result = await _authRepository.checkAuthAccount(
+    final res = await _authRepository.checkAuthAccount(
       method: state.method,
       identifier: state.identifier,
     );
 
-    result.fold(
-      (failure) {
-        ErrorManager().reportError(failure);
-        emit(state.withIdentifierError(failure.userMessage));
+    res.fold(
+      (f) {
+        f.report();
+        emit(state.withIdentifierError(f.userMessage));
       },
       (userId) {
         emit(
@@ -136,15 +140,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   Future<void> _submitRegIdentifier(Emitter<AuthState> emit) async {
-    final result = await _authRepository.checkRegAccount(
+    final res = await _authRepository.checkRegAccount(
       method: state.method,
       identifier: state.identifier,
     );
 
-    result.fold(
-      (failure) {
-        ErrorManager().reportError(failure);
-        emit(state.withIdentifierError(failure.userMessage));
+    res?.fold(
+      (f) {
+        f.report();
+        emit(state.withIdentifierError(f.userMessage));
       },
       (_) {
         emit(state.withIdentifierLoading(false).copyWith(step: .enterPassword));
@@ -175,14 +179,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       return;
     }
 
-    final result = await _authRepository.login(
-      id: id,
-      password: state.password,
-    );
-    result.fold(
-      (failure) {
-        ErrorManager().reportError(failure);
-        emit(state.withPasswordError(failure.userMessage));
+    final res = await _authRepository.login(id: id, password: state.password);
+
+    res.fold(
+      (f) {
+        f.report();
+        emit(state.withPasswordError(f.userMessage));
       },
       (user) {
         LocalStorageService.saveAuth(user.id);
@@ -216,11 +218,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       return;
     }
 
-    final result = await _authRepository.register(user);
-    result.fold(
-      (failure) {
-        ErrorManager().reportError(failure);
-        emit(state.withPasswordError(failure.userMessage));
+    final res = await _authRepository.register(user);
+
+    res.fold(
+      (f) {
+        f.report();
+        emit(state.withPasswordError(f.userMessage));
       },
       (newId) {
         LocalStorageService.saveAuth(newId);
@@ -267,9 +270,31 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       return;
     }
 
+    final field = state.fields[event.method];
+    if (field == null) {
+      emit(state.withDetailError(event.method, 'Ошибка состояния'));
+      return;
+    }
+
     await _cancelableOps[event.method]?.cancel();
 
     final cancelToken = CancelToken();
+
+    if (field.availabilityStatus != .available) {
+      final operation = CancelableOperation.fromFuture(
+        _checkAvailability(event.method, cancelToken, emit),
+        onCancel: cancelToken.cancel,
+      );
+      _cancelableOps[event.method] = operation;
+      final availability = await operation.valueOrCancellation();
+      if (_cancelableOps[event.method] == operation) {
+        _cancelableOps.remove(event.method);
+      }
+
+      if (!(availability ?? false)) return;
+    }
+
+    if (cancelToken.isCancelled) return;
 
     final operation = CancelableOperation.fromFuture(
       _performUpdate(event, emit, userId, cancelToken),
@@ -277,9 +302,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
 
     _cancelableOps[event.method] = operation;
-
     await operation.valueOrCancellation();
-
     if (_cancelableOps[event.method] == operation) {
       _cancelableOps.remove(event.method);
     }
@@ -294,7 +317,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(state.withDetailLoading(event.method, true));
 
     final detail = state.detail(event.method);
-    final updateResult = await _authRepository.updateDetail(
+    final res = await _authRepository.updateDetail(
       method: event.method,
       detail: detail,
       id: userId,
@@ -302,12 +325,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
 
     if (cancelToken.isCancelled) return;
-    if (updateResult == null) return; // отменено в репозитории
+    if (res == null) return; // отменено в репозитории
 
-    updateResult.fold(
-      (failure) {
-        ErrorManager().reportError(failure);
-        emit(state.withDetailError(event.method, failure.userMessage));
+    res.fold(
+      (f) {
+        f.report();
+        emit(state.withDetailError(event.method, f.userMessage));
       },
       (_) {
         final user = state.user;
@@ -354,37 +377,94 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   void _onUpdateField(_UpdateField event, Emitter<AuthState> emit) {
+    final newField = event.value.copyWith(
+      availabilityStatus: AvailabilityStatus.unknown,
+      error: null,
+    );
     switch (event.field) {
       case .name:
-        emit(state.copyWith(nameField: event.value));
+        emit(state.copyWith(nameField: newField));
         break;
       case .password:
-        emit(state.copyWith(passwordField: event.value));
+        emit(state.copyWith(passwordField: newField));
         break;
       case .identifier:
         final newFields = Map<AuthMethod, FieldState>.from(state.fields);
-        newFields[state.method] = event.value;
+        newFields[state.method] = newField;
 
         final newStep = state.step == .enterPassword
             ? AuthStep.enterIdentifier
             : state.step;
         emit(state.copyWith(fields: newFields, step: newStep));
         break;
-      case AuthField.email:
+      case .email:
+      case .phone:
+      case .login:
+        final method = event.field.toMethod;
+        if (method == null) return;
+
         final newFields = Map<AuthMethod, FieldState>.from(state.fields);
-        newFields[.email] = event.value;
-        emit(state.copyWith(fields: newFields));
-        break;
-      case AuthField.phone:
-        final newFields = Map<AuthMethod, FieldState>.from(state.fields);
-        newFields[.phone] = event.value;
-        emit(state.copyWith(fields: newFields));
-        break;
-      case AuthField.login:
-        final newFields = Map<AuthMethod, FieldState>.from(state.fields);
-        newFields[.login] = event.value;
+        newFields[method] = newField;
+        _cancelableOps[method]?.cancel();
         emit(state.copyWith(fields: newFields));
         break;
     }
+  }
+
+  Future<void> _checkDetail(_CheckDetail event, Emitter<AuthState> emit) async {
+    final userId = state.user?.id;
+    if (userId == null) return;
+
+    await _cancelableOps[event.method]?.cancel();
+
+    final cancelToken = CancelToken();
+    final operation = CancelableOperation.fromFuture(
+      _checkAvailability(event.method, cancelToken, emit),
+      onCancel: cancelToken.cancel,
+    );
+
+    _cancelableOps[event.method] = operation;
+
+    await operation.valueOrCancellation();
+
+    if (_cancelableOps[event.method] == operation) {
+      _cancelableOps.remove(event.method);
+    }
+  }
+
+  Future<bool> _checkAvailability(
+    AuthMethod method,
+    CancelToken cancelToken,
+    Emitter<AuthState> emit,
+  ) async {
+    final currentField = state.fields[method];
+    if (currentField == null) {
+      emit(state.withDetailError(method, 'Ошибка состояния'));
+      return false;
+    }
+    emit(state.withDetailLoading(method, true));
+
+    final res = await _authRepository.checkRegAccount(
+      method: method,
+      identifier: currentField.value,
+      cancelToken: cancelToken,
+    );
+
+    if (cancelToken.isCancelled) return false;
+    if (res == null) return false; // отменено в репозитории
+
+    final availability = res.fold(
+      (f) {
+        f.report();
+        emit(state.withDetailError(method, f.userMessage));
+        return false;
+      },
+      (_) {
+        emit(state.withDetailSuccess(method));
+        return true;
+      },
+    );
+
+    return availability;
   }
 }

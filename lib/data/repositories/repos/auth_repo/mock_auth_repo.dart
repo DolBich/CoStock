@@ -34,17 +34,19 @@ class MockAuthRepository  extends IAuthRepository  with MockRepoDelay {
   }
 
   @override
-  Future<Either<AppError, Unit>> checkRegAccount({
+  Future<Either<AppError, Unit>?> checkRegAccount({
     required AuthMethod method,
     required String identifier,
+    CancelToken? cancelToken,
   }) async {
-    await delay();
+    final cancel = await cancelableDelay(cancelToken);
+    if (cancel) return null;
 
     final res = savedUsers.values.firstWhereOrNull(
-      (User e) => method.check(e, identifier),
+          (User e) => method.check(e, identifier),
     );
 
-    return res == null ? right(unit) : left(.auth(type: method.error));
+    return res == null ? right(unit) : left(AppError.auth(type: method.error));
   }
 
   @override
@@ -106,16 +108,6 @@ class MockAuthRepository  extends IAuthRepository  with MockRepoDelay {
       );
     }
 
-    /// Когда будем делать сервер эта проверка должна быть на стороне сервера
-    /// в целях экономии трафика, а не отдельным запросом
-    if(email != null) {
-      final checker = await checkRegAccount(method: .email, identifier: email);
-
-      if(checker.isLeft()) {
-        return checker;
-      }
-    }
-
     savedUsers[id] = user.copyWith(email: some(email));
     return right(unit);
   }
@@ -134,16 +126,6 @@ class MockAuthRepository  extends IAuthRepository  with MockRepoDelay {
       return left(
             .client(type: .state, msg: 'Не был найден пользователь с id [$id]'),
       );
-    }
-
-    /// Когда будем делать сервер эта проверка должна быть на стороне сервера
-    /// в целях экономии трафика, а не отдельным запросом
-    if(login != null) {
-      final checker = await checkRegAccount(method: .login, identifier: login);
-
-      if(checker.isLeft()) {
-        return checker;
-      }
     }
 
     savedUsers[id] = user.copyWith(login: some(login));
@@ -183,17 +165,6 @@ class MockAuthRepository  extends IAuthRepository  with MockRepoDelay {
             .client(type: .state, msg: 'Не был найден пользователь с id [$id]'),
       );
     }
-
-    /// Когда будем делать сервер эта проверка должна быть на стороне сервера
-    /// в целях экономии трафика, а не отдельным запросом
-    if(phone != null) {
-      final checker = await checkRegAccount(method: .phone, identifier: phone);
-
-      if(checker.isLeft()) {
-        return checker;
-      }
-    }
-
 
     savedUsers[id] = user.copyWith(phone: some(phone));
     return right(unit);

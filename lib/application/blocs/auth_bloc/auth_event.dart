@@ -29,4 +29,6 @@ sealed class AuthEvent with _$AuthEvent {
   }) = _UpdateField;
 
   const factory AuthEvent.checkDetail(AuthMethod method) = _CheckDetail;
+
+  const factory AuthEvent.trySubmit() = _TrySubmit;
 }

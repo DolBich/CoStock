@@ -24,15 +24,15 @@ sealed class AuthState with _$AuthState {
 
   factory AuthState.initial() {
     return const AuthState(
-      step: AuthStep.enterIdentifier,
-      mode: AuthMode.login,
-      method: AuthMethod.email,
+      step: .enterIdentifier,
+      mode: .login,
+      method: .email,
       isLoading: true,
       userId: null,
       fields: {
-        AuthMethod.email: FieldState(),
-        AuthMethod.phone: FieldState(),
-        AuthMethod.login: FieldState(),
+        .email: FieldState(),
+        .phone: FieldState(),
+        .login: FieldState(),
       },
       passwordField: FieldState(),
       nameField: FieldState(),
@@ -137,7 +137,7 @@ extension AuthStateExt on AuthState {
       field: .identifier,
       error: error,
       isLoading: false,
-      status: .unavailable,
+      status: .unknown,
     );
   }
 
@@ -158,7 +158,7 @@ extension AuthStateExt on AuthState {
       field: method.toField,
       error: error,
       isLoading: false,
-      status: .unavailable,
+      status: .unknown,
     );
   }
 

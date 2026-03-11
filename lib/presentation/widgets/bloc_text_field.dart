@@ -53,6 +53,15 @@ class _BlocTextFieldState<B extends StateStreamable<S>, S>
   @override
   void initState() {
     super.initState();
+    final state =  context.read<B>().state;
+    final field = widget
+        .selector(state)
+        .copyWith(
+      instantValidator: widget.instantValidator,
+      finalValidator: widget.finalValidator,
+    );
+    widget.onChanged(field);
+
     _focusNode = widget.focusNode ?? FocusNode();
     _focusNode.addListener(_onFocusChange);
 
@@ -73,16 +82,12 @@ class _BlocTextFieldState<B extends StateStreamable<S>, S>
   }
 
   void _performFinalValidation() {
-    if (widget.finalValidator == null) return;
-
     final state = context.read<B>().state;
     final field = widget.selector(state);
 
-    final error = widget.finalValidator!.validate(field.value);
-
     // Вызываем onChanged только если ошибка изменилась
-    if (field.error != error) {
-      final newField = field.copyWith(error: error);
+    final newField = field.validateFinal();
+    if (field != newField) {
       widget.onChanged(newField);
     }
   }
@@ -98,24 +103,24 @@ class _BlocTextFieldState<B extends StateStreamable<S>, S>
     super.dispose();
   }
 
+  void _handleSubmit(String value) {
+    _performFinalValidation();
+
+    final state = context.read<B>().state;
+    final field = widget.selector(state);
+
+    if (field.isValid) {
+      widget.onFieldSubmitted?.call(value);
+    }
+    // Если есть ошибка или загрузка — ничего не делаем (ошибка уже отображается)
+  }
+
   @override
   Widget build(BuildContext context) {
-    bool firstTime = true;
     return BlocBuilder<B, S>(
       buildWhen: (p, c) => widget.selector(p) != widget.selector(c),
       builder: (context, state) {
-        final FieldState field;
-        if (firstTime) {
-          field = widget
-              .selector(state)
-              .copyWith(
-                instantValidator: widget.instantValidator,
-                finalValidator: widget.finalValidator,
-              );
-          firstTime = false;
-        } else {
-          field = widget.selector(state);
-        }
+        final FieldState field = widget.selector(state);
 
         /// --- ОТОБРАЖЕНИЕ ОШИБОК И УСПЕХА ---
         String? helperText;
@@ -137,9 +142,7 @@ class _BlocTextFieldState<B extends StateStreamable<S>, S>
             size: iconSize,
           );
           isError = false;
-        } else if (field.error != null &&
-            field.hasInteracted &&
-            field.value.isNotEmpty) {
+        } else if (field.isError) {
           helperText = field.error;
           helperColor = AppThemeImpl.error;
           suffixIcon = const Icon(
@@ -203,16 +206,9 @@ class _BlocTextFieldState<B extends StateStreamable<S>, S>
           textInputAction: widget.textInputAction,
           onChanged: (value) {
             /// Мгновенная валидация
-            String? error;
-            if (widget.instantValidator != null) {
-              error = widget.instantValidator!.validate(value);
-            }
-            final newField = field.copyWith(
-              value: value,
-              error: error,
-              hasInteracted: true,
-              isLoading: false,
-            );
+            final newField = field
+                .copyWith(value: value, hasInteracted: true, error: null)
+                .validateInstant();
             widget.onChanged(newField);
           },
           onEditingComplete: () {
@@ -220,7 +216,7 @@ class _BlocTextFieldState<B extends StateStreamable<S>, S>
             FocusScope.of(context).unfocus();
             // onFieldSubmitted вызывается автоматически после onEditingComplete
           },
-          onFieldSubmitted: widget.onFieldSubmitted,
+          onFieldSubmitted: _handleSubmit,
         );
       },
     );

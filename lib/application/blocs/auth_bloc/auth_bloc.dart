@@ -26,7 +26,7 @@ part 'auth_bloc.freezed.dart';
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   late final IAuthRepository _authRepository;
 
-  AuthBloc() : super(AuthState.initial()) {
+  AuthBloc() : super(.initial()) {
     on<_Init>(_onInit);
     on<_ChangeMode>(_onChangeMode);
     on<_ChangeMethod>(_onChangeMethod);
@@ -41,12 +41,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<_SkipDetails>(_onSkipDetails);
     on<_UpdateField>(_onUpdateField);
     on<_CheckDetail>(
-      _checkDetail,
+      _onCheckDetail,
       transformer: restartableByKey((e) => e.method),
     );
+    on<_TrySubmit>(_onTrySubmit);
 
     _authRepository = InjectorManager().current.authRepository;
-    add(const AuthEvent.init());
+    add(const .init());
   }
 
   Future<void> _onInit(_Init event, Emitter<AuthState> emit) async {
@@ -85,9 +86,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(
       state.copyWith(
         mode: event.mode,
-        step: event.mode == AuthMode.register
-            ? AuthStep.enterName
-            : AuthStep.enterIdentifier,
+        step: event.mode == .register
+            ? .enterName
+            : .enterIdentifier,
         fields: newFields,
         passwordField: const FieldState(),
         nameField: const FieldState(),
@@ -111,7 +112,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     emit(state.withIdentifierLoading(true));
 
-    if (state.mode == AuthMode.login) {
+    if (state.mode == .login) {
       await _submitAuthIdentifier(emit);
     } else {
       await _submitRegIdentifier(emit);
@@ -409,7 +410,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-  Future<void> _checkDetail(_CheckDetail event, Emitter<AuthState> emit) async {
+  Future<void> _onCheckDetail(_CheckDetail event, Emitter<AuthState> emit) async {
     final userId = state.user?.id;
     if (userId == null) return;
 
@@ -464,5 +465,50 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
 
     return availability;
+  }
+
+  void _onTrySubmit(_TrySubmit event, Emitter<AuthState> emit) {
+    final showPassword = state.step == .enterPassword;
+
+    final identifierField = state.fields[state.method];
+    if(identifierField == null) {
+      const f = AppError.client(type: .state, msg: 'Не получается найти идентификатор');
+      f.report();
+      emit(state.withDetailError(state.method, f.userMessage));
+      return;
+    }
+    final validatedId = identifierField.validateFinal();
+
+    // Валидируем поле пароля, если нужно
+    FieldState? validatedPass;
+    if (showPassword) {
+      validatedPass = state.passwordField.validateFinal();
+    }
+
+    // Обновляем поля, если они изменились
+    bool needUpdate = false;
+    final updatedFields = Map.of(state.fields);
+    if (validatedId != identifierField) {
+      updatedFields[state.method] = validatedId;
+      needUpdate = true;
+    }
+    if (validatedPass != null && validatedPass != state.passwordField) {
+      needUpdate = true;
+    }
+
+    if (needUpdate) {
+      emit(state.copyWith(
+        fields: updatedFields,
+        passwordField: validatedPass ?? state.passwordField,
+      ));
+    }
+
+    if (!validatedId.isError) {
+      if (showPassword && !(validatedPass?.isError ?? true)) {
+        add(const .submitPassword());
+      } else {
+        add(const .submitIdentifier());
+      }
+    }
   }
 }

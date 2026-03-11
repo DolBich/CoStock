@@ -28,6 +28,7 @@ class _EnterIdentifierView extends StatelessWidget {
     );
   }
 
+
   Widget get _identifierField {
     return BlocBuilder<AuthBloc, AuthState>(
       buildWhen: (p, c) =>
@@ -76,7 +77,7 @@ class _EnterIdentifierView extends StatelessWidget {
                       onChanged: (newField) {
                         bloc.add(
                           .updateField(
-                            field: AuthField.password,
+                            field: .password,
                             value: newField,
                           ),
                         );
@@ -102,31 +103,21 @@ class _EnterIdentifierView extends StatelessWidget {
           p.isLoading != c.isLoading ||
           p.fields != c.fields ||
           p.passwordField != c.passwordField ||
-          p.method != c.method,
+          p.method != c.method ||
+          p.step != c.step,
       builder: (context, state) {
         final bloc = context.read<AuthBloc>();
         final showPassword = state.step == .enterPassword;
         final identifierField = state.fields[state.method];
-        final canSubmit =
+
+        final enableButton =
             !state.isLoading &&
-            (identifierField?.isValid ?? false) &&
-            (!showPassword || (state.passwordField.isValid));
+            !(identifierField?.isError ?? true) &&
+            (!showPassword || !state.passwordField.isError);
 
         return ElevatedButton(
-          onPressed: canSubmit
-              ? () {
-                  if (showPassword) {
-                    bloc.add(const .submitPassword());
-                    return;
-                  }
-                  bloc.add(const .submitIdentifier());
-                }
-              : null,
-          child: Text(
-            showPassword
-                ? 'Continue'
-                : (state.mode == .login ? 'Continue' : 'Next'),
-          ),
+          onPressed: enableButton ? () => bloc.add(const .trySubmit()) : null,
+          child: Text(showPassword ? 'Continue' : 'Next'),
         );
       },
     );

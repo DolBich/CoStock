@@ -26,6 +26,8 @@ extension FieldStateValid on FieldState {
       value.isNotEmpty &&
       instantValidator?.validate(value) == null &&
       finalValidator?.validate(value) == null;
+
+  bool get isError => error != null && value.isNotEmpty && hasInteracted;
 }
 
 extension AvailabilityStatusExt on AvailabilityStatus {
@@ -38,5 +40,32 @@ extension AvailabilityStatusExt on AvailabilityStatus {
       case .available:
         return 'Можно зарегистрировать';
     }
+  }
+}
+
+extension FieldValidationExtension on FieldState {
+  FieldState validateInstant() {
+    if (instantValidator == null) return this;
+
+    String? error;
+    error = instantValidator!.validate(value);
+    return copyWith(
+      error: error ?? this.error,
+      hasInteracted: true,
+      isLoading: false,
+      availabilityStatus: .unknown
+    );
+  }
+
+  FieldState validateFinal() {
+    if (finalValidator == null) return this;
+
+    String? error;
+    error = finalValidator!.validate(value);
+    return copyWith(
+      error: error ?? this.error,
+      hasInteracted: true,
+      isLoading: false,
+    );
   }
 }

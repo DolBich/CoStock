@@ -50,38 +50,17 @@ class _DetailField extends StatefulWidget {
 }
 
 class __DetailFieldState extends State<_DetailField> {
-  final _focusNode = FocusNode();
   Timer? _debounceTimer;
 
   @override
   void initState() {
     super.initState();
-    _focusNode.addListener(_onFocusChange);
   }
 
   @override
   void dispose() {
     _debounceTimer?.cancel();
-    _focusNode.removeListener(_onFocusChange);
-    _focusNode.dispose();
     super.dispose();
-  }
-
-  void _onFocusChange() {
-    if (!_focusNode.hasFocus) {
-      _trySubmit();
-    }
-  }
-
-  /// Проверяет, можно ли отправить запрос, и если да — отправляет.
-  void _trySubmit() {
-    final bloc = context.read<AuthBloc>();
-    final state = bloc.state;
-    final field = state.fields[widget.method] ?? const FieldState();
-
-    if (_checker(state, field)) {
-      bloc.add(.registerDetail(method: widget.method));
-    }
   }
 
   void _onTextChanged(FieldState newField) {
@@ -93,17 +72,18 @@ class __DetailFieldState extends State<_DetailField> {
     _debounceTimer = Timer(const Duration(milliseconds: 500), () {
       final currentState = context.read<AuthBloc>().state;
       final currentField = currentState.fields[widget.method]!;
-      if (_checker(currentState, currentField)) {
+      if (_checker(currentField)) {
         bloc.add(.checkDetail(widget.method));
       }
     });
   }
 
-  bool _checker(AuthState state, FieldState? field) =>
+  bool _checker(FieldState? field) =>
       (field?.isValid ?? false) && !(field?.isLoading ?? true);
 
   @override
   Widget build(BuildContext context) {
+    final bloc = context.read<AuthBloc>();
     final method = widget.method;
     return BlocBuilder<AuthBloc, AuthState>(
       buildWhen: (p, c) => p.fields.length != c.fields.length,
@@ -116,8 +96,8 @@ class __DetailFieldState extends State<_DetailField> {
           onChanged: _onTextChanged,
           instantValidator: method.getInstantValidator,
           finalValidator: method.getFinalValidator,
-          focusNode: _focusNode,
-          onFieldSubmitted: (_) => _trySubmit(),
+          onFieldSubmitted: (_) =>
+              bloc.add(.registerDetail(method: widget.method)),
           textInputAction: .done,
         );
       },

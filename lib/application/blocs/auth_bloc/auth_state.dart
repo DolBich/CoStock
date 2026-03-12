@@ -91,7 +91,7 @@ extension AuthStateExt on AuthState {
       case .email:
       case .phone:
       case .login:
-      method = field.toMethod ?? this.method;
+        method = field.toMethod ?? this.method;
     }
     return _updateField(
       base: base,
@@ -112,12 +112,11 @@ extension AuthStateExt on AuthState {
     final updatedFields = Map<AuthMethod, FieldState>.from(fields);
     final currentField = updatedFields[method];
     if (currentField == null) {
-      ErrorManager().reportError(
-        .client(
-          type: .state,
-          msg: '[${method.name}] currentField == null - WTF!?',
-        ),
-      );
+      AppError.client(
+        type: .state,
+        msg: '[${method.name}] currentField == null - WTF!?',
+      ).report();
+
       return base;
     }
     updatedFields[method] = currentField.copyWith(

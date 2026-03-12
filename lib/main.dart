@@ -3,7 +3,7 @@ import 'package:co_stock/data/local_storage/i_local_storage.dart';
 import 'package:co_stock/data/local_storage/local_storage_impl/shared_preferences_storage.dart';
 import 'package:co_stock/presentation/navigation/app_router.dart';
 import 'package:co_stock/presentation/prefs/locale/locale_data.dart';
-import 'package:co_stock/presentation/widgets/error_listener.dart';
+import 'package:co_stock/presentation/widgets/snack_listener.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -55,7 +55,7 @@ class _App extends StatelessWidget {
           themeMode: state.themeMode,
           locale: state.getLocale,
           builder: (context, child) =>
-              ErrorListener(child: child ?? const SizedBox()),
+              SnackListener(child: child ?? const SizedBox()),
         );
       },
     );

@@ -5,8 +5,7 @@ import 'package:co_stock/data/repositories/repo_di/injector_manager.dart';
 import 'package:co_stock/data/repositories/repos/auth_repo/i_auth_repo.dart';
 import 'package:co_stock/domain/bases/cancel_token.dart';
 import 'package:co_stock/domain/bases/session_manager.dart';
-import 'package:co_stock/domain/errors/app_errors.dart';
-import 'package:co_stock/domain/errors/error_manager.dart';
+import 'package:co_stock/domain/notifications/snack/snack_notification.dart';
 import 'package:co_stock/domain/screens_entities/auth_screen/auth_field.dart';
 import 'package:co_stock/domain/screens_entities/auth_screen/auth_method.dart';
 import 'package:co_stock/domain/screens_entities/auth_screen/auth_mode.dart';
@@ -173,10 +172,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Future<void> _submitAuthPassword(Emitter<AuthState> emit) async {
     final id = state.userId;
     if (id == null) {
-      ErrorManager().reportError(
-        const .client(type: .state, msg: 'No user id'),
-      );
-      emit(state.withPasswordError('No user id'));
+      const f = AppError.client(type: .state, msg: 'No user id');
+      f.report();
+      emit(state.withPasswordError(f.userMessage));
       return;
     }
 
@@ -212,10 +210,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Future<void> _submitRegPassword(Emitter<AuthState> emit) async {
     final user = state.toUser;
     if (!user.isValid) {
-      ErrorManager().reportError(
-        const .client(type: .state, msg: 'User is invalid'),
-      );
-      emit(state.withPasswordError('User is invalid'));
+      const f = AppError.client(type: .state, msg: 'User is invalid');
+      f.report();
+      emit(state.withPasswordError(f.userMessage));
       return;
     }
 
@@ -264,10 +261,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     final userId = state.user?.id;
     if (userId == null) {
-      ErrorManager().reportError(
-        const .client(type: .state, msg: 'No user id'),
-      );
-      emit(state.withDetailError(event.method, 'No user id'));
+      const f = AppError.client(type: .state, msg: 'No user id');
+      f.report();
+      emit(state.withDetailError(event.method, f.userMessage));
       return;
     }
 
@@ -336,10 +332,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       (_) {
         final user = state.user;
         if (user == null) {
-          ErrorManager().reportError(
-            const .client(type: .state, msg: 'No user'),
-          );
-          emit(state.withDetailError(event.method, 'No user'));
+          const f = AppError.client(type: .state, msg: 'No user');
+          f.report();
+          emit(state.withDetailError(event.method, f.userMessage));
           return;
         }
 

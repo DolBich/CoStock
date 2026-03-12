@@ -1,5 +1,5 @@
 import 'package:co_stock/application/handlers/phone_input_formatter.dart';
-import 'package:co_stock/domain/errors/app_errors.dart';
+import 'package:co_stock/domain/notifications/snack/snack_notification.dart';
 import 'package:co_stock/domain/errors/validation/validation_rule.dart';
 import 'package:co_stock/domain/errors/validation/validators.dart';
 import 'package:co_stock/domain/screens_entities/auth_screen/auth_field.dart';

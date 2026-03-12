@@ -1,6 +1,6 @@
 import 'package:co_stock/data/repositories/repos/auth_repo/i_auth_repo.dart';
 import 'package:co_stock/domain/bases/cancel_token.dart';
-import 'package:co_stock/domain/errors/app_errors.dart';
+import 'package:co_stock/domain/notifications/snack/snack_notification.dart';
 import 'package:co_stock/domain/screens_entities/auth_screen/auth_method.dart';
 import 'package:co_stock/domain/screens_entities/user_screen/user.dart';
 import 'package:fpdart/fpdart.dart';

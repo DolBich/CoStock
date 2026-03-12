@@ -4,8 +4,7 @@ import 'package:co_stock/data/repositories/repo_di/injector_manager.dart';
 import 'package:co_stock/data/repositories/repos/auth_repo/i_auth_repo.dart';
 import 'package:co_stock/domain/bases/cancel_token.dart';
 import 'package:co_stock/domain/bases/session_manager.dart';
-import 'package:co_stock/domain/errors/app_errors.dart';
-import 'package:co_stock/domain/errors/error_manager.dart';
+import 'package:co_stock/domain/notifications/snack/snack_notification.dart';
 import 'package:co_stock/domain/screens_entities/auth_screen/auth_method.dart';
 import 'package:co_stock/domain/screens_entities/user_screen/user.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -47,9 +46,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   Future<void> _init(_Init event, Emitter<ProfileState> emit) async {
     final id = SessionManager.id;
     if (id == null) {
-      ErrorManager().reportError(
-        const .client(type: .state, msg: 'Couldn\'t get userId'),
-      );
+      const f = AppError.client(type: .state, msg: 'Couldn\'t get userId');
+      f.report();
       return;
     }
 
@@ -80,12 +78,11 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
     final userId = state.user?.id;
     if (userId == null) {
-      ErrorManager().reportError(
-        const .client(
-          type: .state,
-          msg: 'Couldn\'t find userId for user info update',
-        ),
+      const f = AppError.client(
+        type: .state,
+        msg: 'Couldn\'t find userId for user info update',
       );
+      f.report();
       return;
     }
 
@@ -149,12 +146,11 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
     final userId = state.user?.id;
     if (userId == null) {
-      ErrorManager().reportError(
-        const .client(
-          type: .state,
-          msg: 'Couldn\'t find userId for user info update',
-        ),
+      const f = AppError.client(
+        type: .state,
+        msg: 'Couldn\'t find userId for user info update',
       );
+      f.report();
       return;
     }
 
@@ -192,12 +188,11 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
     final userId = state.user?.id;
     if (userId == null) {
-      ErrorManager().reportError(
-        const .client(
-          type: .state,
-          msg: 'Couldn\'t find userId for user info update',
-        ),
+      const f = AppError.client(
+        type: .state,
+        msg: 'Couldn\'t find userId for user info update',
       );
+      f.report();
       return;
     }
 

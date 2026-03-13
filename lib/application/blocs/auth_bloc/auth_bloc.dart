@@ -127,7 +127,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     res.fold(
       (f) {
         f.report();
-        emit(state.withIdentifierError(f.userMessage));
+        emit(state.withIdentifierError(f));
       },
       (userId) {
         emit(
@@ -148,7 +148,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     res?.fold(
       (f) {
         f.report();
-        emit(state.withIdentifierError(f.userMessage));
+        emit(state.withIdentifierError(f));
       },
       (_) {
         emit(state.withIdentifierLoading(false).copyWith(step: .enterPassword));
@@ -174,7 +174,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     if (id == null) {
       const f = AppError.client(type: .state, msg: 'No user id');
       f.report();
-      emit(state.withPasswordError(f.userMessage));
+      emit(state.withPasswordError(f));
       return;
     }
 
@@ -183,7 +183,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     res.fold(
       (f) {
         f.report();
-        emit(state.withPasswordError(f.userMessage));
+        emit(state.withPasswordError(f));
       },
       (user) {
         LocalStorageService.saveAuth(user.id);
@@ -212,7 +212,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     if (!user.isValid) {
       const f = AppError.client(type: .state, msg: 'User is invalid');
       f.report();
-      emit(state.withPasswordError(f.userMessage));
+      emit(state.withPasswordError(f));
       return;
     }
 
@@ -221,7 +221,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     res.fold(
       (f) {
         f.report();
-        emit(state.withPasswordError(f.userMessage));
+        emit(state.withPasswordError(f));
       },
       (newId) {
         LocalStorageService.saveAuth(newId);
@@ -261,15 +261,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     final userId = state.user?.id;
     if (userId == null) {
-      const f = AppError.client(type: .state, msg: 'No user id');
+      const f = AppError.client(type: .state, msg: '[Auth 1] No user id');
       f.report();
-      emit(state.withDetailError(event.method, f.userMessage));
+      emit(state.withDetailError(event.method, f));
       return;
     }
 
     final field = state.fields[event.method];
     if (field == null) {
-      emit(state.withDetailError(event.method, 'Ошибка состояния'));
+      const f = AppError.client(type: .state, msg: '[Auth 1] Не было найдено поле ввода');
+      f.report();
+      emit(state.withDetailError(event.method, f));
       return;
     }
 
@@ -277,7 +279,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     final cancelToken = CancelToken();
 
-    if (field.availabilityStatus != .available) {
+    if (!field.isAvailable) {
       final operation = CancelableOperation.fromFuture(
         _checkAvailability(event.method, cancelToken, emit),
         onCancel: cancelToken.cancel,
@@ -327,14 +329,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     res.fold(
       (f) {
         f.report();
-        emit(state.withDetailError(event.method, f.userMessage));
+        emit(state.withDetailError(event.method, f));
       },
       (_) {
         final user = state.user;
         if (user == null) {
-          const f = AppError.client(type: .state, msg: 'No user');
+          const f = AppError.client(type: .state, msg: '[Auth 2] No user');
           f.report();
-          emit(state.withDetailError(event.method, f.userMessage));
+          emit(state.withDetailError(event.method, f));
           return;
         }
 
@@ -433,7 +435,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     final currentField = state.fields[method];
     if (currentField == null) {
-      emit(state.withDetailError(method, 'Ошибка состояния'));
+      const f = AppError.client(type: .state, msg: '[Auth 2] Не было найдено поле ввода');
+      f.report();
+      emit(state.withDetailError(method, f));
       return false;
     }
     emit(state.withDetailLoading(method, true));
@@ -450,11 +454,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final availability = res.fold(
       (f) {
         f.report();
-        emit(state.withDetailError(method, f.userMessage));
+        emit(state.withDetailError(method, f));
         return false;
       },
       (_) {
-        emit(state.withDetailSuccess(method));
+        emit(state.withDetailSuccess(method, const .auth(type: .available)));
         return true;
       },
     );
@@ -467,9 +471,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     final identifierField = state.fields[state.method];
     if(identifierField == null) {
-      const f = AppError.client(type: .state, msg: 'Не получается найти идентификатор');
+      const f = AppError.client(type: .state, msg: '[Auth 1] Не получается найти идентификатор');
       f.report();
-      emit(state.withDetailError(state.method, f.userMessage));
+      emit(state.withDetailError(state.method, f));
       return;
     }
     final validatedId = identifierField.validateFinal();
@@ -498,8 +502,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       ));
     }
 
-    if (!validatedId.isError) {
-      if (showPassword && !(validatedPass?.isError ?? true)) {
+    if (!validatedId.hasError) {
+      if (showPassword && !(validatedPass?.hasError ?? true)) {
         add(const .submitPassword());
       } else {
         add(const .submitIdentifier());

@@ -1,69 +1,74 @@
 import 'package:co_stock/domain/errors/validation/validation_rule.dart';
+import 'package:co_stock/domain/notifications/snack/snack_notification.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'field_state.freezed.dart';
-
-enum AvailabilityStatus { unknown, available, unavailable }
 
 @freezed
 sealed class FieldState with _$FieldState {
   const factory FieldState({
     @Default('') String value,
-    String? error,
     @Default(false) bool isLoading,
 
     /// нужно для показа ошибки только после взаимодействия
     @Default(false) bool hasInteracted,
     ValidationRule? instantValidator,
     ValidationRule? finalValidator,
-    @Default(AvailabilityStatus.unknown) AvailabilityStatus availabilityStatus,
+    SnackNotification? notification,
   }) = _FieldState;
 }
 
 extension FieldStateValid on FieldState {
   bool get isValid =>
-      error == null &&
+      (notification == null || notification?.type != .error) &&
       value.isNotEmpty &&
       instantValidator?.validate(value) == null &&
       finalValidator?.validate(value) == null;
 
-  bool get isError => error != null && value.isNotEmpty && hasInteracted;
-}
+  bool get hasError => notification?.type == .error;
 
-extension AvailabilityStatusExt on AvailabilityStatus {
-  String get toText {
-    switch (this) {
-      case .unknown:
-        return 'Неизвестно';
-      case .unavailable:
-        return 'Недоступно';
-      case .available:
-        return 'Можно зарегистрировать';
-    }
+  bool get hasSuccess => notification?.type == .success;
+
+  bool get isAvailable {
+    final notification = this.notification;
+    if(notification == null) return false;
+    if(notification.type is! SnackSuccess) return false;
+    return (notification as SnackSuccess).success.type == .available;
   }
 }
 
 extension FieldValidationExtension on FieldState {
   FieldState validateInstant() {
     if (instantValidator == null) return this;
-
-    String? error;
-    error = instantValidator!.validate(value);
-    return copyWith(
-      error: error ?? this.error,
-      hasInteracted: true,
-      isLoading: false,
-      availabilityStatus: .unknown
-    );
+    final errorText = instantValidator!.validate(value);
+    return _validateRes(errorText);
   }
 
   FieldState validateFinal() {
     if (finalValidator == null) return this;
+    final errorText = finalValidator!.validate(value);
+    return _validateRes(errorText);
+  }
 
-    String? error;
-    error = finalValidator!.validate(value);
+  FieldState _validateRes(String? errorText) {
+    if (errorText != null) {
+      final error = AppError.validator(type: .validator, msg: errorText);
+      return copyWith(
+        notification: .error(error),
+        hasInteracted: true,
+        isLoading: false,
+      );
+    }
+    final notification = this.notification;
+    if(notification is SnackError && notification.error.isValidationError) {
+      return copyWith(
+        notification: null,
+        hasInteracted: true,
+        isLoading: false,
+      );
+    }
+
     return copyWith(
-      error: error ?? this.error,
       hasInteracted: true,
       isLoading: false,
     );

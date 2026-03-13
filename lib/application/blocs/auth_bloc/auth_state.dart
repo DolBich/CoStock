@@ -59,16 +59,15 @@ extension AuthStateExt on AuthState {
   String detail(AuthMethod method) => fields[method]?.value ?? '';
 
   Map<AuthMethod, FieldState> resetFields() => <AuthMethod, FieldState>{
-    AuthMethod.email: const FieldState(),
-    AuthMethod.phone: const FieldState(),
-    AuthMethod.login: const FieldState(),
+    .email: const FieldState(),
+    .phone: const FieldState(),
+    .login: const FieldState(),
   };
 
   AuthState withFieldState({
     required AuthField field,
     bool? isLoading,
-    String? error,
-    AvailabilityStatus? status,
+    SnackNotification? notification,
   }) {
     final base = copyWith(isLoading: isLoading ?? this.isLoading);
     AuthMethod method = this.method;
@@ -77,14 +76,14 @@ extension AuthStateExt on AuthState {
         return base.copyWith(
           nameField: nameField.copyWith(
             isLoading: isLoading ?? nameField.isLoading,
-            error: error ?? nameField.error,
+            notification: notification ?? nameField.notification,
           ),
         );
       case .password:
         return base.copyWith(
           passwordField: passwordField.copyWith(
             isLoading: isLoading ?? passwordField.isLoading,
-            error: error ?? passwordField.error,
+            notification: notification ?? passwordField.notification,
           ),
         );
       case .identifier:
@@ -97,8 +96,7 @@ extension AuthStateExt on AuthState {
       base: base,
       method: method,
       isLoading: isLoading,
-      error: error,
-      status: status,
+      notification: notification,
     );
   }
 
@@ -106,8 +104,7 @@ extension AuthStateExt on AuthState {
     required AuthState base,
     required AuthMethod method,
     bool? isLoading,
-    String? error,
-    AvailabilityStatus? status,
+    SnackNotification? notification,
   }) {
     final updatedFields = Map<AuthMethod, FieldState>.from(fields);
     final currentField = updatedFields[method];
@@ -116,56 +113,59 @@ extension AuthStateExt on AuthState {
         type: .state,
         msg: '[${method.name}] currentField == null - WTF!?',
       ).report();
-
       return base;
     }
     updatedFields[method] = currentField.copyWith(
       isLoading: isLoading ?? currentField.isLoading,
-      error: error ?? currentField.error,
-      availabilityStatus: status ?? currentField.availabilityStatus,
+      notification: notification ?? currentField.notification,
     );
     return base.copyWith(fields: updatedFields);
   }
 
+  // Для идентификатора (логин/телефон/почта)
   AuthState withIdentifierLoading(bool loading) {
     return withFieldState(field: .identifier, isLoading: loading);
   }
 
-  AuthState withIdentifierError(String error) {
+  AuthState withIdentifierError(AppError error) {
     return withFieldState(
       field: .identifier,
-      error: error,
       isLoading: false,
-      status: .unknown,
+      notification: .error(error),
     );
   }
 
+  // Для пароля
   AuthState withPasswordLoading(bool loading) {
     return withFieldState(field: .password, isLoading: loading);
   }
 
-  AuthState withPasswordError(String error) {
-    return withFieldState(field: .password, error: error, isLoading: false);
+  AuthState withPasswordError(AppError error) {
+    return withFieldState(
+      field: .password,
+      notification: .error(error),
+      isLoading: false,
+    );
   }
 
+  // Для деталей
   AuthState withDetailLoading(AuthMethod method, bool loading) {
     return withFieldState(field: method.toField, isLoading: loading);
   }
 
-  AuthState withDetailError(AuthMethod method, String error) {
+  AuthState withDetailError(AuthMethod method, AppError error) {
     return withFieldState(
       field: method.toField,
-      error: error,
+      notification: .error(error),
       isLoading: false,
-      status: .unknown,
     );
   }
 
-  AuthState withDetailSuccess(AuthMethod method) {
+  AuthState withDetailSuccess(AuthMethod method, AppSuccess success) {
     return withFieldState(
       field: method.toField,
       isLoading: false,
-      status: .available,
+      notification: .success(success),
     );
   }
 

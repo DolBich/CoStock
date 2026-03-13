@@ -9,4 +9,13 @@ extension SnackNotificationPresentation on SnackNotificationType {
         return AppThemeImpl.success;
     }
   }
+
+  IconData get icon {
+    switch (this) {
+      case .error:
+        return Icons.error_outline;
+      case .success:
+        return Icons.check_circle;
+    }
+  }
 }

@@ -14,8 +14,8 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$FieldState {
 
- String get value; String? get error; bool get isLoading;/// нужно для показа ошибки только после взаимодействия
- bool get hasInteracted; ValidationRule? get instantValidator; ValidationRule? get finalValidator; AvailabilityStatus get availabilityStatus;
+ String get value; bool get isLoading;/// нужно для показа ошибки только после взаимодействия
+ bool get hasInteracted; ValidationRule? get instantValidator; ValidationRule? get finalValidator; SnackNotification? get notification;
 /// Create a copy of FieldState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -26,16 +26,16 @@ $FieldStateCopyWith<FieldState> get copyWith => _$FieldStateCopyWithImpl<FieldSt
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is FieldState&&(identical(other.value, value) || other.value == value)&&(identical(other.error, error) || other.error == error)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.hasInteracted, hasInteracted) || other.hasInteracted == hasInteracted)&&(identical(other.instantValidator, instantValidator) || other.instantValidator == instantValidator)&&(identical(other.finalValidator, finalValidator) || other.finalValidator == finalValidator)&&(identical(other.availabilityStatus, availabilityStatus) || other.availabilityStatus == availabilityStatus));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is FieldState&&(identical(other.value, value) || other.value == value)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.hasInteracted, hasInteracted) || other.hasInteracted == hasInteracted)&&(identical(other.instantValidator, instantValidator) || other.instantValidator == instantValidator)&&(identical(other.finalValidator, finalValidator) || other.finalValidator == finalValidator)&&(identical(other.notification, notification) || other.notification == notification));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,value,error,isLoading,hasInteracted,instantValidator,finalValidator,availabilityStatus);
+int get hashCode => Object.hash(runtimeType,value,isLoading,hasInteracted,instantValidator,finalValidator,notification);
 
 @override
 String toString() {
-  return 'FieldState(value: $value, error: $error, isLoading: $isLoading, hasInteracted: $hasInteracted, instantValidator: $instantValidator, finalValidator: $finalValidator, availabilityStatus: $availabilityStatus)';
+  return 'FieldState(value: $value, isLoading: $isLoading, hasInteracted: $hasInteracted, instantValidator: $instantValidator, finalValidator: $finalValidator, notification: $notification)';
 }
 
 
@@ -46,11 +46,11 @@ abstract mixin class $FieldStateCopyWith<$Res>  {
   factory $FieldStateCopyWith(FieldState value, $Res Function(FieldState) _then) = _$FieldStateCopyWithImpl;
 @useResult
 $Res call({
- String value, String? error, bool isLoading, bool hasInteracted, ValidationRule? instantValidator, ValidationRule? finalValidator, AvailabilityStatus availabilityStatus
+ String value, bool isLoading, bool hasInteracted, ValidationRule? instantValidator, ValidationRule? finalValidator, SnackNotification? notification
 });
 
 
-
+$SnackNotificationCopyWith<$Res>? get notification;
 
 }
 /// @nodoc
@@ -63,19 +63,30 @@ class _$FieldStateCopyWithImpl<$Res>
 
 /// Create a copy of FieldState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? value = null,Object? error = freezed,Object? isLoading = null,Object? hasInteracted = null,Object? instantValidator = freezed,Object? finalValidator = freezed,Object? availabilityStatus = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? value = null,Object? isLoading = null,Object? hasInteracted = null,Object? instantValidator = freezed,Object? finalValidator = freezed,Object? notification = freezed,}) {
   return _then(_self.copyWith(
 value: null == value ? _self.value : value // ignore: cast_nullable_to_non_nullable
-as String,error: freezed == error ? _self.error : error // ignore: cast_nullable_to_non_nullable
-as String?,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
+as String,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,hasInteracted: null == hasInteracted ? _self.hasInteracted : hasInteracted // ignore: cast_nullable_to_non_nullable
 as bool,instantValidator: freezed == instantValidator ? _self.instantValidator : instantValidator // ignore: cast_nullable_to_non_nullable
 as ValidationRule?,finalValidator: freezed == finalValidator ? _self.finalValidator : finalValidator // ignore: cast_nullable_to_non_nullable
-as ValidationRule?,availabilityStatus: null == availabilityStatus ? _self.availabilityStatus : availabilityStatus // ignore: cast_nullable_to_non_nullable
-as AvailabilityStatus,
+as ValidationRule?,notification: freezed == notification ? _self.notification : notification // ignore: cast_nullable_to_non_nullable
+as SnackNotification?,
   ));
 }
+/// Create a copy of FieldState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$SnackNotificationCopyWith<$Res>? get notification {
+    if (_self.notification == null) {
+    return null;
+  }
 
+  return $SnackNotificationCopyWith<$Res>(_self.notification!, (value) {
+    return _then(_self.copyWith(notification: value));
+  });
+}
 }
 
 
@@ -154,10 +165,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String value,  String? error,  bool isLoading,  bool hasInteracted,  ValidationRule? instantValidator,  ValidationRule? finalValidator,  AvailabilityStatus availabilityStatus)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String value,  bool isLoading,  bool hasInteracted,  ValidationRule? instantValidator,  ValidationRule? finalValidator,  SnackNotification? notification)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _FieldState() when $default != null:
-return $default(_that.value,_that.error,_that.isLoading,_that.hasInteracted,_that.instantValidator,_that.finalValidator,_that.availabilityStatus);case _:
+return $default(_that.value,_that.isLoading,_that.hasInteracted,_that.instantValidator,_that.finalValidator,_that.notification);case _:
   return orElse();
 
 }
@@ -175,10 +186,10 @@ return $default(_that.value,_that.error,_that.isLoading,_that.hasInteracted,_tha
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String value,  String? error,  bool isLoading,  bool hasInteracted,  ValidationRule? instantValidator,  ValidationRule? finalValidator,  AvailabilityStatus availabilityStatus)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String value,  bool isLoading,  bool hasInteracted,  ValidationRule? instantValidator,  ValidationRule? finalValidator,  SnackNotification? notification)  $default,) {final _that = this;
 switch (_that) {
 case _FieldState():
-return $default(_that.value,_that.error,_that.isLoading,_that.hasInteracted,_that.instantValidator,_that.finalValidator,_that.availabilityStatus);}
+return $default(_that.value,_that.isLoading,_that.hasInteracted,_that.instantValidator,_that.finalValidator,_that.notification);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -192,10 +203,10 @@ return $default(_that.value,_that.error,_that.isLoading,_that.hasInteracted,_tha
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String value,  String? error,  bool isLoading,  bool hasInteracted,  ValidationRule? instantValidator,  ValidationRule? finalValidator,  AvailabilityStatus availabilityStatus)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String value,  bool isLoading,  bool hasInteracted,  ValidationRule? instantValidator,  ValidationRule? finalValidator,  SnackNotification? notification)?  $default,) {final _that = this;
 switch (_that) {
 case _FieldState() when $default != null:
-return $default(_that.value,_that.error,_that.isLoading,_that.hasInteracted,_that.instantValidator,_that.finalValidator,_that.availabilityStatus);case _:
+return $default(_that.value,_that.isLoading,_that.hasInteracted,_that.instantValidator,_that.finalValidator,_that.notification);case _:
   return null;
 
 }
@@ -207,17 +218,16 @@ return $default(_that.value,_that.error,_that.isLoading,_that.hasInteracted,_tha
 
 
 class _FieldState implements FieldState {
-  const _FieldState({this.value = '', this.error, this.isLoading = false, this.hasInteracted = false, this.instantValidator, this.finalValidator, this.availabilityStatus = AvailabilityStatus.unknown});
+  const _FieldState({this.value = '', this.isLoading = false, this.hasInteracted = false, this.instantValidator, this.finalValidator, this.notification});
   
 
 @override@JsonKey() final  String value;
-@override final  String? error;
 @override@JsonKey() final  bool isLoading;
 /// нужно для показа ошибки только после взаимодействия
 @override@JsonKey() final  bool hasInteracted;
 @override final  ValidationRule? instantValidator;
 @override final  ValidationRule? finalValidator;
-@override@JsonKey() final  AvailabilityStatus availabilityStatus;
+@override final  SnackNotification? notification;
 
 /// Create a copy of FieldState
 /// with the given fields replaced by the non-null parameter values.
@@ -229,16 +239,16 @@ _$FieldStateCopyWith<_FieldState> get copyWith => __$FieldStateCopyWithImpl<_Fie
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _FieldState&&(identical(other.value, value) || other.value == value)&&(identical(other.error, error) || other.error == error)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.hasInteracted, hasInteracted) || other.hasInteracted == hasInteracted)&&(identical(other.instantValidator, instantValidator) || other.instantValidator == instantValidator)&&(identical(other.finalValidator, finalValidator) || other.finalValidator == finalValidator)&&(identical(other.availabilityStatus, availabilityStatus) || other.availabilityStatus == availabilityStatus));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _FieldState&&(identical(other.value, value) || other.value == value)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.hasInteracted, hasInteracted) || other.hasInteracted == hasInteracted)&&(identical(other.instantValidator, instantValidator) || other.instantValidator == instantValidator)&&(identical(other.finalValidator, finalValidator) || other.finalValidator == finalValidator)&&(identical(other.notification, notification) || other.notification == notification));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,value,error,isLoading,hasInteracted,instantValidator,finalValidator,availabilityStatus);
+int get hashCode => Object.hash(runtimeType,value,isLoading,hasInteracted,instantValidator,finalValidator,notification);
 
 @override
 String toString() {
-  return 'FieldState(value: $value, error: $error, isLoading: $isLoading, hasInteracted: $hasInteracted, instantValidator: $instantValidator, finalValidator: $finalValidator, availabilityStatus: $availabilityStatus)';
+  return 'FieldState(value: $value, isLoading: $isLoading, hasInteracted: $hasInteracted, instantValidator: $instantValidator, finalValidator: $finalValidator, notification: $notification)';
 }
 
 
@@ -249,11 +259,11 @@ abstract mixin class _$FieldStateCopyWith<$Res> implements $FieldStateCopyWith<$
   factory _$FieldStateCopyWith(_FieldState value, $Res Function(_FieldState) _then) = __$FieldStateCopyWithImpl;
 @override @useResult
 $Res call({
- String value, String? error, bool isLoading, bool hasInteracted, ValidationRule? instantValidator, ValidationRule? finalValidator, AvailabilityStatus availabilityStatus
+ String value, bool isLoading, bool hasInteracted, ValidationRule? instantValidator, ValidationRule? finalValidator, SnackNotification? notification
 });
 
 
-
+@override $SnackNotificationCopyWith<$Res>? get notification;
 
 }
 /// @nodoc
@@ -266,20 +276,31 @@ class __$FieldStateCopyWithImpl<$Res>
 
 /// Create a copy of FieldState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? value = null,Object? error = freezed,Object? isLoading = null,Object? hasInteracted = null,Object? instantValidator = freezed,Object? finalValidator = freezed,Object? availabilityStatus = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? value = null,Object? isLoading = null,Object? hasInteracted = null,Object? instantValidator = freezed,Object? finalValidator = freezed,Object? notification = freezed,}) {
   return _then(_FieldState(
 value: null == value ? _self.value : value // ignore: cast_nullable_to_non_nullable
-as String,error: freezed == error ? _self.error : error // ignore: cast_nullable_to_non_nullable
-as String?,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
+as String,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,hasInteracted: null == hasInteracted ? _self.hasInteracted : hasInteracted // ignore: cast_nullable_to_non_nullable
 as bool,instantValidator: freezed == instantValidator ? _self.instantValidator : instantValidator // ignore: cast_nullable_to_non_nullable
 as ValidationRule?,finalValidator: freezed == finalValidator ? _self.finalValidator : finalValidator // ignore: cast_nullable_to_non_nullable
-as ValidationRule?,availabilityStatus: null == availabilityStatus ? _self.availabilityStatus : availabilityStatus // ignore: cast_nullable_to_non_nullable
-as AvailabilityStatus,
+as ValidationRule?,notification: freezed == notification ? _self.notification : notification // ignore: cast_nullable_to_non_nullable
+as SnackNotification?,
   ));
 }
 
+/// Create a copy of FieldState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$SnackNotificationCopyWith<$Res>? get notification {
+    if (_self.notification == null) {
+    return null;
+  }
 
+  return $SnackNotificationCopyWith<$Res>(_self.notification!, (value) {
+    return _then(_self.copyWith(notification: value));
+  });
+}
 }
 
 // dart format on

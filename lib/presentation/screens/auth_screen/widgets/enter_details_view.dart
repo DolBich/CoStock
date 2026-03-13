@@ -80,7 +80,7 @@ class __DetailFieldState extends State<_DetailField> {
 
   bool _checker(FieldState? field) =>
       (field?.isValid ?? false) && !(field?.isLoading ?? true);
-
+  
   @override
   Widget build(BuildContext context) {
     final bloc = context.read<AuthBloc>();
@@ -89,6 +89,7 @@ class __DetailFieldState extends State<_DetailField> {
       buildWhen: (p, c) => p.fields.length != c.fields.length,
       builder: (context, state) {
         return BlocTextField<AuthBloc, AuthState>(
+          key: ValueKey(method.name),
           hintText: method.text,
           keyboardType: method.textInputType,
           inputFormatters: method.textInputFormatters,

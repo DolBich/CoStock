@@ -324,7 +324,7 @@ $AppSuccessCopyWith<$Res> get success {
 /// @nodoc
 mixin _$AppSuccess {
 
- Enum get type; String? get msg;
+ AuthSuccessType get type; String? get msg;
 /// Create a copy of AppSuccess
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -355,7 +355,7 @@ abstract mixin class $AppSuccessCopyWith<$Res>  {
   factory $AppSuccessCopyWith(AppSuccess value, $Res Function(AppSuccess) _then) = _$AppSuccessCopyWithImpl;
 @useResult
 $Res call({
- String? msg
+ AuthSuccessType type, String? msg
 });
 
 
@@ -372,9 +372,10 @@ class _$AppSuccessCopyWithImpl<$Res>
 
 /// Create a copy of AppSuccess
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? msg = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? type = null,Object? msg = freezed,}) {
   return _then(_self.copyWith(
-msg: freezed == msg ? _self.msg : msg // ignore: cast_nullable_to_non_nullable
+type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
+as AuthSuccessType,msg: freezed == msg ? _self.msg : msg // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
@@ -396,13 +397,11 @@ extension AppSuccessPatterns on AppSuccess {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _AuthSuccess value)?  auth,TResult Function( _ServerSuccess value)?  server,TResult Function( _ClientSuccess value)?  client,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _AuthSuccess value)?  auth,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case _AuthSuccess() when auth != null:
-return auth(_that);case _ServerSuccess() when server != null:
-return server(_that);case _ClientSuccess() when client != null:
-return client(_that);case _:
+return auth(_that);case _:
   return orElse();
 
 }
@@ -420,13 +419,11 @@ return client(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _AuthSuccess value)  auth,required TResult Function( _ServerSuccess value)  server,required TResult Function( _ClientSuccess value)  client,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _AuthSuccess value)  auth,}){
 final _that = this;
 switch (_that) {
 case _AuthSuccess():
-return auth(_that);case _ServerSuccess():
-return server(_that);case _ClientSuccess():
-return client(_that);}
+return auth(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -440,13 +437,11 @@ return client(_that);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _AuthSuccess value)?  auth,TResult? Function( _ServerSuccess value)?  server,TResult? Function( _ClientSuccess value)?  client,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _AuthSuccess value)?  auth,}){
 final _that = this;
 switch (_that) {
 case _AuthSuccess() when auth != null:
-return auth(_that);case _ServerSuccess() when server != null:
-return server(_that);case _ClientSuccess() when client != null:
-return client(_that);case _:
+return auth(_that);case _:
   return null;
 
 }
@@ -463,12 +458,10 @@ return client(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( AuthSuccessType type,  String? msg)?  auth,TResult Function( ServerSuccessType type,  String? msg)?  server,TResult Function( ClientSuccessType type,  String? msg)?  client,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( AuthSuccessType type,  String? msg)?  auth,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AuthSuccess() when auth != null:
-return auth(_that.type,_that.msg);case _ServerSuccess() when server != null:
-return server(_that.type,_that.msg);case _ClientSuccess() when client != null:
-return client(_that.type,_that.msg);case _:
+return auth(_that.type,_that.msg);case _:
   return orElse();
 
 }
@@ -486,12 +479,10 @@ return client(_that.type,_that.msg);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( AuthSuccessType type,  String? msg)  auth,required TResult Function( ServerSuccessType type,  String? msg)  server,required TResult Function( ClientSuccessType type,  String? msg)  client,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( AuthSuccessType type,  String? msg)  auth,}) {final _that = this;
 switch (_that) {
 case _AuthSuccess():
-return auth(_that.type,_that.msg);case _ServerSuccess():
-return server(_that.type,_that.msg);case _ClientSuccess():
-return client(_that.type,_that.msg);}
+return auth(_that.type,_that.msg);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -505,12 +496,10 @@ return client(_that.type,_that.msg);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( AuthSuccessType type,  String? msg)?  auth,TResult? Function( ServerSuccessType type,  String? msg)?  server,TResult? Function( ClientSuccessType type,  String? msg)?  client,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( AuthSuccessType type,  String? msg)?  auth,}) {final _that = this;
 switch (_that) {
 case _AuthSuccess() when auth != null:
-return auth(_that.type,_that.msg);case _ServerSuccess() when server != null:
-return server(_that.type,_that.msg);case _ClientSuccess() when client != null:
-return client(_that.type,_that.msg);case _:
+return auth(_that.type,_that.msg);case _:
   return null;
 
 }
@@ -579,142 +568,6 @@ class __$AuthSuccessCopyWithImpl<$Res>
   return _then(_AuthSuccess(
 type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as AuthSuccessType,msg: freezed == msg ? _self.msg : msg // ignore: cast_nullable_to_non_nullable
-as String?,
-  ));
-}
-
-
-}
-
-/// @nodoc
-
-
-class _ServerSuccess extends AppSuccess {
-  const _ServerSuccess({required this.type, this.msg}): super._();
-  
-
-@override final  ServerSuccessType type;
-@override final  String? msg;
-
-/// Create a copy of AppSuccess
-/// with the given fields replaced by the non-null parameter values.
-@override @JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-_$ServerSuccessCopyWith<_ServerSuccess> get copyWith => __$ServerSuccessCopyWithImpl<_ServerSuccess>(this, _$identity);
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ServerSuccess&&(identical(other.type, type) || other.type == type)&&(identical(other.msg, msg) || other.msg == msg));
-}
-
-
-@override
-int get hashCode => Object.hash(runtimeType,type,msg);
-
-@override
-String toString() {
-  return 'AppSuccess.server(type: $type, msg: $msg)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class _$ServerSuccessCopyWith<$Res> implements $AppSuccessCopyWith<$Res> {
-  factory _$ServerSuccessCopyWith(_ServerSuccess value, $Res Function(_ServerSuccess) _then) = __$ServerSuccessCopyWithImpl;
-@override @useResult
-$Res call({
- ServerSuccessType type, String? msg
-});
-
-
-
-
-}
-/// @nodoc
-class __$ServerSuccessCopyWithImpl<$Res>
-    implements _$ServerSuccessCopyWith<$Res> {
-  __$ServerSuccessCopyWithImpl(this._self, this._then);
-
-  final _ServerSuccess _self;
-  final $Res Function(_ServerSuccess) _then;
-
-/// Create a copy of AppSuccess
-/// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? type = null,Object? msg = freezed,}) {
-  return _then(_ServerSuccess(
-type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
-as ServerSuccessType,msg: freezed == msg ? _self.msg : msg // ignore: cast_nullable_to_non_nullable
-as String?,
-  ));
-}
-
-
-}
-
-/// @nodoc
-
-
-class _ClientSuccess extends AppSuccess {
-  const _ClientSuccess({required this.type, this.msg}): super._();
-  
-
-@override final  ClientSuccessType type;
-@override final  String? msg;
-
-/// Create a copy of AppSuccess
-/// with the given fields replaced by the non-null parameter values.
-@override @JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-_$ClientSuccessCopyWith<_ClientSuccess> get copyWith => __$ClientSuccessCopyWithImpl<_ClientSuccess>(this, _$identity);
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ClientSuccess&&(identical(other.type, type) || other.type == type)&&(identical(other.msg, msg) || other.msg == msg));
-}
-
-
-@override
-int get hashCode => Object.hash(runtimeType,type,msg);
-
-@override
-String toString() {
-  return 'AppSuccess.client(type: $type, msg: $msg)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class _$ClientSuccessCopyWith<$Res> implements $AppSuccessCopyWith<$Res> {
-  factory _$ClientSuccessCopyWith(_ClientSuccess value, $Res Function(_ClientSuccess) _then) = __$ClientSuccessCopyWithImpl;
-@override @useResult
-$Res call({
- ClientSuccessType type, String? msg
-});
-
-
-
-
-}
-/// @nodoc
-class __$ClientSuccessCopyWithImpl<$Res>
-    implements _$ClientSuccessCopyWith<$Res> {
-  __$ClientSuccessCopyWithImpl(this._self, this._then);
-
-  final _ClientSuccess _self;
-  final $Res Function(_ClientSuccess) _then;
-
-/// Create a copy of AppSuccess
-/// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? type = null,Object? msg = freezed,}) {
-  return _then(_ClientSuccess(
-type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
-as ClientSuccessType,msg: freezed == msg ? _self.msg : msg // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
@@ -797,13 +650,14 @@ extension AppErrorPatterns on AppError {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _AuthError value)?  auth,TResult Function( _ServerError value)?  server,TResult Function( _ClientError value)?  client,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _AuthError value)?  auth,TResult Function( _ServerError value)?  server,TResult Function( _ClientError value)?  client,TResult Function( _ValidatorError value)?  validator,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case _AuthError() when auth != null:
 return auth(_that);case _ServerError() when server != null:
 return server(_that);case _ClientError() when client != null:
-return client(_that);case _:
+return client(_that);case _ValidatorError() when validator != null:
+return validator(_that);case _:
   return orElse();
 
 }
@@ -821,13 +675,14 @@ return client(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _AuthError value)  auth,required TResult Function( _ServerError value)  server,required TResult Function( _ClientError value)  client,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _AuthError value)  auth,required TResult Function( _ServerError value)  server,required TResult Function( _ClientError value)  client,required TResult Function( _ValidatorError value)  validator,}){
 final _that = this;
 switch (_that) {
 case _AuthError():
 return auth(_that);case _ServerError():
 return server(_that);case _ClientError():
-return client(_that);}
+return client(_that);case _ValidatorError():
+return validator(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -841,13 +696,14 @@ return client(_that);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _AuthError value)?  auth,TResult? Function( _ServerError value)?  server,TResult? Function( _ClientError value)?  client,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _AuthError value)?  auth,TResult? Function( _ServerError value)?  server,TResult? Function( _ClientError value)?  client,TResult? Function( _ValidatorError value)?  validator,}){
 final _that = this;
 switch (_that) {
 case _AuthError() when auth != null:
 return auth(_that);case _ServerError() when server != null:
 return server(_that);case _ClientError() when client != null:
-return client(_that);case _:
+return client(_that);case _ValidatorError() when validator != null:
+return validator(_that);case _:
   return null;
 
 }
@@ -864,12 +720,13 @@ return client(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( AuthErrorType type,  String? msg)?  auth,TResult Function( ServerErrorType type,  String? msg)?  server,TResult Function( ClientErrorType type,  String? msg)?  client,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( AuthErrorType type,  String? msg)?  auth,TResult Function( ServerErrorType type,  String? msg)?  server,TResult Function( ClientErrorType type,  String? msg)?  client,TResult Function( ValidatorErrorType type,  String? msg)?  validator,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AuthError() when auth != null:
 return auth(_that.type,_that.msg);case _ServerError() when server != null:
 return server(_that.type,_that.msg);case _ClientError() when client != null:
-return client(_that.type,_that.msg);case _:
+return client(_that.type,_that.msg);case _ValidatorError() when validator != null:
+return validator(_that.type,_that.msg);case _:
   return orElse();
 
 }
@@ -887,12 +744,13 @@ return client(_that.type,_that.msg);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( AuthErrorType type,  String? msg)  auth,required TResult Function( ServerErrorType type,  String? msg)  server,required TResult Function( ClientErrorType type,  String? msg)  client,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( AuthErrorType type,  String? msg)  auth,required TResult Function( ServerErrorType type,  String? msg)  server,required TResult Function( ClientErrorType type,  String? msg)  client,required TResult Function( ValidatorErrorType type,  String? msg)  validator,}) {final _that = this;
 switch (_that) {
 case _AuthError():
 return auth(_that.type,_that.msg);case _ServerError():
 return server(_that.type,_that.msg);case _ClientError():
-return client(_that.type,_that.msg);}
+return client(_that.type,_that.msg);case _ValidatorError():
+return validator(_that.type,_that.msg);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -906,12 +764,13 @@ return client(_that.type,_that.msg);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( AuthErrorType type,  String? msg)?  auth,TResult? Function( ServerErrorType type,  String? msg)?  server,TResult? Function( ClientErrorType type,  String? msg)?  client,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( AuthErrorType type,  String? msg)?  auth,TResult? Function( ServerErrorType type,  String? msg)?  server,TResult? Function( ClientErrorType type,  String? msg)?  client,TResult? Function( ValidatorErrorType type,  String? msg)?  validator,}) {final _that = this;
 switch (_that) {
 case _AuthError() when auth != null:
 return auth(_that.type,_that.msg);case _ServerError() when server != null:
 return server(_that.type,_that.msg);case _ClientError() when client != null:
-return client(_that.type,_that.msg);case _:
+return client(_that.type,_that.msg);case _ValidatorError() when validator != null:
+return validator(_that.type,_that.msg);case _:
   return null;
 
 }
@@ -1116,6 +975,74 @@ class __$ClientErrorCopyWithImpl<$Res>
   return _then(_ClientError(
 type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as ClientErrorType,msg: freezed == msg ? _self.msg : msg // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class _ValidatorError extends AppError {
+  const _ValidatorError({required this.type, this.msg}): super._();
+  
+
+@override final  ValidatorErrorType type;
+@override final  String? msg;
+
+/// Create a copy of AppError
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$ValidatorErrorCopyWith<_ValidatorError> get copyWith => __$ValidatorErrorCopyWithImpl<_ValidatorError>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ValidatorError&&(identical(other.type, type) || other.type == type)&&(identical(other.msg, msg) || other.msg == msg));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,type,msg);
+
+@override
+String toString() {
+  return 'AppError.validator(type: $type, msg: $msg)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$ValidatorErrorCopyWith<$Res> implements $AppErrorCopyWith<$Res> {
+  factory _$ValidatorErrorCopyWith(_ValidatorError value, $Res Function(_ValidatorError) _then) = __$ValidatorErrorCopyWithImpl;
+@override @useResult
+$Res call({
+ ValidatorErrorType type, String? msg
+});
+
+
+
+
+}
+/// @nodoc
+class __$ValidatorErrorCopyWithImpl<$Res>
+    implements _$ValidatorErrorCopyWith<$Res> {
+  __$ValidatorErrorCopyWithImpl(this._self, this._then);
+
+  final _ValidatorError _self;
+  final $Res Function(_ValidatorError) _then;
+
+/// Create a copy of AppError
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? type = null,Object? msg = freezed,}) {
+  return _then(_ValidatorError(
+type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
+as ValidatorErrorType,msg: freezed == msg ? _self.msg : msg // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:co_stock/domain/errors/validation/validation_rule.dart';
+import 'package:co_stock/domain/notifications/snack/snack_notification.dart';
 import 'package:co_stock/domain/widget_entities/field_state.dart';
 import 'package:co_stock/presentation/prefs/theme/app_theme_impl.dart';
 import 'package:flutter/material.dart';
@@ -53,23 +54,33 @@ class _BlocTextFieldState<B extends StateStreamable<S>, S>
   @override
   void initState() {
     super.initState();
-    final state =  context.read<B>().state;
+    final state = context.read<B>().state;
     final field = widget
         .selector(state)
         .copyWith(
-      instantValidator: widget.instantValidator,
-      finalValidator: widget.finalValidator,
-    );
+          instantValidator: widget.instantValidator,
+          finalValidator: widget.finalValidator,
+        );
     widget.onChanged(field);
 
     _focusNode = widget.focusNode ?? FocusNode();
+    if (widget.autofocus) {
+      // autofocus срабатывает только при первом создании виджета
+      // Если виджет уже был создан, изчез, а потом снова вставили в дерево, то
+      // autofocus не сработает
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          FocusScope.of(context).requestFocus(_focusNode);
+        }
+      });
+    }
     _focusNode.addListener(_onFocusChange);
 
     _keyboardVisibilityController = KeyboardVisibilityController();
     _keyboardSubscription = _keyboardVisibilityController.onChange.listen((
       isVisible,
     ) {
-      if (!isVisible) {
+      if (!isVisible && field.hasInteracted) {
         _performFinalValidation(); // клавиатура скрыта — валидируем
       }
     });
@@ -104,8 +115,8 @@ class _BlocTextFieldState<B extends StateStreamable<S>, S>
   }
 
   void _handleSubmit(String value) {
-    _performFinalValidation();
-
+    // По идее тут уже будет ошибка из валидации, потому что при [onComplete] будет вызван
+    // расфокус, а с ним и валидация
     final state = context.read<B>().state;
     final field = widget.selector(state);
 
@@ -126,39 +137,26 @@ class _BlocTextFieldState<B extends StateStreamable<S>, S>
         String? helperText;
         Color? helperColor;
         Widget? suffixIcon;
-        bool isError = true;
         const double iconSize = 20;
+
         if (field.isLoading) {
           suffixIcon = const Padding(
             padding: .all(8.0),
             child: CircularProgressIndicator(strokeWidth: 2),
           );
-        } else if (field.availabilityStatus == .available) {
-          helperText = field.availabilityStatus.toText;
-          helperColor = AppThemeImpl.success;
-          suffixIcon = const Icon(
-            Icons.check_circle,
-            color: AppThemeImpl.success,
-            size: iconSize,
-          );
-          isError = false;
-        } else if (field.isError) {
-          helperText = field.error;
-          helperColor = AppThemeImpl.error;
-          suffixIcon = const Icon(
-            Icons.error_outline,
-            color: AppThemeImpl.error,
-            size: iconSize,
-          );
-        } else if (field.availabilityStatus == .unavailable) {
-          helperText = field.availabilityStatus.toText;
-          helperColor = AppThemeImpl.error;
-          suffixIcon = const Icon(
-            Icons.error_outline,
-            color: AppThemeImpl.error,
+        } else if (field.notification != null) {
+          final notification = field.notification!;
+          helperText = notification.userMessage;
+          helperColor = notification.type.backgroundColor;
+          suffixIcon = Icon(
+            notification.type.icon,
+            color: helperColor,
             size: iconSize,
           );
         }
+
+        final isError = field.hasError;
+        final isSuccess = field.hasSuccess;
 
         /// --- ОТОБРАЖЕНИЕ ОШИБОК И УСПЕХА ---
 
@@ -169,7 +167,7 @@ class _BlocTextFieldState<B extends StateStreamable<S>, S>
         InputBorder? enabledBorder;
         InputBorder? focusedBorder;
 
-        if (!isError) {
+        if (isSuccess) {
           enabledBorder = inputTheme.enabledBorder?.copyWith(
             borderSide: inputTheme.enabledBorder?.borderSide.copyWith(
               color: AppThemeImpl.success,
@@ -207,7 +205,7 @@ class _BlocTextFieldState<B extends StateStreamable<S>, S>
           onChanged: (value) {
             /// Мгновенная валидация
             final newField = field
-                .copyWith(value: value, hasInteracted: true, error: null)
+                .copyWith(value: value, notification: null)
                 .validateInstant();
             widget.onChanged(newField);
           },

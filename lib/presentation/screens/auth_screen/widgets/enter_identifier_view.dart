@@ -111,8 +111,8 @@ class _EnterIdentifierView extends StatelessWidget {
 
         final enableButton =
             !state.isLoading &&
-            !(identifierField?.isError ?? true) &&
-            (!showPassword || !state.passwordField.isError);
+            !(identifierField?.hasError ?? true) &&
+            (!showPassword || !state.passwordField.hasError);
 
         return ElevatedButton(
           onPressed: enableButton ? () => bloc.add(const .trySubmit()) : null,

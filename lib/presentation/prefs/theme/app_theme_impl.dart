@@ -1,6 +1,7 @@
 import 'package:co_stock/domain/extensions/color_ext.dart';
 import 'package:co_stock/presentation/prefs/theme/app_theme_system.dart';
 import 'package:co_stock/presentation/prefs/theme/theme_config.dart';
+import 'package:co_stock/presentation/prefs/theme/theme_extensions/app_segmented_button_theme.dart';
 import 'package:flutter/material.dart';
 
 /// Система тем основанная на ручном выборе всех цветов
@@ -146,6 +147,17 @@ class AppThemeImpl extends AppThemeSystem {
       useMaterial3: true,
       colorScheme: scheme,
       brightness: scheme.brightness,
+      extensions: [
+        AppSegmentedButtonTheme(
+          backgroundColor: Colors.grey.shade200,
+          selectedColor: Colors.white,
+          foregroundColor: Colors.black,
+          selectedForegroundColor: Colors.black,
+          borderRadius: 24,
+          padding: const .symmetric(horizontal: 16, vertical: 8),
+          animationDuration: const Duration(milliseconds: 200),
+        ),
+      ],
     );
 
     return base.copyWith(
@@ -331,19 +343,19 @@ class AppThemeImpl extends AppThemeSystem {
       /// Segmented buttons
       segmentedButtonTheme: SegmentedButtonThemeData(
         style: SegmentedButton.styleFrom(
-          foregroundColor: WidgetStateColor.resolveWith((states) {
-            if (states.contains(WidgetState.selected)) {
-              return scheme.onPrimary;
-            }
-            return scheme.onSurface;
-          }),
-          backgroundColor: WidgetStateColor.resolveWith((states) {
-            if (states.contains(WidgetState.selected)) {
-              return scheme.primary;
-            }
-            return scheme.surfaceContainerHighest;
-          }),
+          shape: const StadiumBorder(),
+          side: .none,
+          padding: const .symmetric(horizontal: 18, vertical: 10),
+          foregroundColor: scheme.onSurface,
+          selectedForegroundColor: scheme.onPrimary,
+          backgroundColor: scheme.surfaceContainerHighest,
+          selectedBackgroundColor: scheme.primary,
           elevation: 0,
+          minimumSize: const Size(0, 36),
+          visualDensity: .compact,
+          tapTargetSize: .shrinkWrap,
+          alignment: .center,
+          animationDuration: const Duration(milliseconds: 100),
         ),
       ),
     );

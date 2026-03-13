@@ -7,21 +7,20 @@ class _EnterIdentifierView extends StatelessWidget {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         final bloc = context.read<AuthBloc>();
-        return SegmentedButton<AuthMethod>(
+        return AppSegmentedButton<AuthMethod>(
           segments: AuthMethod.values
               .map(
-                (e) => ButtonSegment(
+                (e) => AppSegmentButton(
                   value: e,
-                  icon: Icon(e.icon),
+                  icon: e.icon,
                   label: Text(e.text),
-                  enabled: !state.isLoading,
+                  // enabled: !state.isLoading,
                 ),
               )
               .toList(),
-          selected: {state.method},
-          showSelectedIcon: false,
-          onSelectionChanged: (Set<AuthMethod> newSelection) {
-            bloc.add(.changeMethod(newSelection.first));
+          selected: state.method,
+          onChanged: (method) {
+            bloc.add(.changeMethod(method));
           },
         );
       },

@@ -44,6 +44,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       transformer: restartableByKey((e) => e.method),
     );
     on<_TrySubmit>(_onTrySubmit);
+    on<_RegisterAllDetails>(
+      _onRegisterAllDetails,
+      transformer: droppable(),
+    );
 
     _authRepository = InjectorManager().current.authRepository;
     add(const .init());
@@ -85,9 +89,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(
       state.copyWith(
         mode: event.mode,
-        step: event.mode == .register
-            ? .enterName
-            : .enterIdentifier,
+        step: event.mode == .register ? .enterName : .enterIdentifier,
         fields: newFields,
         passwordField: const FieldState(),
         nameField: const FieldState(),
@@ -269,7 +271,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     final field = state.fields[event.method];
     if (field == null) {
-      const f = AppError.client(type: .state, msg: '[Auth 1] Не было найдено поле ввода');
+      const f = AppError.client(
+        type: .state,
+        msg: '[Auth 1] Не было найдено поле ввода',
+      );
       f.report();
       emit(state.withDetailError(event.method, f));
       return;
@@ -407,7 +412,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-  Future<void> _onCheckDetail(_CheckDetail event, Emitter<AuthState> emit) async {
+  Future<void> _onCheckDetail(
+    _CheckDetail event,
+    Emitter<AuthState> emit,
+  ) async {
     final userId = state.user?.id;
     if (userId == null) return;
 
@@ -435,7 +443,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     final currentField = state.fields[method];
     if (currentField == null) {
-      const f = AppError.client(type: .state, msg: '[Auth 2] Не было найдено поле ввода');
+      const f = AppError.client(
+        type: .state,
+        msg: '[Auth 2] Не было найдено поле ввода',
+      );
       f.report();
       emit(state.withDetailError(method, f));
       return false;
@@ -470,8 +481,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final showPassword = state.step == .enterPassword;
 
     final identifierField = state.fields[state.method];
-    if(identifierField == null) {
-      const f = AppError.client(type: .state, msg: '[Auth 1] Не получается найти идентификатор');
+    if (identifierField == null) {
+      const f = AppError.client(
+        type: .state,
+        msg: '[Auth 1] Не получается найти идентификатор',
+      );
       f.report();
       emit(state.withDetailError(state.method, f));
       return;
@@ -496,10 +510,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
 
     if (needUpdate) {
-      emit(state.copyWith(
-        fields: updatedFields,
-        passwordField: validatedPass ?? state.passwordField,
-      ));
+      emit(
+        state.copyWith(
+          fields: updatedFields,
+          passwordField: validatedPass ?? state.passwordField,
+        ),
+      );
     }
 
     if (!validatedId.hasError) {
@@ -508,6 +524,22 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       } else {
         add(const .submitIdentifier());
       }
+    }
+  }
+
+  void _onRegisterAllDetails(
+    _RegisterAllDetails event,
+    Emitter<AuthState> emit,
+  ) {
+    final availableMethods = state.fields.entries
+        .where((entry) => entry.value.isAvailable)
+        .map((entry) => entry.key)
+        .toList();
+
+    if (availableMethods.isEmpty) return;
+
+    for (final method in availableMethods) {
+      add(.registerDetail(method: method));
     }
   }
 }

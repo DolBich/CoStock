@@ -20,6 +20,25 @@ class _RegisterDetailsView extends StatelessWidget {
     );
   }
 
+  Widget get _registerAllButton {
+    return BlocBuilder<AuthBloc, AuthState>(
+      buildWhen: (p, c) =>
+      p.fields != c.fields || p.isLoading != c.isLoading,
+      builder: (context, state) {
+        final anyLoading = state.fields.values.any((f) => f.isLoading);
+        final anyAvailable = state.fields.values.any((f) => f.isAvailable);
+        final isEnabled = !state.isLoading && !anyLoading && anyAvailable;
+
+        return ElevatedButton(
+          onPressed: isEnabled
+              ? () => context.read<AuthBloc>().add(const .registerAllDetails())
+              : null,
+          child: const Text('Register All'),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(
@@ -32,6 +51,7 @@ class _RegisterDetailsView extends StatelessWidget {
           spacing: 16,
           children: [
             ...missingMethods.map((method) => _DetailField(method: method)),
+            _registerAllButton,
             _skipButton,
           ],
         );
@@ -80,7 +100,7 @@ class __DetailFieldState extends State<_DetailField> {
 
   bool _checker(FieldState? field) =>
       (field?.isValid ?? false) && !(field?.isLoading ?? true);
-  
+
   @override
   Widget build(BuildContext context) {
     final bloc = context.read<AuthBloc>();

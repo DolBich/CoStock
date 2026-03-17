@@ -32,7 +32,7 @@ extension FieldStateValid on FieldState {
   bool get isAvailable {
     final notification = this.notification;
     if(notification == null) return false;
-    if(notification.type is! SnackSuccess) return false;
+    if(notification.type != .success) return false;
     return (notification as SnackSuccess).success.type == .available;
   }
 }

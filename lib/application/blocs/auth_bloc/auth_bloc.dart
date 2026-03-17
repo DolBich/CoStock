@@ -376,6 +376,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   void _onSkipDetails(_SkipDetails event, Emitter<AuthState> emit) {
+    for (final op in _cancelableOps.values) {
+      op.cancel();
+    }
+    _cancelableOps.clear();
+
     emit(state.copyWith(step: .authenticated));
   }
 
@@ -541,5 +546,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     for (final method in availableMethods) {
       add(.registerDetail(method: method));
     }
+  }
+
+  @override
+  Future<void> close() async {
+    for (final op in _cancelableOps.values) {
+      op.cancel();
+    }
+    _cancelableOps.clear();
+
+    super.close();
   }
 }

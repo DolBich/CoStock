@@ -4,16 +4,13 @@ class _RegisterDetailsView extends StatelessWidget {
   const _RegisterDetailsView({super.key});
 
   Widget get _skipButton {
-    return BlocBuilder<AuthBloc, AuthState>(
-      buildWhen: (p, c) => p.isLoading != c.isLoading,
-      builder: (context, state) {
+    return Builder(
+      builder: (context) {
         return OutlinedButton(
-          onPressed: state.isLoading
-              ? null
-              : () {
-                  final bloc = context.read<AuthBloc>();
-                  bloc.add(const .skipDetails());
-                },
+          onPressed: () {
+            final bloc = context.read<AuthBloc>();
+            bloc.add(const .skipDetails());
+          },
           child: const Text('Skip'),
         );
       },
@@ -22,8 +19,7 @@ class _RegisterDetailsView extends StatelessWidget {
 
   Widget get _registerAllButton {
     return BlocBuilder<AuthBloc, AuthState>(
-      buildWhen: (p, c) =>
-      p.fields != c.fields || p.isLoading != c.isLoading,
+      buildWhen: (p, c) => p.fields != c.fields || p.isLoading != c.isLoading,
       builder: (context, state) {
         final anyLoading = state.fields.values.any((f) => f.isLoading);
         final anyAvailable = state.fields.values.any((f) => f.isAvailable);

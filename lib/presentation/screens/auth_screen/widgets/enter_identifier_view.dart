@@ -1,7 +1,29 @@
 part of '../auth_screen.dart';
 
-class _EnterIdentifierView extends StatelessWidget {
+class _EnterIdentifierView extends StatefulWidget {
   const _EnterIdentifierView({super.key});
+
+  @override
+  State<_EnterIdentifierView> createState() => __EnterIdentifierViewState();
+}
+
+class __EnterIdentifierViewState extends State<_EnterIdentifierView> {
+  late final BlocTextFieldController _identifierController;
+  late final BlocTextFieldController _passwordController;
+
+  @override
+  void initState() {
+    super.initState();
+    _identifierController = BlocTextFieldController();
+    _passwordController = BlocTextFieldController();
+  }
+
+  @override
+  void dispose() {
+    _identifierController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   Widget get _segmentedButton {
     return BlocBuilder<AuthBloc, AuthState>(
@@ -14,7 +36,6 @@ class _EnterIdentifierView extends StatelessWidget {
                   value: e,
                   icon: e.icon,
                   label: Text(e.text),
-                  // enabled: !state.isLoading,
                 ),
               )
               .toList(),
@@ -27,7 +48,6 @@ class _EnterIdentifierView extends StatelessWidget {
     );
   }
 
-
   Widget get _identifierField {
     return BlocBuilder<AuthBloc, AuthState>(
       buildWhen: (p, c) =>
@@ -35,6 +55,11 @@ class _EnterIdentifierView extends StatelessWidget {
           p.step != c.step ||
           p.fields.length != c.fields.length,
       builder: (context, state) {
+        /// Эта заглушка спасает нас от бага срабатывания onChange
+        /// от [s.fields[s.method] ?? const FieldState()] при определении
+        /// missing fields для details
+        if(state.fields[state.method] == null) return const SizedBox();
+
         final bloc = context.read<AuthBloc>();
         final method = state.method;
         return BlocTextField<AuthBloc, AuthState>(
@@ -43,14 +68,14 @@ class _EnterIdentifierView extends StatelessWidget {
           keyboardType: method.textInputType,
           inputFormatters: method.textInputFormatters,
           selector: (s) => s.fields[s.method] ?? const FieldState(),
+          controller: _identifierController,
           onChanged: (newField) {
             bloc.add(.updateField(field: .identifier, value: newField));
           },
           onFieldSubmitted: (_) {
             bloc.add(const .submitIdentifier());
           },
-          instantValidator: method.getInstantValidator,
-          finalValidator: method.getFinalValidator,
+          validator: method.validator,
           autofocus: true,
           textInputAction: .done,
         );
@@ -67,29 +92,29 @@ class _EnterIdentifierView extends StatelessWidget {
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
           child: state.step == .enterPassword
-              ? Column(
-                  children: [
-                    BlocTextField<AuthBloc, AuthState>(
-                      hintText: 'Password',
-                      obscureText: true,
-                      selector: (s) => s.passwordField,
-                      onChanged: (newField) {
-                        bloc.add(
-                          .updateField(
-                            field: .password,
-                            value: newField,
-                          ),
-                        );
-                      },
-                      onFieldSubmitted: (_) {
-                        bloc.add(const .submitPassword());
-                      },
-                      instantValidator: Validators.passwordInstant,
-                      finalValidator: Validators.passwordFinal,
-                      textInputAction: .done,
-                    ),
-                  ],
-                )
+              ? Padding(
+                padding: const .symmetric(vertical: 12.0),
+                child: Column(
+                    children: [
+                      BlocTextField<AuthBloc, AuthState>(
+                        hintText: 'Password',
+                        obscureText: true,
+                        selector: (s) => s.passwordField,
+                        controller: _passwordController,
+                        onChanged: (newField) {
+                          bloc.add(
+                            .updateField(field: .password, value: newField),
+                          );
+                        },
+                        onFieldSubmitted: (_) {
+                          bloc.add(const .submitPassword());
+                        },
+                        validator: Validators.password,
+                        textInputAction: .done,
+                      ),
+                    ],
+                  ),
+              )
               : const SizedBox.shrink(),
         );
       },
@@ -105,17 +130,23 @@ class _EnterIdentifierView extends StatelessWidget {
           p.method != c.method ||
           p.step != c.step,
       builder: (context, state) {
-        final bloc = context.read<AuthBloc>();
         final showPassword = state.step == .enterPassword;
         final identifierField = state.fields[state.method];
-
         final enableButton =
             !state.isLoading &&
             !(identifierField?.hasError ?? true) &&
             (!showPassword || !state.passwordField.hasError);
 
         return ElevatedButton(
-          onPressed: enableButton ? () => bloc.add(const .trySubmit()) : null,
+          onPressed: enableButton
+              ? () {
+                  if (showPassword) {
+                    _passwordController.submit();
+                  } else {
+                    _identifierController.submit();
+                  }
+                }
+              : null,
           child: Text(showPassword ? 'Continue' : 'Next'),
         );
       },
@@ -126,9 +157,9 @@ class _EnterIdentifierView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: .stretch,
-      spacing: 12,
       children: [
         _segmentedButton,
+        const SizedBox(height: 12,),
         _identifierField,
         _passwordField,
         _actionButton,

@@ -30,11 +30,9 @@ class _AuthModeSwitcher extends StatelessWidget {
           mainAxisAlignment: .center,
           children: [
             TextButton(
-              onPressed: state.isLoading
-                  ? null
-                  : () {
-                      bloc.add(.changeMode(modeChanger(state.mode)));
-                    },
+              onPressed: () {
+                bloc.add(.changeMode(modeChanger(state.mode)));
+              },
               child: Text(mainText(state.mode)),
             ),
             if (state.mode == .login) ...[

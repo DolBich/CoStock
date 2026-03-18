@@ -1,4 +1,5 @@
-import 'package:co_stock/domain/errors/validation/validation_rule.dart';
+import 'package:co_stock/domain/errors/validation/field_validator.dart';
+import 'package:co_stock/domain/errors/validation/validation_freezed.dart';
 import 'package:co_stock/domain/notifications/snack/snack_notification.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -10,67 +11,105 @@ sealed class FieldState with _$FieldState {
     @Default('') String value,
     @Default(false) bool isLoading,
 
-    /// нужно для показа ошибки только после взаимодействия
-    @Default(false) bool hasInteracted,
-    ValidationRule? instantValidator,
-    ValidationRule? finalValidator,
+    /// [false] - не валидируем и не показываем ошибки
+    /// Нужно чтобы ошибки и успехи не отображались сразу, а только если
+    /// пользователь уже что-то сделал с полем
+    @Default(false) bool wasInteracted,
+
+    /// null - пустая строка
+    @Default(false) bool? errorPersisted,
+    ValidationResult? validationResult,
     SnackNotification? notification,
   }) = _FieldState;
 }
 
 extension FieldStateValid on FieldState {
-  bool get isValid =>
-      (notification == null || notification?.type != .error) &&
-      value.isNotEmpty &&
-      instantValidator?.validate(value) == null &&
-      finalValidator?.validate(value) == null;
+  /// Поле считается валидным, если:
+  /// - нет серверной ошибки (notification.error)
+  /// - и (если есть validationResult) у него нет ошибок
+  /// - иначе (для полей без валидации) просто не пустое
+  bool get canSubmit {
+    if (notification?.type == .error) return false;
+    return isValid;
+  }
 
-  bool get hasError => notification?.type == .error;
+  bool get isValid {
+    if (validationResult != null) {
+      return !validationResult!.hasError;
+    }
+    return value.isNotEmpty;
+  }
+  
+  /// Есть ошибка, если:
+  /// - серверная ошибка
+  /// - или validationResult имеет ошибку
+  bool get hasError {
+    if (notification?.type == .error) return true;
+    if (validationResult != null) {
+      return validationResult!.hasError;
+    }
+    return false;
+  }
 
+  bool get showError => wasInteracted && hasError;
+
+  /// Успех только от серверных уведомлений (например, "доступно")
   bool get hasSuccess => notification?.type == .success;
+
+  bool get showSuccess => wasInteracted && hasSuccess;
 
   bool get isAvailable {
     final notification = this.notification;
-    if(notification == null) return false;
-    if(notification.type != .success) return false;
+    if (notification == null) return false;
+    if (notification.type != .success) return false;
     return (notification as SnackSuccess).success.type == .available;
   }
 }
 
-extension FieldValidationExtension on FieldState {
-  FieldState validateInstant() {
-    if (instantValidator == null) return this;
-    final errorText = instantValidator!.validate(value);
-    return _validateRes(errorText);
-  }
+extension FieldStateValidation on FieldState {
+  /// Вычисляет новое состояние поля на основе введённого значения и валидатора.
+  /// - [newValue] – новое значение поля
+  /// - [validator] – валидатор поля (может быть null)
+  /// - [forceErrorPersisted] – если true, принудительно устанавливает errorPersisted = hasError
+  FieldState computeWithValidation({
+    required String newValue,
+    required FieldValidator? validator,
 
-  FieldState validateFinal() {
-    if (finalValidator == null) return this;
-    final errorText = finalValidator!.validate(value);
-    return _validateRes(errorText);
-  }
-
-  FieldState _validateRes(String? errorText) {
-    if (errorText != null) {
-      final error = AppError.validator(type: .validator, msg: errorText);
-      return copyWith(
-        notification: .error(error),
-        hasInteracted: true,
-        isLoading: false,
-      );
+    /// Нужно например при submit
+    bool forceErrorPersisted = false,
+  }) {
+    if (validator == null) {
+      return copyWith(value: newValue);
     }
-    final notification = this.notification;
-    if(notification is SnackError && notification.error.isValidationError) {
-      return copyWith(
-        notification: null,
-        hasInteracted: true,
-        isLoading: false,
-      );
+
+    final validationResult = validator.evaluate(newValue);
+
+    bool? newErrorPersisted = errorPersisted;
+
+    if (forceErrorPersisted) {
+      /// Финальная валидация (сабмит, потеря фокуса)
+      newErrorPersisted = validationResult.hasError;
+    } else {
+      /// Мгновенная валидация (пользователь печатает)
+      if (newValue.isEmpty) {
+        /// Пустое поле — ошибку не показываем
+        newErrorPersisted = null;
+      } else if (validationResult.hasImmediateError) {
+        /// Немедленная ошибка — показываем сразу
+        newErrorPersisted = true;
+      } else if (errorPersisted == true && validationResult.hasError) {
+        /// Если ранее была зафиксирована ошибка и она всё ещё существует — сохраняем
+        newErrorPersisted = true;
+      } else {
+        /// В остальных случаях ошибку не показываем
+        newErrorPersisted = false;
+      }
     }
 
     return copyWith(
-      hasInteracted: true,
-      isLoading: false,
+      value: newValue,
+      validationResult: validationResult,
+      errorPersisted: newErrorPersisted,
     );
   }
 }

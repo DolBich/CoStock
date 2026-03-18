@@ -1,7 +1,9 @@
-import 'package:co_stock/domain/errors/validation/validation_rule.dart';
+import 'package:co_stock/domain/errors/validation/displayable_validation_rule.dart';
 
 /// Мгновенная проверка: разрешённые символы (латиница, цифры, подчёркивание)
-class LoginAllowedCharsRule implements ValidationRule {
+class LoginAllowedCharsRule implements DisplayableValidationRule {
+  const LoginAllowedCharsRule();
+
   @override
   String? validate(String input) {
     final forbidden = input.replaceAll(RegExp(r'[a-zA-Z0-9_]'), '');
@@ -10,9 +12,17 @@ class LoginAllowedCharsRule implements ValidationRule {
     }
     return null;
   }
+
+  @override
+  String get description => 'только латинские буквы, цифры и подчёркивание';
+
+  @override
+  bool get triggersImmediateError => true;
 }
 
-class LoginLengthRule implements ValidationRule {
+class LoginLengthRule implements DisplayableValidationRule {
+  const LoginLengthRule();
+
   @override
   String? validate(String input) {
     if (input.length < 3) {
@@ -23,4 +33,10 @@ class LoginLengthRule implements ValidationRule {
     }
     return null;
   }
+
+  @override
+  String get description => 'от 3 до 20 символов';
+
+  @override
+  bool get triggersImmediateError => false;
 }

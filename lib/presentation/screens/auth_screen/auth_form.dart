@@ -14,13 +14,13 @@ class AuthForm extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const .all(24.0),
+          padding: const .only(left: 24.0, right: 24.0, top: 12),
           child: Column(
-            spacing: 16,
+            spacing: 4,
             children: [
-              Flexible(flex: 1, child: _buildHeader(context)),
+              Flexible(flex: 2, child: _buildHeader(context)),
               Flexible(
-                flex: 2,
+                flex: 5,
                 child: SingleChildScrollView(
                   child: Align(
                     alignment: .topCenter,

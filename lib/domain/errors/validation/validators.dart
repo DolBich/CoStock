@@ -1,4 +1,4 @@
-import 'package:co_stock/domain/errors/validation/composite_validator.dart';
+import 'package:co_stock/domain/errors/validation/field_validator.dart';
 import 'package:co_stock/domain/errors/validation/validation_rules/email_rules.dart';
 import 'package:co_stock/domain/errors/validation/validation_rules/login_rules.dart';
 import 'package:co_stock/domain/errors/validation/validation_rules/name_rules.dart';
@@ -6,61 +6,38 @@ import 'package:co_stock/domain/errors/validation/validation_rules/password_rule
 import 'package:co_stock/domain/errors/validation/validation_rules/phone_rules.dart';
 
 class Validators {
-  /// Email
-  static final emailInstant = CompositeValidator([
-    EmailAllowedCharsRule(),
-  ]);
+  static const FieldValidator email = FieldValidator(
+    requirements: [EmailAllowedCharsRule(), EmailAtRule(), EmailDomainRule()],
+  );
 
-  static final emailFinal = CompositeValidator([
-    EmailAllowedCharsRule(),
-    EmailAtRule(),
-    EmailDomainRule(),
-  ]);
+  static const FieldValidator phone = FieldValidator(
+    requirements: [
+      PhoneOnlyDigitsRule(),
+      PhoneCountryCodeRule(),
+      PhoneFullDigitsRule(),
+    ],
+  );
 
-  /// Phone
-  static final phoneInstant = CompositeValidator([
-    PhoneOnlyDigitsRule(),
-    PhoneCountryCodeRule(),
-  ]);
+  static const FieldValidator login = FieldValidator(
+    requirements: [LoginAllowedCharsRule(), LoginLengthRule()],
+  );
 
-  static final phoneFinal = CompositeValidator([
-    PhoneOnlyDigitsRule(),
-    PhoneCountryCodeRule(),
-    PhoneFullDigitsRule(),
-  ]);
+  static const FieldValidator password = FieldValidator(
+    requirements: [PasswordNoWhitespaceRule(), PasswordMinLengthRule()],
+    suggestions: [
+      PasswordUppercaseRule(),
+      PasswordLowercaseRule(),
+      PasswordDigitRule(),
+      PasswordSpecialCharRule(),
+    ],
+    suggestionsText: 'Для улучшения пароля:'
+  );
 
-  /// Login
-  static final loginInstant = CompositeValidator([
-    LoginAllowedCharsRule(),
-  ]);
-
-  static final loginFinal = CompositeValidator([
-    LoginAllowedCharsRule(),
-    LoginLengthRule(),
-  ]);
-
-  /// Password
-  static final passwordInstant = CompositeValidator([
-    PasswordNoWhitespaceRule(),
-  ]);
-
-  static final passwordFinal = CompositeValidator([
-    PasswordNoWhitespaceRule(),
-    PasswordMinLengthRule(),
-    PasswordUppercaseRule(),
-    PasswordLowercaseRule(),
-    PasswordDigitRule(),
-    PasswordSpecialCharRule(),
-  ]);
-
-  /// Name
-  static final nameInstant = CompositeValidator([
-    NameAllowedCharsRule(),
-  ]);
-
-  static final nameFinal = CompositeValidator([
-    NameAllowedCharsRule(),
-    NameMinLengthRule(),
-    NameMaxLengthRule(),
-  ]);
+  static const FieldValidator name = FieldValidator(
+    requirements: [
+      NameAllowedCharsRule(),
+      NameMinLengthRule(),
+      NameMaxLengthRule(),
+    ],
+  );
 }

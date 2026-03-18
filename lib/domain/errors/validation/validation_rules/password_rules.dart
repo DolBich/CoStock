@@ -1,8 +1,8 @@
-import 'package:co_stock/domain/errors/validation/validation_rule.dart';
+import 'package:co_stock/domain/errors/validation/displayable_validation_rule.dart';
 
-class PasswordMinLengthRule implements ValidationRule {
+class PasswordMinLengthRule implements DisplayableValidationRule {
   final int minLength;
-  PasswordMinLengthRule({this.minLength = 6});
+  const PasswordMinLengthRule({this.minLength = 6});
 
   @override
   String? validate(String input) {
@@ -11,9 +11,17 @@ class PasswordMinLengthRule implements ValidationRule {
     }
     return null;
   }
+
+  @override
+  String get description => 'минимум $minLength символов';
+
+  @override
+  bool get triggersImmediateError => false;
 }
 
-class PasswordUppercaseRule implements ValidationRule {
+class PasswordUppercaseRule implements DisplayableValidationRule {
+  const PasswordUppercaseRule();
+
   @override
   String? validate(String input) {
     if (!input.contains(RegExp(r'[A-Z]'))) {
@@ -21,9 +29,17 @@ class PasswordUppercaseRule implements ValidationRule {
     }
     return null;
   }
+
+  @override
+  String get description => 'хотя бы одна заглавная буква';
+
+  @override
+  bool get triggersImmediateError => false;
 }
 
-class PasswordLowercaseRule implements ValidationRule {
+class PasswordLowercaseRule implements DisplayableValidationRule {
+  const PasswordLowercaseRule();
+
   @override
   String? validate(String input) {
     if (!input.contains(RegExp(r'[a-z]'))) {
@@ -31,9 +47,17 @@ class PasswordLowercaseRule implements ValidationRule {
     }
     return null;
   }
+
+  @override
+  String get description => 'хотя бы одна строчная буква';
+
+  @override
+  bool get triggersImmediateError => false;
 }
 
-class PasswordDigitRule implements ValidationRule {
+class PasswordDigitRule implements DisplayableValidationRule {
+  const PasswordDigitRule();
+
   @override
   String? validate(String input) {
     if (!input.contains(RegExp(r'[0-9]'))) {
@@ -41,9 +65,17 @@ class PasswordDigitRule implements ValidationRule {
     }
     return null;
   }
+
+  @override
+  String get description => 'хотя бы одна цифра';
+
+  @override
+  bool get triggersImmediateError => false;
 }
 
-class PasswordSpecialCharRule implements ValidationRule {
+class PasswordSpecialCharRule implements DisplayableValidationRule {
+  const PasswordSpecialCharRule();
+
   @override
   String? validate(String input) {
     if (!input.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
@@ -51,9 +83,17 @@ class PasswordSpecialCharRule implements ValidationRule {
     }
     return null;
   }
+
+  @override
+  String get description => 'хотя бы один спецсимвол (!@#\$%^&*(),.?":{}|<>)';
+
+  @override
+  bool get triggersImmediateError => false;
 }
 
-class PasswordNoWhitespaceRule implements ValidationRule {
+class PasswordNoWhitespaceRule implements DisplayableValidationRule {
+  const PasswordNoWhitespaceRule();
+
   @override
   String? validate(String input) {
     if (input.contains(RegExp(r'\s'))) {
@@ -61,4 +101,10 @@ class PasswordNoWhitespaceRule implements ValidationRule {
     }
     return null;
   }
+
+  @override
+  String get description => 'без пробелов';
+
+  @override
+  bool get triggersImmediateError => true;
 }

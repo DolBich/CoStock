@@ -44,10 +44,7 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.DolBichCorp.CoStock"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
@@ -55,19 +52,20 @@ android {
     }
 
     buildTypes {
+
+        debug {
+            isMinifyEnabled = false
+            isDebuggable = true
+            isShrinkResources = false
+        }
         release {
-            // ====================================================
-            // ИСПОЛЬЗОВАНИЕ КОНФИГУРАЦИИ ПОДПИСИ (заменить строку signingConfig)
-            // ====================================================
-            // Для release сборки необходимо иметь файл key.properties
             signingConfig = signingConfigs.getByName("release")
 
-            // Дополнительные настройки для релиза (минификация, etc.)
-            isMinifyEnabled = true
-            isShrinkResources = true
+            isMinifyEnabled = false
+            isShrinkResources = false
             proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"), /// Базовые правила оптимизации от Google
-                "proguard-rules.pro" /// Наши правила для Flutter, нативных библиотек и своего кода
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
             )
         }
     }

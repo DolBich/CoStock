@@ -46,7 +46,7 @@ class _RegisterDetailsView extends StatelessWidget {
           crossAxisAlignment: .stretch,
           spacing: 16,
           children: [
-            ...missingMethods.map((method) => _DetailField(method: method)),
+            ...missingMethods.mapWithIndex((method, i) => _DetailField(method: method, first: i == 0,)),
             _registerAllButton,
             _skipButton,
           ],
@@ -58,24 +58,28 @@ class _RegisterDetailsView extends StatelessWidget {
 
 class _DetailField extends StatefulWidget {
   final AuthMethod method;
+  final bool first;
 
-  const _DetailField({required this.method});
+  const _DetailField({required this.method, this.first = false});
 
   @override
   __DetailFieldState createState() => __DetailFieldState();
 }
 
 class __DetailFieldState extends State<_DetailField> {
+  late final BlocTextFieldController _controller;
   Timer? _debounceTimer;
 
   @override
   void initState() {
     super.initState();
+    _controller = BlocTextFieldController();
   }
 
   @override
   void dispose() {
     _debounceTimer?.cancel();
+    _controller.dispose();
     super.dispose();
   }
 
@@ -86,7 +90,7 @@ class __DetailFieldState extends State<_DetailField> {
 
     _debounceTimer?.cancel();
     _debounceTimer = Timer(const Duration(milliseconds: 500), () {
-      final currentState = context.read<AuthBloc>().state;
+      final currentState = bloc.state;
       final currentField = currentState.fields[widget.method]!;
       if (_checker(currentField)) {
         bloc.add(.checkDetail(widget.method));
@@ -104,15 +108,21 @@ class __DetailFieldState extends State<_DetailField> {
     return BlocBuilder<AuthBloc, AuthState>(
       buildWhen: (p, c) => p.fields.length != c.fields.length,
       builder: (context, state) {
+
+        /// Эта заглушка спасает нас от бага срабатывания onChange
+        /// от [s.fields[method] ?? const FieldState()] при определении
+        /// missing fields для details
+        if(state.fields[method] == null) return const SizedBox();
+
         return BlocTextField<AuthBloc, AuthState>(
           key: ValueKey(method.name),
           hintText: method.text,
           keyboardType: method.textInputType,
           inputFormatters: method.textInputFormatters,
           selector: (s) => s.fields[method] ?? const FieldState(),
+          controller: _controller,
           onChanged: _onTextChanged,
-          instantValidator: method.getInstantValidator,
-          finalValidator: method.getFinalValidator,
+          validator: method.validator,
           onFieldSubmitted: (_) =>
               bloc.add(.registerDetail(method: widget.method)),
           textInputAction: .done,

@@ -43,11 +43,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       _onCheckDetail,
       transformer: restartableByKey((e) => e.method),
     );
-    on<_TrySubmit>(_onTrySubmit);
-    on<_RegisterAllDetails>(
-      _onRegisterAllDetails,
-      transformer: droppable(),
-    );
+    on<_RegisterAllDetails>(_onRegisterAllDetails, transformer: droppable());
 
     _authRepository = InjectorManager().current.authRepository;
     add(const .init());
@@ -121,9 +117,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   Future<void> _submitAuthIdentifier(Emitter<AuthState> emit) async {
+    final identifier = state.identifier;
+    if (identifier.isEmpty) {
+      const f = AppError.client(type: .state, msg: 'Identifier is empty');
+      f.report();
+      emit(state.withIdentifierError(f));
+      return;
+    }
+
     final res = await _authRepository.checkAuthAccount(
       method: state.method,
-      identifier: state.identifier,
+      identifier: identifier,
     );
 
     res.fold(
@@ -142,9 +146,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   Future<void> _submitRegIdentifier(Emitter<AuthState> emit) async {
+    final identifier = state.identifier;
+    if (identifier.isEmpty) {
+      const f = AppError.client(type: .state, msg: 'Identifier is empty');
+      f.report();
+      emit(state.withIdentifierError(f));
+      return;
+    }
+
     final res = await _authRepository.checkRegAccount(
       method: state.method,
-      identifier: state.identifier,
+      identifier: identifier,
     );
 
     res?.fold(
@@ -180,7 +192,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       return;
     }
 
-    final res = await _authRepository.login(id: id, password: state.password);
+    final password = state.password;
+    if (password.isEmpty) {
+      const f = AppError.client(type: .state, msg: 'Password is empty');
+      f.report();
+      emit(state.withPasswordError(f));
+      return;
+    }
+
+    final res = await _authRepository.login(id: id, password: password);
 
     res.fold(
       (f) {
@@ -210,6 +230,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   Future<void> _submitRegPassword(Emitter<AuthState> emit) async {
+    final password = state.password;
+    if (password.isEmpty) {
+      const f = AppError.client(type: .state, msg: 'Password is empty');
+      f.report();
+      emit(state.withPasswordError(f));
+      return;
+    }
+
     final user = state.toUser;
     if (!user.isValid) {
       const f = AppError.client(type: .state, msg: 'User is invalid');
@@ -480,56 +508,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
 
     return availability;
-  }
-
-  void _onTrySubmit(_TrySubmit event, Emitter<AuthState> emit) {
-    final showPassword = state.step == .enterPassword;
-
-    final identifierField = state.fields[state.method];
-    if (identifierField == null) {
-      const f = AppError.client(
-        type: .state,
-        msg: '[Auth 1] Не получается найти идентификатор',
-      );
-      f.report();
-      emit(state.withDetailError(state.method, f));
-      return;
-    }
-    final validatedId = identifierField.validateFinal();
-
-    // Валидируем поле пароля, если нужно
-    FieldState? validatedPass;
-    if (showPassword) {
-      validatedPass = state.passwordField.validateFinal();
-    }
-
-    // Обновляем поля, если они изменились
-    bool needUpdate = false;
-    final updatedFields = Map.of(state.fields);
-    if (validatedId != identifierField) {
-      updatedFields[state.method] = validatedId;
-      needUpdate = true;
-    }
-    if (validatedPass != null && validatedPass != state.passwordField) {
-      needUpdate = true;
-    }
-
-    if (needUpdate) {
-      emit(
-        state.copyWith(
-          fields: updatedFields,
-          passwordField: validatedPass ?? state.passwordField,
-        ),
-      );
-    }
-
-    if (!validatedId.hasError) {
-      if (showPassword && !(validatedPass?.hasError ?? true)) {
-        add(const .submitPassword());
-      } else {
-        add(const .submitIdentifier());
-      }
-    }
   }
 
   void _onRegisterAllDetails(

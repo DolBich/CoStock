@@ -1,0 +1,288 @@
+import 'dart:async';
+
+import 'package:co_stock/application/controllers/bloc_text_field_controller.dart';
+import 'package:co_stock/domain/errors/validation/field_validator.dart';
+import 'package:co_stock/domain/errors/validation/validation_freezed.dart';
+import 'package:co_stock/domain/notifications/snack/snack_notification.dart';
+import 'package:co_stock/domain/widget_entities/field_state.dart';
+import 'package:co_stock/presentation/prefs/theme/app_theme_impl.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+
+part 'validation_display.dart';
+
+class BlocTextField<B extends StateStreamable<S>, S> extends StatefulWidget {
+  final String? hintText;
+  final TextInputType keyboardType;
+  final List<TextInputFormatter>? inputFormatters;
+  final bool obscureText;
+  final bool autofocus;
+  final TextInputAction? textInputAction;
+  final FocusNode? focusNode;
+  final int? errorMaxLines;
+  final FieldState Function(S) selector;
+  final BlocTextFieldController? controller;
+  final FieldValidator? validator;
+  final void Function(FieldState) onChanged;
+  final void Function(String)? onFieldSubmitted;
+
+  const BlocTextField({
+    super.key,
+    required this.selector,
+    required this.onChanged,
+    this.controller,
+    this.validator,
+    this.onFieldSubmitted,
+    this.hintText,
+    this.keyboardType = TextInputType.text,
+    this.inputFormatters,
+    this.obscureText = false,
+    this.autofocus = false,
+    this.textInputAction,
+    this.focusNode,
+    this.errorMaxLines = 3,
+  });
+
+  @override
+  State<BlocTextField<B, S>> createState() => _BlocTextFieldState<B, S>();
+}
+
+class _BlocTextFieldState<B extends StateStreamable<S>, S>
+    extends State<BlocTextField<B, S>>
+    with SingleTickerProviderStateMixin {
+  late FocusNode _focusNode;
+  late KeyboardVisibilityController _keyboardVisibilityController;
+  late StreamSubscription<bool> _keyboardSubscription;
+
+  late AnimationController _animationController;
+  late Animation<double> _slideAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 200),
+    );
+    _slideAnimation = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
+    );
+
+    _focusNode = widget.focusNode ?? FocusNode();
+    if (widget.autofocus) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && !_focusNode.hasFocus) {
+          FocusScope.of(context).requestFocus(_focusNode);
+        }
+      });
+    }
+    _focusNode.addListener(_onFocusChange);
+
+    _keyboardVisibilityController = KeyboardVisibilityController();
+    _keyboardSubscription = _keyboardVisibilityController.onChange.listen((
+      isVisible,
+    ) {
+      if (mounted) _validate(errorPersist: !isVisible);
+    });
+
+    widget.controller?.attach(
+      updateValue: _updateValue,
+      validate: _validate,
+      submit: _submit,
+    );
+  }
+
+  void _updateValue(String newValue) {
+    final state = context.read<B>().state;
+    final field = widget.selector(state);
+    final newField = field.computeWithValidation(
+      newValue: newValue,
+      validator: widget.validator,
+    );
+    if (field != newField) {
+      widget.onChanged(
+        newField.copyWith(wasInteracted: true, notification: null),
+      );
+    }
+  }
+
+  /// Нужно чтобы ошибки и успехи не отображались сразу, а только если
+  /// пользователь уже что-то сделал с полем
+  bool get wasInteracted {
+    final state = context.read<B>().state;
+    final field = widget.selector(state);
+
+    return field.wasInteracted;
+  }
+
+  bool _validate({bool errorPersist = true, FieldState? inputField}) {
+    if (!mounted) return false;
+    final state = context.read<B>().state;
+    final field = inputField ?? widget.selector(state);
+
+    FieldState newField = field.computeWithValidation(
+      newValue: field.value,
+      validator: widget.validator,
+      forceErrorPersisted: errorPersist,
+    );
+
+    newField = newField.copyWith(
+      notification: !_focusNode.hasFocus && (newField.errorPersisted ?? false)
+          ? const .error(.validator(type: .validator))
+          : null,
+    );
+
+    if (field != newField) {
+      widget.onChanged(newField);
+    }
+    return newField.canSubmit;
+  }
+
+  void _submit() {
+    final state = context.read<B>().state;
+    final field = widget.selector(state);
+    if (_validate()) {
+      widget.onFieldSubmitted?.call(field.value);
+    }
+
+    /// Если пытаемся засабмитить поле ни разу с ним не провзаимодействовав
+    /// то это должно считаться тем самым взаимодействием с валидацией
+    if (!wasInteracted) {
+      _validate(inputField: field.copyWith(wasInteracted: true));
+    }
+  }
+
+  void _onFocusChange() {
+    if (mounted) _validate(errorPersist: !_focusNode.hasFocus);
+    setState(() {});
+  }
+
+  @override
+  void dispose() {
+    _focusNode.removeListener(_onFocusChange);
+    _animationController.dispose();
+    if (widget.focusNode == null) _focusNode.dispose();
+    _keyboardSubscription.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<B, S>(
+      buildWhen: (p, c) => widget.selector(p) != widget.selector(c),
+      builder: (context, state) {
+        final FieldState field = widget.selector(state);
+        final validationResult = field.validationResult;
+        final bool showValidation =
+            validationResult != null && _focusNode.hasFocus;
+
+        /// --- ОТОБРАЖЕНИЕ ОШИБОК И УСПЕХА ---
+        String? helperText;
+        Color? helperColor;
+        Widget? suffixIcon;
+        const double iconSize = 20;
+
+        if (field.isLoading) {
+          suffixIcon = const Padding(
+            padding: .all(8.0),
+            child: CircularProgressIndicator(strokeWidth: 2),
+          );
+        } else if (field.notification != null && wasInteracted) {
+          final notification = field.notification!;
+          helperText = notification.userMessage;
+          helperColor = notification.type.backgroundColor;
+          suffixIcon = Icon(
+            notification.type.icon,
+            color: helperColor,
+            size: iconSize,
+          );
+        }
+
+        final isError = field.showError;
+        final isSuccess = field.showSuccess;
+
+        /// --- ОТОБРАЖЕНИЕ ОШИБОК И УСПЕХА ---
+
+        /// --- ОТОБРАЖЕНИЕ ГРАНИЦЫ ----
+        final theme = Theme.of(context);
+        final inputTheme = theme.inputDecorationTheme;
+
+        InputBorder? enabledBorder;
+        InputBorder? focusedBorder;
+
+        if (isSuccess) {
+          enabledBorder = inputTheme.enabledBorder?.copyWith(
+            borderSide: inputTheme.enabledBorder?.borderSide.copyWith(
+              color: AppThemeImpl.success,
+            ),
+          );
+          focusedBorder = inputTheme.focusedBorder?.copyWith(
+            borderSide: inputTheme.focusedBorder?.borderSide.copyWith(
+              color: AppThemeImpl.success,
+            ),
+          );
+        }
+
+        if (showValidation != _animationController.isCompleted) {
+          if (showValidation) {
+            _animationController.forward();
+          } else {
+            _animationController.reverse();
+          }
+        }
+
+        return Column(
+          children: [
+            TextFormField(
+              focusNode: _focusNode,
+              initialValue: field.value,
+              decoration: InputDecoration(
+                hintText: widget.hintText,
+                errorText: isError ? helperText : null,
+                helperText: helperText,
+                helperStyle: helperColor != null
+                    ? TextStyle(color: helperColor)
+                    : null,
+                errorMaxLines: widget.errorMaxLines,
+                suffixIcon: suffixIcon,
+                enabledBorder: enabledBorder,
+                focusedBorder: focusedBorder,
+              ),
+              keyboardType: widget.keyboardType,
+              inputFormatters: widget.inputFormatters,
+              obscureText: widget.obscureText,
+              autofocus: widget.autofocus,
+              textInputAction: widget.textInputAction,
+              onChanged: _updateValue,
+              onEditingComplete: () {},
+              onFieldSubmitted: (_) => _submit(),
+            ),
+            AnimatedBuilder(
+              animation: _animationController,
+              builder: (context, child) {
+                return SizeTransition(
+                  sizeFactor: _slideAnimation,
+                  axisAlignment: -1.0,
+                  child: Opacity(
+                    opacity: _animationController.value,
+                    child: child,
+                  ),
+                );
+              },
+              child: validationResult != null
+                  ? _ValidationDisplay(
+                      validationResult: validationResult,
+                      errorPersisted: field.wasInteracted
+                          ? field.errorPersisted
+                          : null,
+                    )
+                  : const SizedBox.shrink(),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}

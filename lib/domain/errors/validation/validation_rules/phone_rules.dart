@@ -1,8 +1,9 @@
+import 'package:co_stock/domain/errors/validation/displayable_validation_rule.dart';
 
-import 'package:co_stock/domain/errors/validation/validation_rule.dart';
 
+class PhoneCountryCodeRule implements DisplayableValidationRule {
+  const PhoneCountryCodeRule();
 
-class PhoneCountryCodeRule implements ValidationRule {
   @override
   String? validate(String input) {
     final digits = input.replaceAll(RegExp(r'\D'), '');
@@ -11,11 +12,17 @@ class PhoneCountryCodeRule implements ValidationRule {
     }
     return null;
   }
+
+  @override
+  String get description => 'начинаться с 7 или 8';
+
+  @override
+  bool get triggersImmediateError => false;
 }
 
-/// Проверяет, что после удаления форматирования остались только цифры
-/// (это гарантирует, что форматтер не пропустил ничего лишнего)
-class PhoneOnlyDigitsRule implements ValidationRule {
+class PhoneOnlyDigitsRule implements DisplayableValidationRule {
+  const PhoneOnlyDigitsRule();
+
   @override
   String? validate(String input) {
     final forbidden = input.replaceAll(RegExp(r'[\d\s\(\)\-+]'), '');
@@ -24,10 +31,17 @@ class PhoneOnlyDigitsRule implements ValidationRule {
     }
     return null;
   }
+
+  @override
+  String get description => 'только цифры, пробелы, скобки, дефисы, +';
+
+  @override
+  bool get triggersImmediateError => true;
 }
 
-/// Проверяет полное количество цифр (11)
-class PhoneFullDigitsRule implements ValidationRule {
+class PhoneFullDigitsRule implements DisplayableValidationRule {
+  const PhoneFullDigitsRule();
+
   @override
   String? validate(String input) {
     final digits = input.replaceAll(RegExp(r'\D'), '');
@@ -36,4 +50,10 @@ class PhoneFullDigitsRule implements ValidationRule {
     }
     return null;
   }
+
+  @override
+  String get description => 'ровно 11 цифр';
+
+  @override
+  bool get triggersImmediateError => false;
 }

@@ -1,6 +1,8 @@
-import 'package:co_stock/domain/errors/validation/validation_rule.dart';
+import 'package:co_stock/domain/errors/validation/displayable_validation_rule.dart';
 
-class EmailAllowedCharsRule implements ValidationRule {
+class EmailAllowedCharsRule implements DisplayableValidationRule {
+  const EmailAllowedCharsRule();
+
   @override
   String? validate(String input) {
     final regex = RegExp(r'^[a-zA-Z0-9._\-@]*$');
@@ -9,9 +11,17 @@ class EmailAllowedCharsRule implements ValidationRule {
     }
     return null;
   }
+
+  @override
+  String get description => 'только латинские буквы, цифры, точки, дефисы, подчёркивания и @';
+
+  @override
+  bool get triggersImmediateError => true;
 }
 
-class EmailAtRule implements ValidationRule {
+class EmailAtRule implements DisplayableValidationRule {
+  const EmailAtRule();
+
   @override
   String? validate(String input) {
     if (!input.contains('@')) {
@@ -19,9 +29,17 @@ class EmailAtRule implements ValidationRule {
     }
     return null;
   }
+
+  @override
+  String get description => 'содержать символ @';
+
+  @override
+  bool get triggersImmediateError => false;
 }
 
-class EmailDomainRule implements ValidationRule {
+class EmailDomainRule implements DisplayableValidationRule {
+  const EmailDomainRule();
+
   @override
   String? validate(String input) {
     final parts = input.split('@');
@@ -33,7 +51,12 @@ class EmailDomainRule implements ValidationRule {
     if (lastParts.length != 2) return 'Domain must have one .';
     if (lastParts[0].isEmpty) return 'Domain must have part before .';
     if (lastParts[1].isEmpty) return 'Email must have part after .';
-
     return null;
   }
+
+  @override
+  String get description => 'корректный формат email (например, name@domain.ru)';
+
+  @override
+  bool get triggersImmediateError => false;
 }

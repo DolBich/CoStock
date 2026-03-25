@@ -101,6 +101,7 @@ class __EnterIdentifierViewState extends State<_EnterIdentifierView> {
                         obscureText: true,
                         selector: (s) => s.passwordField,
                         controller: _passwordController,
+                        showToggleObscure: true,
                         onChanged: (newField) {
                           bloc.add(
                             .updateField(field: .password, value: newField),

@@ -27,6 +27,7 @@ class BlocTextField<B extends StateStreamable<S>, S> extends StatefulWidget {
   final FieldValidator? validator;
   final void Function(FieldState) onChanged;
   final void Function(String)? onFieldSubmitted;
+  final bool showToggleObscure;
 
   const BlocTextField({
     super.key,
@@ -43,6 +44,7 @@ class BlocTextField<B extends StateStreamable<S>, S> extends StatefulWidget {
     this.textInputAction,
     this.focusNode,
     this.errorMaxLines = 3,
+    this.showToggleObscure = false,
   });
 
   @override
@@ -59,9 +61,13 @@ class _BlocTextFieldState<B extends StateStreamable<S>, S>
   late AnimationController _animationController;
   late Animation<double> _slideAnimation;
 
+  late bool _obscureText;
+
   @override
   void initState() {
     super.initState();
+    _obscureText = widget.obscureText;
+
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 200),
@@ -159,6 +165,12 @@ class _BlocTextFieldState<B extends StateStreamable<S>, S>
     setState(() {});
   }
 
+  void _toggleObscure() {
+    setState(() {
+      _obscureText = !_obscureText;
+    });
+  }
+
   @override
   void dispose() {
     _focusNode.removeListener(_onFocusChange);
@@ -181,11 +193,11 @@ class _BlocTextFieldState<B extends StateStreamable<S>, S>
         /// --- ОТОБРАЖЕНИЕ ОШИБОК И УСПЕХА ---
         String? helperText;
         Color? helperColor;
-        Widget? suffixIcon;
+        Widget? statusIcon;
         const double iconSize = 20;
 
         if (field.isLoading) {
-          suffixIcon = const Padding(
+          statusIcon = const Padding(
             padding: .all(8.0),
             child: CircularProgressIndicator(strokeWidth: 2),
           );
@@ -193,19 +205,51 @@ class _BlocTextFieldState<B extends StateStreamable<S>, S>
           final notification = field.notification!;
           helperText = notification.userMessage;
           helperColor = notification.type.backgroundColor;
-          suffixIcon = Icon(
+          statusIcon = Icon(
             notification.type.icon,
             color: helperColor,
             size: iconSize,
           );
         }
 
-        final isError = field.showError;
-        final isSuccess = field.showSuccess;
+        /// --- СОЗДАНИЕ suffixIcon ---
+        Widget? suffixIcon;
+        if (widget.showToggleObscure) {
+          // Собираем Row из statusIcon и глазика
+          final List<Widget> children = [];
 
-        /// --- ОТОБРАЖЕНИЕ ОШИБОК И УСПЕХА ---
+          if (statusIcon != null) {
+            children.add(statusIcon);
+          }
+
+          children.add(
+            IconButton(
+              icon: Icon(
+                _obscureText ? Icons.visibility_off : Icons.visibility,
+                size: iconSize,
+              ),
+              onPressed: _toggleObscure,
+              padding: .zero,
+              // убираем лишние отступы, чтобы не увеличивать высоту поля
+              constraints: const BoxConstraints(
+                minWidth: 32,
+                minHeight: 32,
+              ), // сохраняем область нажатия
+            ),
+          );
+
+          suffixIcon = Row(
+            mainAxisSize: .min,
+            crossAxisAlignment: .center,
+            children: children,
+          );
+        } else {
+          suffixIcon = statusIcon;
+        }
 
         /// --- ОТОБРАЖЕНИЕ ГРАНИЦЫ ----
+        final isError = field.showError;
+        final isSuccess = field.showSuccess;
         final theme = Theme.of(context);
         final inputTheme = theme.inputDecorationTheme;
 
@@ -252,7 +296,7 @@ class _BlocTextFieldState<B extends StateStreamable<S>, S>
               ),
               keyboardType: widget.keyboardType,
               inputFormatters: widget.inputFormatters,
-              obscureText: widget.obscureText,
+              obscureText: _obscureText,
               autofocus: widget.autofocus,
               textInputAction: widget.textInputAction,
               onChanged: _updateValue,

@@ -35,6 +35,29 @@ class _RegisterDetailsView extends StatelessWidget {
     );
   }
 
+  Widget _descriptionText(BuildContext context) {
+    final theme = Theme.of(context);
+    return Row(
+      children: [
+        Icon(
+          Icons.security,
+          size: 18,
+          color: theme.colorScheme.primary,
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            'Привяжите аккаунт к почте и телефону, чтобы не потерять доступ. '
+                'Это поможет восстановить пароль и защитить данные.',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurface,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(
@@ -46,7 +69,10 @@ class _RegisterDetailsView extends StatelessWidget {
           crossAxisAlignment: .stretch,
           spacing: 16,
           children: [
-            ...missingMethods.mapWithIndex((method, i) => _DetailField(method: method, first: i == 0,)),
+            _descriptionText(context),
+            ...missingMethods.mapWithIndex(
+              (method, i) => _DetailField(method: method, first: i == 0),
+            ),
             _registerAllButton,
             _skipButton,
           ],
@@ -108,11 +134,10 @@ class __DetailFieldState extends State<_DetailField> {
     return BlocBuilder<AuthBloc, AuthState>(
       buildWhen: (p, c) => p.fields.length != c.fields.length,
       builder: (context, state) {
-
         /// Эта заглушка спасает нас от бага срабатывания onChange
         /// от [s.fields[method] ?? const FieldState()] при определении
         /// missing fields для details
-        if(state.fields[method] == null) return const SizedBox();
+        if (state.fields[method] == null) return const SizedBox();
 
         return BlocTextField<AuthBloc, AuthState>(
           key: ValueKey(method.name),

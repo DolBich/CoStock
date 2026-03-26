@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:async/async.dart';
 import 'package:co_stock/application/handlers/event_transformers.dart';
 import 'package:co_stock/data/local_storage/local_storage_impl/local_storage_service.dart';
@@ -43,10 +45,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       transformer: restartableByKey((e) => e.method),
     );
     on<_RegisterAllDetails>(_onRegisterAllDetails, transformer: droppable());
+    on<_RemoveDetail>(_onRemoveDetail);
 
     _authRepository = InjectorManager().current.authRepository;
     add(const .init());
   }
+
+  final Map<AuthMethod, Timer> _removeTimers = {};
 
   Future<void> _onInit(_Init event, Emitter<AuthState> emit) async {
     final savedId = await LocalStorageService.getAuth();
@@ -345,11 +350,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     String userId,
     CancelToken cancelToken,
   ) async {
-    emit(state.withDetailLoading(event.method, true));
+    final method = event.method;
+    emit(state.withDetailLoading(method, true));
 
-    final detail = state.detail(event.method);
+    final detail = state.detail(method);
     final res = await _authRepository.updateDetail(
-      method: event.method,
+      method: method,
       detail: detail,
       id: userId,
       cancelToken: cancelToken,
@@ -361,24 +367,30 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     res.fold(
       (f) {
         f.report();
-        emit(state.withDetailError(event.method, f));
+        emit(state.withDetailError(method, f));
       },
       (_) {
         final user = state.user;
         if (user == null) {
           const f = AppError.client(type: .state, msg: '[Auth 2] No user');
           f.report();
-          emit(state.withDetailError(event.method, f));
+          emit(state.withDetailError(method, f));
           return;
         }
 
         User updatedUser = user;
-        if (event.method == .email) updatedUser = updatedUser.withEmail(detail);
-        if (event.method == .phone) updatedUser = updatedUser.withPhone(detail);
-        if (event.method == .login) updatedUser = updatedUser.withLogin(detail);
+        if (method == .email) updatedUser = updatedUser.withEmail(detail);
+        if (method == .phone) updatedUser = updatedUser.withPhone(detail);
+        if (method == .login) updatedUser = updatedUser.withLogin(detail);
 
-        final newFields = Map<AuthMethod, FieldState>.from(state.fields)
-          ..remove(event.method);
+        final currentField = state.fields[method]!;
+        final updatedField = currentField.copyWith(
+          isLoading: false,
+          notification: const SnackSuccess(.auth(type: .registered)),
+        );
+
+        final newFields = Map<AuthMethod, FieldState>.from(state.fields);
+        newFields[method] = updatedField;
 
         final nextStep = newFields.isEmpty
             ? AuthStep.authenticated
@@ -386,12 +398,29 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
         emit(
           state
-              .withDetailLoading(event.method, false)
+              .withDetailLoading(method, false)
               .copyWith(user: updatedUser, fields: newFields, step: nextStep),
+        );
+
+        _removeTimers[method]?.cancel();
+        _removeTimers[method] = Timer(
+          FieldStateCompleted.removeDelay,
+          () {
+            add(.removeDetail(method));
+          },
         );
       },
     );
   }
+
+  void _onRemoveDetail(_RemoveDetail event, Emitter<AuthState> emit) {
+    final newFields = Map<AuthMethod, FieldState>.from(state.fields);
+    newFields.remove(event.method);
+    final nextStep = newFields.isEmpty ? AuthStep.authenticated : state.step;
+    emit(state.copyWith(fields: newFields, step: nextStep));
+    _removeTimers.remove(event.method);
+  }
+
 
   void _onToggleIdentifier(_ToggleIdentifier event, Emitter<AuthState> emit) {
     emit(state.copyWith(step: .enterIdentifier));
@@ -402,10 +431,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   void _onSkipDetails(_SkipDetails event, Emitter<AuthState> emit) {
-    for (final op in _cancelableOps.values) {
-      op.cancel();
-    }
-    _cancelableOps.clear();
+    closeRemoveTimers();
+    closeCancelableOps();
 
     if (event.dontAskAgain ?? false) {
       final user = state.user;
@@ -451,6 +478,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       case .login:
         final method = event.field.toMethod;
         if (method == null) return;
+
+        final currentField = state.fields[method];
+        if (currentField != null && currentField.completed) return;
 
         final newFields = Map<AuthMethod, FieldState>.from(state.fields);
         newFields[method] = newField;
@@ -541,12 +571,24 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-  @override
-  Future<void> close() async {
+  void closeCancelableOps() {
     for (final op in _cancelableOps.values) {
       op.cancel();
     }
     _cancelableOps.clear();
+  }
+
+  void closeRemoveTimers() {
+    for (final timer in _removeTimers.values) {
+      timer.cancel();
+    }
+    _removeTimers.clear();
+  }
+
+  @override
+  Future<void> close() async {
+    closeCancelableOps();
+    closeRemoveTimers();
 
     super.close();
   }

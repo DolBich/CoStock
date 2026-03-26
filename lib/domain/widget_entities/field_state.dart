@@ -113,3 +113,14 @@ extension FieldStateValidation on FieldState {
     );
   }
 }
+
+extension FieldStateCompleted on FieldState {
+  static const Duration removeDelay = Duration(seconds: 2);
+
+  bool get completed {
+    final notification = this.notification;
+    if (notification?.type != .success) return false;
+    final success = notification as SnackSuccess;
+    return success.success.type == .registered;
+  }
+}

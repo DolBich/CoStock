@@ -6,10 +6,36 @@ class _RegisterDetailsView extends StatelessWidget {
   Widget get _skipButton {
     return Builder(
       builder: (context) {
+        final bloc = context.read<AuthBloc>();
         return OutlinedButton(
           onPressed: () {
-            final bloc = context.read<AuthBloc>();
-            bloc.add(const .skipDetails());
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (dialogContext) => AlertDialog(
+                title: const Text('Пропустить заполнение?'),
+                content: const Text(
+                  'Вы можете заполнить детали позже в профиле. '
+                      'Хотите больше не показывать это окно?',
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(dialogContext).pop();
+                      bloc.add(const .skipDetails());
+                    },
+                    child: const Text('Нет'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(dialogContext).pop();
+                      bloc.add(const .skipDetails(dontAskAgain: true));
+                    },
+                    child: const Text('Да, больше не спрашивать'),
+                  ),
+                ],
+              ),
+            );
           },
           child: const Text('Skip'),
         );

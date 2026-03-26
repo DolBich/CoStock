@@ -24,13 +24,13 @@ extension ProfileStateExt on ProfileState {
   }
 
   ProfileState setDetail({required AuthMethod method, String? value}) {
-    return copyWith(
-      user: user?.copyWith(
-        login: method == .login ? some(value): null,
-        phone: method == .phone ? some(value): null,
-        email: method == .email ? some(value): null,
-      )
-    );
+    User? newUser = user;
+    if (newUser != null) {
+      if (method == .login) newUser = newUser.withLogin(value);
+      if (method == .phone) newUser = newUser.withPhone(value);
+      if (method == .email) newUser = newUser.withEmail(value);
+    }
+    return copyWith(user: newUser);
   }
 
   String? detailFromMethod(AuthMethod method) {

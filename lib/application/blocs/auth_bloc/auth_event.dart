@@ -21,7 +21,7 @@ sealed class AuthEvent with _$AuthEvent {
 
   const factory AuthEvent.changeName() = _ChangeName;
 
-  const factory AuthEvent.skipDetails() = _SkipDetails;
+  const factory AuthEvent.skipDetails({bool? dontAskAgain}) = _SkipDetails;
 
   const factory AuthEvent.updateField({
     required AuthField field,

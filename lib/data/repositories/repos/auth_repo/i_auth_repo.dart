@@ -1,8 +1,8 @@
 import 'package:co_stock/data/repositories/repos/i_repository.dart';
-import 'package:co_stock/domain/bases/cancel_token.dart';
+import 'package:co_stock/application/tools/cancel_token.dart';
 import 'package:co_stock/domain/notifications/snack/snack_notification.dart';
 import 'package:co_stock/domain/screens_entities/auth_screen/auth_method.dart';
-import 'package:co_stock/domain/screens_entities/user_screen/user.dart';
+import 'package:co_stock/domain/bases/user.dart';
 import 'package:fpdart/fpdart.dart';
 
 abstract class IAuthRepository implements IRepository {
@@ -77,5 +77,10 @@ abstract class IAuthRepository implements IRepository {
   Future<Either<AppError, Unit>> updateName({
     required String id,
     required String name,
+  });
+
+  Future<Either<AppError, Unit>> updateUserSettings({
+    required String id,
+    required UserSettings settings,
   });
 }

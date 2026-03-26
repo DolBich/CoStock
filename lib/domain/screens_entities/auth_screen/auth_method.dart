@@ -3,7 +3,7 @@ import 'package:co_stock/domain/errors/validation/field_validator.dart';
 import 'package:co_stock/domain/notifications/snack/snack_notification.dart';
 import 'package:co_stock/domain/errors/validation/validators.dart';
 import 'package:co_stock/domain/screens_entities/auth_screen/auth_field.dart';
-import 'package:co_stock/domain/screens_entities/user_screen/user.dart';
+import 'package:co_stock/domain/bases/user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 

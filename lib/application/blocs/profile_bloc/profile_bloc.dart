@@ -2,13 +2,12 @@ import 'package:async/async.dart';
 import 'package:co_stock/application/handlers/event_transformers.dart';
 import 'package:co_stock/data/repositories/repo_di/injector_manager.dart';
 import 'package:co_stock/data/repositories/repos/auth_repo/i_auth_repo.dart';
-import 'package:co_stock/domain/bases/cancel_token.dart';
-import 'package:co_stock/domain/bases/session_manager.dart';
+import 'package:co_stock/application/tools/cancel_token.dart';
+import 'package:co_stock/application/managers/session_manager.dart';
 import 'package:co_stock/domain/notifications/snack/snack_notification.dart';
 import 'package:co_stock/domain/screens_entities/auth_screen/auth_method.dart';
-import 'package:co_stock/domain/screens_entities/user_screen/user.dart';
+import 'package:co_stock/domain/bases/user.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fpdart/fpdart.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'profile_event.dart';

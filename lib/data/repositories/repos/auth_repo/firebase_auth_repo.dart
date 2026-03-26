@@ -1,8 +1,8 @@
 import 'package:co_stock/data/repositories/repos/auth_repo/i_auth_repo.dart';
-import 'package:co_stock/domain/bases/cancel_token.dart';
+import 'package:co_stock/application/tools/cancel_token.dart';
 import 'package:co_stock/domain/notifications/snack/snack_notification.dart';
 import 'package:co_stock/domain/screens_entities/auth_screen/auth_method.dart';
-import 'package:co_stock/domain/screens_entities/user_screen/user.dart';
+import 'package:co_stock/domain/bases/user.dart';
 import 'package:fpdart/fpdart.dart';
 
 class FirebaseAuthRepository extends IAuthRepository {
@@ -64,6 +64,12 @@ class FirebaseAuthRepository extends IAuthRepository {
   @override
   Future<Either<AppError, Unit>?> checkRegAccount({required AuthMethod method, required String identifier, CancelToken? cancelToken}) {
     // TODO: implement checkRegAccount
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Either<AppError, Unit>> updateUserSettings({required String id, required UserSettings settings}) {
+    // TODO: implement updateUserSettings
     throw UnimplementedError();
   }
 

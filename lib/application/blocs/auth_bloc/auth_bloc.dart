@@ -3,17 +3,16 @@ import 'package:co_stock/application/handlers/event_transformers.dart';
 import 'package:co_stock/data/local_storage/local_storage_impl/local_storage_service.dart';
 import 'package:co_stock/data/repositories/repo_di/injector_manager.dart';
 import 'package:co_stock/data/repositories/repos/auth_repo/i_auth_repo.dart';
-import 'package:co_stock/domain/bases/cancel_token.dart';
-import 'package:co_stock/domain/bases/session_manager.dart';
+import 'package:co_stock/application/tools/cancel_token.dart';
+import 'package:co_stock/application/managers/session_manager.dart';
 import 'package:co_stock/domain/notifications/snack/snack_notification.dart';
 import 'package:co_stock/domain/screens_entities/auth_screen/auth_field.dart';
 import 'package:co_stock/domain/screens_entities/auth_screen/auth_method.dart';
 import 'package:co_stock/domain/screens_entities/auth_screen/auth_mode.dart';
 import 'package:co_stock/domain/screens_entities/auth_screen/auth_step.dart';
-import 'package:co_stock/domain/screens_entities/user_screen/user.dart';
+import 'package:co_stock/domain/bases/user.dart';
 import 'package:co_stock/domain/widget_entities/field_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fpdart/fpdart.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'auth_event.dart';
@@ -58,12 +57,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     final res = await _authRepository.getCurrentUser(id: savedId);
 
-    res.fold(
+    await res.fold(
       (f) {
         f.report();
         emit(state.copyWith(isLoading: false));
       },
-      (user) {
+      (user) async {
         if (user.needDetails) {
           emit(
             state
@@ -202,12 +201,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     final res = await _authRepository.login(id: id, password: password);
 
-    res.fold(
+    await res.fold(
       (f) {
         f.report();
         emit(state.withPasswordError(f));
       },
-      (user) {
+      (user) async {
         LocalStorageService.saveAuth(user.id);
         SessionManager.id = user.id;
 
@@ -248,16 +247,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     final res = await _authRepository.register(user);
 
-    res.fold(
+    await res.fold(
       (f) {
         f.report();
         emit(state.withPasswordError(f));
       },
-      (newId) {
+      (newId) async {
         LocalStorageService.saveAuth(newId);
         SessionManager.id = user.id;
 
-        final updatedUser = user.changeId(newId);
+        final updatedUser = user.copyWith(id: newId);
         if (updatedUser.needDetails) {
           emit(
             state
@@ -373,11 +372,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           return;
         }
 
-        final updatedUser = user.copyWith(
-          email: event.method == .email ? some(detail) : null,
-          phone: event.method == .phone ? some(detail) : null,
-          login: event.method == .login ? some(detail) : null,
-        );
+        User updatedUser = user;
+        if (event.method == .email) updatedUser = updatedUser.withEmail(detail);
+        if (event.method == .phone) updatedUser = updatedUser.withPhone(detail);
+        if (event.method == .login) updatedUser = updatedUser.withLogin(detail);
 
         final newFields = Map<AuthMethod, FieldState>.from(state.fields)
           ..remove(event.method);
@@ -408,6 +406,23 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       op.cancel();
     }
     _cancelableOps.clear();
+
+    if (event.dontAskAgain ?? false) {
+      final user = state.user;
+      if (user == null) {
+        const f = AppError.client(type: .state, msg: '[Auth 3] No user');
+        f.report();
+        return;
+      }
+      final res = _authRepository.updateUserSettings(
+        id: user.id,
+        settings: (user.settings ?? const UserSettings()).copyWith(
+          dontAskDetails: event.dontAskAgain,
+        ),
+      );
+
+      res.then((v) => v.fold((f) => f.report(), (_) {}));
+    }
 
     emit(state.copyWith(step: .authenticated));
   }

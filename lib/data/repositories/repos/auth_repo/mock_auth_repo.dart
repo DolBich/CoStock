@@ -1,15 +1,15 @@
 import 'package:co_stock/data/repositories/repos/auth_repo/i_auth_repo.dart';
 import 'package:co_stock/data/repositories/repos/i_repository.dart';
-import 'package:co_stock/domain/bases/cancel_token.dart';
+import 'package:co_stock/application/tools/cancel_token.dart';
 import 'package:co_stock/domain/notifications/snack/snack_notification.dart';
 import 'package:co_stock/domain/extensions/iterable_ext.dart';
 import 'package:co_stock/domain/screens_entities/auth_screen/auth_method.dart';
-import 'package:co_stock/domain/screens_entities/user_screen/user.dart';
+import 'package:co_stock/domain/bases/user.dart';
 import 'package:fpdart/fpdart.dart';
 
 class MockAuthRepository  extends IAuthRepository  with MockRepoDelay {
   Map<String, User> savedUsers = {
-    'UniqueId': User(
+    'UniqueId': const User.customId(
       id: 'UniqueId',
       name: 'Иванов Дмитрий Игоревич',
       login: 'DolBich',
@@ -108,7 +108,7 @@ class MockAuthRepository  extends IAuthRepository  with MockRepoDelay {
       );
     }
 
-    savedUsers[id] = user.copyWith(email: some(email));
+    savedUsers[id] = user.copyWith(email: email);
     return right(unit);
   }
 
@@ -128,7 +128,7 @@ class MockAuthRepository  extends IAuthRepository  with MockRepoDelay {
       );
     }
 
-    savedUsers[id] = user.copyWith(login: some(login));
+    savedUsers[id] = user.copyWith(login: login);
     return right(unit);
   }
 
@@ -166,7 +166,7 @@ class MockAuthRepository  extends IAuthRepository  with MockRepoDelay {
       );
     }
 
-    savedUsers[id] = user.copyWith(phone: some(phone));
+    savedUsers[id] = user.copyWith(phone: phone);
     return right(unit);
   }
 
@@ -183,6 +183,17 @@ class MockAuthRepository  extends IAuthRepository  with MockRepoDelay {
     }
 
     savedUsers[id] = user.copyWith(name: name);
+    return right(unit);
+  }
+
+  @override
+  Future<Either<AppError, Unit>> updateUserSettings({
+    required String id,
+    required UserSettings settings,
+  }) async {
+    final user = savedUsers[id];
+    if (user == null) return left(const .client(type: .state, msg: 'User not found'));
+    savedUsers[id] = user.copyWith(settings: settings);
     return right(unit);
   }
 }

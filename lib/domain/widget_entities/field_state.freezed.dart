@@ -15,6 +15,8 @@ T _$identity<T>(T value) => value;
 mixin _$FieldState {
 
  String get value; bool get isLoading;/// [false] - не валидируем и не показываем ошибки
+/// Нужно чтобы ошибки и успехи не отображались сразу, а только если
+/// пользователь уже что-то сделал с полем
  bool get wasInteracted;/// null - пустая строка
  bool? get errorPersisted; ValidationResult? get validationResult; SnackNotification? get notification;
 /// Create a copy of FieldState
@@ -237,6 +239,8 @@ class _FieldState implements FieldState {
 @override@JsonKey() final  String value;
 @override@JsonKey() final  bool isLoading;
 /// [false] - не валидируем и не показываем ошибки
+/// Нужно чтобы ошибки и успехи не отображались сразу, а только если
+/// пользователь уже что-то сделал с полем
 @override@JsonKey() final  bool wasInteracted;
 /// null - пустая строка
 @override@JsonKey() final  bool? errorPersisted;

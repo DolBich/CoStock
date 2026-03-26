@@ -152,7 +152,7 @@ return registerAllDetails(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  init,TResult Function( AuthMode mode)?  changeMode,TResult Function( AuthMethod method)?  changeMethod,TResult Function()?  submitIdentifier,TResult Function()?  submitPassword,TResult Function( AuthMethod method)?  registerDetail,TResult Function()?  toggleIdentifier,TResult Function()?  changeName,TResult Function()?  skipDetails,TResult Function( AuthField field,  FieldState value)?  updateField,TResult Function( AuthMethod method)?  checkDetail,TResult Function()?  trySubmit,TResult Function()?  registerAllDetails,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  init,TResult Function( AuthMode mode)?  changeMode,TResult Function( AuthMethod method)?  changeMethod,TResult Function()?  submitIdentifier,TResult Function()?  submitPassword,TResult Function( AuthMethod method)?  registerDetail,TResult Function()?  toggleIdentifier,TResult Function()?  changeName,TResult Function( bool? dontAskAgain)?  skipDetails,TResult Function( AuthField field,  FieldState value)?  updateField,TResult Function( AuthMethod method)?  checkDetail,TResult Function()?  trySubmit,TResult Function()?  registerAllDetails,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Init() when init != null:
 return init();case _ChangeMode() when changeMode != null:
@@ -163,7 +163,7 @@ return submitPassword();case _RegisterDetail() when registerDetail != null:
 return registerDetail(_that.method);case _ToggleIdentifier() when toggleIdentifier != null:
 return toggleIdentifier();case _ChangeName() when changeName != null:
 return changeName();case _SkipDetails() when skipDetails != null:
-return skipDetails();case _UpdateField() when updateField != null:
+return skipDetails(_that.dontAskAgain);case _UpdateField() when updateField != null:
 return updateField(_that.field,_that.value);case _CheckDetail() when checkDetail != null:
 return checkDetail(_that.method);case _TrySubmit() when trySubmit != null:
 return trySubmit();case _RegisterAllDetails() when registerAllDetails != null:
@@ -185,7 +185,7 @@ return registerAllDetails();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  init,required TResult Function( AuthMode mode)  changeMode,required TResult Function( AuthMethod method)  changeMethod,required TResult Function()  submitIdentifier,required TResult Function()  submitPassword,required TResult Function( AuthMethod method)  registerDetail,required TResult Function()  toggleIdentifier,required TResult Function()  changeName,required TResult Function()  skipDetails,required TResult Function( AuthField field,  FieldState value)  updateField,required TResult Function( AuthMethod method)  checkDetail,required TResult Function()  trySubmit,required TResult Function()  registerAllDetails,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  init,required TResult Function( AuthMode mode)  changeMode,required TResult Function( AuthMethod method)  changeMethod,required TResult Function()  submitIdentifier,required TResult Function()  submitPassword,required TResult Function( AuthMethod method)  registerDetail,required TResult Function()  toggleIdentifier,required TResult Function()  changeName,required TResult Function( bool? dontAskAgain)  skipDetails,required TResult Function( AuthField field,  FieldState value)  updateField,required TResult Function( AuthMethod method)  checkDetail,required TResult Function()  trySubmit,required TResult Function()  registerAllDetails,}) {final _that = this;
 switch (_that) {
 case _Init():
 return init();case _ChangeMode():
@@ -196,7 +196,7 @@ return submitPassword();case _RegisterDetail():
 return registerDetail(_that.method);case _ToggleIdentifier():
 return toggleIdentifier();case _ChangeName():
 return changeName();case _SkipDetails():
-return skipDetails();case _UpdateField():
+return skipDetails(_that.dontAskAgain);case _UpdateField():
 return updateField(_that.field,_that.value);case _CheckDetail():
 return checkDetail(_that.method);case _TrySubmit():
 return trySubmit();case _RegisterAllDetails():
@@ -214,7 +214,7 @@ return registerAllDetails();}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  init,TResult? Function( AuthMode mode)?  changeMode,TResult? Function( AuthMethod method)?  changeMethod,TResult? Function()?  submitIdentifier,TResult? Function()?  submitPassword,TResult? Function( AuthMethod method)?  registerDetail,TResult? Function()?  toggleIdentifier,TResult? Function()?  changeName,TResult? Function()?  skipDetails,TResult? Function( AuthField field,  FieldState value)?  updateField,TResult? Function( AuthMethod method)?  checkDetail,TResult? Function()?  trySubmit,TResult? Function()?  registerAllDetails,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  init,TResult? Function( AuthMode mode)?  changeMode,TResult? Function( AuthMethod method)?  changeMethod,TResult? Function()?  submitIdentifier,TResult? Function()?  submitPassword,TResult? Function( AuthMethod method)?  registerDetail,TResult? Function()?  toggleIdentifier,TResult? Function()?  changeName,TResult? Function( bool? dontAskAgain)?  skipDetails,TResult? Function( AuthField field,  FieldState value)?  updateField,TResult? Function( AuthMethod method)?  checkDetail,TResult? Function()?  trySubmit,TResult? Function()?  registerAllDetails,}) {final _that = this;
 switch (_that) {
 case _Init() when init != null:
 return init();case _ChangeMode() when changeMode != null:
@@ -225,7 +225,7 @@ return submitPassword();case _RegisterDetail() when registerDetail != null:
 return registerDetail(_that.method);case _ToggleIdentifier() when toggleIdentifier != null:
 return toggleIdentifier();case _ChangeName() when changeName != null:
 return changeName();case _SkipDetails() when skipDetails != null:
-return skipDetails();case _UpdateField() when updateField != null:
+return skipDetails(_that.dontAskAgain);case _UpdateField() when updateField != null:
 return updateField(_that.field,_that.value);case _CheckDetail() when checkDetail != null:
 return checkDetail(_that.method);case _TrySubmit() when trySubmit != null:
 return trySubmit();case _RegisterAllDetails() when registerAllDetails != null:
@@ -599,33 +599,67 @@ String toString() {
 
 
 class _SkipDetails implements AuthEvent {
-  const _SkipDetails();
+  const _SkipDetails({this.dontAskAgain});
   
 
+ final  bool? dontAskAgain;
 
-
+/// Create a copy of AuthEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$SkipDetailsCopyWith<_SkipDetails> get copyWith => __$SkipDetailsCopyWithImpl<_SkipDetails>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SkipDetails);
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SkipDetails&&(identical(other.dontAskAgain, dontAskAgain) || other.dontAskAgain == dontAskAgain));
 }
 
 
 @override
-int get hashCode => runtimeType.hashCode;
+int get hashCode => Object.hash(runtimeType,dontAskAgain);
 
 @override
 String toString() {
-  return 'AuthEvent.skipDetails()';
+  return 'AuthEvent.skipDetails(dontAskAgain: $dontAskAgain)';
 }
 
 
 }
 
+/// @nodoc
+abstract mixin class _$SkipDetailsCopyWith<$Res> implements $AuthEventCopyWith<$Res> {
+  factory _$SkipDetailsCopyWith(_SkipDetails value, $Res Function(_SkipDetails) _then) = __$SkipDetailsCopyWithImpl;
+@useResult
+$Res call({
+ bool? dontAskAgain
+});
 
 
+
+
+}
+/// @nodoc
+class __$SkipDetailsCopyWithImpl<$Res>
+    implements _$SkipDetailsCopyWith<$Res> {
+  __$SkipDetailsCopyWithImpl(this._self, this._then);
+
+  final _SkipDetails _self;
+  final $Res Function(_SkipDetails) _then;
+
+/// Create a copy of AuthEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? dontAskAgain = freezed,}) {
+  return _then(_SkipDetails(
+dontAskAgain: freezed == dontAskAgain ? _self.dontAskAgain : dontAskAgain // ignore: cast_nullable_to_non_nullable
+as bool?,
+  ));
+}
+
+
+}
 
 /// @nodoc
 
@@ -877,7 +911,7 @@ $Res call({
 });
 
 
-$FieldStateCopyWith<$Res> get passwordField;$FieldStateCopyWith<$Res> get nameField;
+$FieldStateCopyWith<$Res> get passwordField;$FieldStateCopyWith<$Res> get nameField;$UserCopyWith<$Res>? get user;
 
 }
 /// @nodoc
@@ -921,6 +955,18 @@ $FieldStateCopyWith<$Res> get nameField {
   
   return $FieldStateCopyWith<$Res>(_self.nameField, (value) {
     return _then(_self.copyWith(nameField: value));
+  });
+}/// Create a copy of AuthState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$UserCopyWith<$Res>? get user {
+    if (_self.user == null) {
+    return null;
+  }
+
+  return $UserCopyWith<$Res>(_self.user!, (value) {
+    return _then(_self.copyWith(user: value));
   });
 }
 }
@@ -1115,7 +1161,7 @@ $Res call({
 });
 
 
-@override $FieldStateCopyWith<$Res> get passwordField;@override $FieldStateCopyWith<$Res> get nameField;
+@override $FieldStateCopyWith<$Res> get passwordField;@override $FieldStateCopyWith<$Res> get nameField;@override $UserCopyWith<$Res>? get user;
 
 }
 /// @nodoc
@@ -1160,6 +1206,18 @@ $FieldStateCopyWith<$Res> get nameField {
   
   return $FieldStateCopyWith<$Res>(_self.nameField, (value) {
     return _then(_self.copyWith(nameField: value));
+  });
+}/// Create a copy of AuthState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$UserCopyWith<$Res>? get user {
+    if (_self.user == null) {
+    return null;
+  }
+
+  return $UserCopyWith<$Res>(_self.user!, (value) {
+    return _then(_self.copyWith(user: value));
   });
 }
 }

@@ -1,4 +1,4 @@
-import 'package:co_stock/domain/bases/cancel_token.dart';
+import 'package:co_stock/application/tools/cancel_token.dart';
 
 abstract class IRepository {}
 

@@ -1,6 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:co_stock/data/local_storage/local_storage_impl/local_storage_service.dart';
-import 'package:co_stock/domain/bases/session_manager.dart';
+import 'package:co_stock/application/managers/session_manager.dart';
 import 'package:co_stock/presentation/navigation/app_router.dart';
 import 'package:flutter/material.dart';
 

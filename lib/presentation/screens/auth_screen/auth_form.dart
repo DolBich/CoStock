@@ -9,30 +9,69 @@ class AuthForm extends StatelessWidget {
     }
   }
 
+  void _onPop(BuildContext context, bool didPop) {
+    if (!didPop) {
+      final bloc = context.read<AuthBloc>();
+      final state = bloc.state;
+      final prevStep = state.previousStep;
+      if (prevStep != null) {
+        bloc.add(const .systemGoBack());
+      } else if (state.isFirstStep) {
+        SystemNavigator.pop();
+      }
+    }
+  }
+
+  Widget get _leading {
+    return BlocBuilder<AuthBloc, AuthState>(
+      buildWhen: (p, c) => p.step != c.step || p.mode != c.mode,
+      builder: (context, state) {
+        final prevStep = state.previousStep;
+        if (prevStep == null) return const SizedBox.shrink();
+        return IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            context.read<AuthBloc>().add(const .uiGoBack());
+          },
+        );
+      },
+    );
+
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const .only(left: 24.0, right: 24.0, top: 12),
-          child: Column(
-            spacing: 4,
-            children: [
-              Flexible(flex: 2, child: _buildHeader(context)),
-              Flexible(
-                flex: 5,
-                child: SingleChildScrollView(
-                  child: Align(
-                    alignment: .topCenter,
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 400),
-                      child: _buildFields(),
+    return PopScope(
+      /// [canPop: false] не даёт системному назад автоматически закрыть
+      /// страницу. Закрытие в ручную обрабатываем в [_onPop]
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) => _onPop(context, didPop),
+      child: Scaffold(
+        appBar: AppBar(
+          leading: _leading,
+        ),
+        body: SafeArea(
+          child: Padding(
+            padding: const .only(left: 24.0, right: 24.0, top: 12),
+            child: Column(
+              spacing: 4,
+              children: [
+                Flexible(flex: 2, child: _buildHeader(context)),
+                Flexible(
+                  flex: 5,
+                  child: SingleChildScrollView(
+                    child: Align(
+                      alignment: .topCenter,
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 400),
+                        child: _buildFields(),
+                      ),
                     ),
                   ),
                 ),
-              ),
-              const _AuthModeSwitcher(),
-            ],
+                const _AuthModeSwitcher(),
+              ],
+            ),
           ),
         ),
       ),

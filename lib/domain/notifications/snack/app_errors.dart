@@ -122,7 +122,7 @@ sealed class AppError extends Snack with _$AppError implements Exception {
   String _validatorMessage(ValidatorErrorType type) {
     switch (type) {
       case .validator:
-        return 'Неизвестная ошибка валидации';
+        return 'Ошибка валидации';
     }
   }
 }

@@ -11,6 +11,7 @@ import 'package:co_stock/presentation/navigation/app_router.dart';
 import 'package:co_stock/presentation/widgets/app_segmented_button.dart';
 import 'package:co_stock/presentation/widgets/text_field/bloc_text_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fpdart/fpdart.dart' show FpdartOnIterable;
 

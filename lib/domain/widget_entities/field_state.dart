@@ -20,6 +20,7 @@ sealed class FieldState with _$FieldState {
     @Default(false) bool? errorPersisted,
     ValidationResult? validationResult,
     SnackNotification? notification,
+    @Default(false) bool removing,
   }) = _FieldState;
 }
 
@@ -116,6 +117,7 @@ extension FieldStateValidation on FieldState {
 
 extension FieldStateCompleted on FieldState {
   static const Duration removeDelay = Duration(seconds: 2);
+  static const Duration removeDuration = Duration(milliseconds: 500);
 
   bool get completed {
     final notification = this.notification;

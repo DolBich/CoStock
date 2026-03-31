@@ -35,4 +35,6 @@ sealed class AuthEvent with _$AuthEvent {
   const factory AuthEvent.registerAllDetails() = _RegisterAllDetails;
 
   const factory AuthEvent.removeDetail(AuthMethod method) = _RemoveDetail;
+
+  const factory AuthEvent.removeDetailFinal(AuthMethod method) = _RemoveDetailFinal;
 }

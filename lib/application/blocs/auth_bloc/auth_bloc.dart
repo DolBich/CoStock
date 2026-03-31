@@ -46,6 +46,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
     on<_RegisterAllDetails>(_onRegisterAllDetails, transformer: droppable());
     on<_RemoveDetail>(_onRemoveDetail);
+    on<_RemoveDetailFinal>(_onRemoveDetailFinal);
 
     _authRepository = InjectorManager().current.authRepository;
     add(const .init());
@@ -414,10 +415,40 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   void _onRemoveDetail(_RemoveDetail event, Emitter<AuthState> emit) {
+    final fields = state.fields;
+    if(fields.length <= 1) {
+      emit(
+        state.copyWith(
+          step: .authenticated
+        )
+      );
+      return;
+    }
+    final field = fields[event.method];
+    if (field == null) return;
+    if (field.removing) return;
+
+    // Переводим поле в состояние "удаляется"
+    final updatedField = field.copyWith(
+      removing: true,
+      isLoading: false,
+    );
     final newFields = Map<AuthMethod, FieldState>.from(state.fields);
-    newFields.remove(event.method);
-    final nextStep = newFields.isEmpty ? AuthStep.authenticated : state.step;
-    emit(state.copyWith(fields: newFields, step: nextStep));
+    newFields[event.method] = updatedField;
+    emit(state.copyWith(fields: newFields));
+
+    // Запускаем таймер на финальное удаление (длительность анимации)
+    _removeTimers[event.method]?.cancel();
+    _removeTimers[event.method] = Timer(FieldStateCompleted.removeDuration, () {
+      add(.removeDetailFinal(event.method));
+    });
+  }
+
+  void _onRemoveDetailFinal(_RemoveDetailFinal event, Emitter<AuthState> emit) {
+    final finalFields = Map<AuthMethod, FieldState>.from(state.fields);
+    finalFields.remove(event.method);
+    final nextStep = finalFields.isEmpty ? AuthStep.authenticated : state.step;
+    emit(state.copyWith(fields: finalFields, step: nextStep));
     _removeTimers.remove(event.method);
   }
 
@@ -542,7 +573,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     final availability = res.fold(
       (f) {
-        f.report();
         emit(state.withDetailError(method, f));
         return false;
       },

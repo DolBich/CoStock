@@ -189,6 +189,7 @@ class _BlocTextFieldState<B extends StateStreamable<S>, S>
         final validationResult = field.validationResult;
         final bool showValidation =
             validationResult != null && _focusNode.hasFocus;
+        final bool completed = field.completed;
 
         /// --- ОТОБРАЖЕНИЕ ОШИБОК И УСПЕХА ---
         String? helperText;
@@ -196,7 +197,15 @@ class _BlocTextFieldState<B extends StateStreamable<S>, S>
         Widget? statusIcon;
         const double iconSize = 20;
 
-        if (field.isLoading) {
+        if (completed) {
+          statusIcon = const Icon(
+            Icons.check_circle,
+            color: AppThemeImpl.success,
+            size: 20,
+          );
+          helperText = 'Подтверждено';
+          helperColor = AppThemeImpl.success;
+        }  else if (field.isLoading) {
           statusIcon = const Padding(
             padding: .all(8.0),
             child: CircularProgressIndicator(strokeWidth: 2),
@@ -256,7 +265,7 @@ class _BlocTextFieldState<B extends StateStreamable<S>, S>
         InputBorder? enabledBorder;
         InputBorder? focusedBorder;
 
-        if (isSuccess) {
+        if (completed || isSuccess) {
           enabledBorder = inputTheme.enabledBorder?.copyWith(
             borderSide: inputTheme.enabledBorder?.borderSide.copyWith(
               color: AppThemeImpl.success,
@@ -280,6 +289,7 @@ class _BlocTextFieldState<B extends StateStreamable<S>, S>
         return Column(
           children: [
             TextFormField(
+              enabled: !completed,
               focusNode: _focusNode,
               initialValue: field.value,
               decoration: InputDecoration(

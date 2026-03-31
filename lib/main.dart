@@ -1,5 +1,7 @@
 import 'package:co_stock/application/blocs/prefs_bloc/prefs_bloc.dart';
+import 'package:co_stock/application/managers/session_manager.dart';
 import 'package:co_stock/data/local_storage/i_local_storage.dart';
+import 'package:co_stock/data/local_storage/local_storage_impl/local_storage_service.dart';
 import 'package:co_stock/data/local_storage/local_storage_impl/shared_preferences_storage.dart';
 import 'package:co_stock/presentation/navigation/app_router.dart';
 import 'package:co_stock/presentation/prefs/locale/locale_data.dart';
@@ -14,6 +16,10 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
   await ILocalStorage.init(SharedPreferencesManager());
+
+  /// Для срабатывания AuthGuards
+  final userId = await LocalStorageService.getAuth();
+  SessionManager.id = userId;
 
   runApp(
     EasyLocalization(

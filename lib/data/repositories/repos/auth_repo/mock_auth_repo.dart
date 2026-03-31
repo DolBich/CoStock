@@ -15,7 +15,7 @@ class MockAuthRepository  extends IAuthRepository  with MockRepoDelay {
       login: 'DolBich',
       phone: '+7 (965) 032-98-29',
       email: 'shotgunz@yandex.ru',
-      password: 'P@__w0rd',
+      password: '123456',
     ),
   };
 

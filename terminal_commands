@@ -1,4 +1,4 @@
-dart run build_runner build - Для единоразовой генерации файлов
+dart run build_runner build --delete-conflicting-outputs - Для единоразовой генерации файлов
 dart run flutter_launcher_icons - Для перегенерации иконок из конфига flutter_launcher_icons.yaml
 dart run flutter_native_splash:create - Для перегенерации splash экрана с конфигом [flutter_native_splash:]
     splash экран - экран во время загрузки приложения

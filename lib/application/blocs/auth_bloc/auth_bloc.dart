@@ -85,15 +85,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   void _onChangeMode(_ChangeMode event, Emitter<AuthState> emit) {
-    final newFields = state.resetFields();
+    final nameField = state.nameField;
 
     emit(
       state.copyWith(
         mode: event.mode,
-        step: event.mode == .register ? .enterName : .enterIdentifier,
-        fields: newFields,
-        passwordField: const FieldState(),
-        nameField: const FieldState(),
+        step: event.mode == .register
+            ? nameField.value.isNotEmpty
+                  ? .enterIdentifier
+                  : .enterName
+            : .enterIdentifier,
         user: null,
       ),
     );
@@ -404,24 +405,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         );
 
         _removeTimers[method]?.cancel();
-        _removeTimers[method] = Timer(
-          FieldStateCompleted.removeDelay,
-          () {
-            add(.removeDetail(method));
-          },
-        );
+        _removeTimers[method] = Timer(FieldStateCompleted.removeDelay, () {
+          add(.removeDetail(method));
+        });
       },
     );
   }
 
   void _onRemoveDetail(_RemoveDetail event, Emitter<AuthState> emit) {
     final fields = state.fields;
-    if(fields.length <= 1) {
-      emit(
-        state.copyWith(
-          step: .authenticated
-        )
-      );
+    if (fields.length <= 1) {
+      emit(state.copyWith(step: .authenticated));
       return;
     }
     final field = fields[event.method];
@@ -429,10 +423,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     if (field.removing) return;
 
     // Переводим поле в состояние "удаляется"
-    final updatedField = field.copyWith(
-      removing: true,
-      isLoading: false,
-    );
+    final updatedField = field.copyWith(removing: true, isLoading: false);
     final newFields = Map<AuthMethod, FieldState>.from(state.fields);
     newFields[event.method] = updatedField;
     emit(state.copyWith(fields: newFields));
@@ -451,7 +442,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(state.copyWith(fields: finalFields, step: nextStep));
     _removeTimers.remove(event.method);
   }
-
 
   void _onToggleIdentifier(_ToggleIdentifier event, Emitter<AuthState> emit) {
     emit(state.copyWith(step: .enterIdentifier));

@@ -19,40 +19,68 @@ enum ValidatorErrorType { validator }
 sealed class AppError extends Snack with _$AppError implements Exception {
   const AppError._();
 
-  const factory AppError.auth({required AuthErrorType type, String? msg}) =
-      _AuthError;
+  const factory AppError.auth({
+    required AuthErrorType type,
+    Object? error,
+    StackTrace? stackTrace,
+  }) = _AuthError;
 
-  const factory AppError.server({required ServerErrorType type, String? msg}) =
-      _ServerError;
+  const factory AppError.server({
+    required ServerErrorType type,
+    Object? error,
+    StackTrace? stackTrace,
+  }) = _ServerError;
 
-  const factory AppError.client({required ClientErrorType type, String? msg}) =
-      _ClientError;
+  const factory AppError.client({
+    required ClientErrorType type,
+    Object? error,
+    StackTrace? stackTrace,
+  }) = _ClientError;
 
   const factory AppError.validator({
     required ValidatorErrorType type,
-    String? msg,
+    Object? error,
+    StackTrace? stackTrace,
   }) = _ValidatorError;
 
   @override
   String get userMessage => when(
-    auth: _authMessage,
-    server: _serverMessage,
-    client: _clientMessage,
-    validator: _validatorMessage,
+    auth: (type, _, _) => _authMessage(type),
+    server: (type, _, _) => _serverMessage(type),
+    client: (type, _, _) => _clientMessage(type),
+    validator: (type, _, _) => _validatorMessage(type),
   );
 
+  @override
+  String get devMessage => when(
+    auth: (type, error, stack) => _formatDevMessage('AuthError($type)', error, stack),
+    server: (type, error, stack) => _formatDevMessage('ServerError($type)', error, stack),
+    client: (type, error, stack) => _formatDevMessage('ClientError($type)', error, stack),
+    validator: (type, error, stack) => _formatDevMessage('ValidatorError($type)', error, stack),
+  );
+
+  String _formatDevMessage(String prefix, Object? error, StackTrace? stack) {
+    final buffer = StringBuffer(prefix);
+    if (error != null) buffer.write(' | error: $error');
+    if (stack != null) buffer.write('\n$stack');
+    return buffer.toString();
+  }
+
   bool get isValidationError => this is _ValidatorError;
+  bool get isClientError => this is _ClientError;
 
   @override
   void report() {
-    // Ошибки валидации не должны показываться в глобальных снекбарах
-    if(isValidationError) return;
+    /// Ошибки валидации не должны показываться в глобальных снекбарах
+    if (isValidationError) return;
+
     SnackError(this).report();
   }
 
-  String _includeMsg(String? msg) => msg != null ? ': $msg' : '';
+  @override
+  void log() => SnackError(this).log();
 
-  String _authMessage(AuthErrorType type, String? msg) {
+  String _authMessage(AuthErrorType type) {
     switch (type) {
       case .identifier:
         return 'Такой пользователь не найден';
@@ -69,32 +97,32 @@ sealed class AppError extends Snack with _$AppError implements Exception {
     }
   }
 
-  String _serverMessage(ServerErrorType type, String? msg) {
+  String _serverMessage(ServerErrorType type) {
     switch (type) {
       case .timeout:
-        return 'Connection timeout. Check your internet.';
+        return 'Нет ответа от сервера. Проверьте подключение к интернету.';
       case .internet:
-        return 'No internet connection.';
+        return 'Отсутствует подключение к интернету. Проверьте настройки сети.';
       case .server:
-        return 'Server error (${msg ?? 'unknown'})';
+        return 'Ошибка на сервере. Попробуйте позже.';
       case .notFound:
-        return 'Данные на сервере не найдены';
+        return 'Данные не найдены. Возможно, они были удалены.';
     }
   }
 
-  String _clientMessage(ClientErrorType type, String? msg) {
+  String _clientMessage(ClientErrorType type) {
     switch (type) {
       case .state:
-        return 'Client error${_includeMsg(msg)}';
+        return 'Произошла внутренняя ошибка. Перезапустите приложение.';
       case .smth:
-        return 'Something went wrong${_includeMsg(msg)}';
+        return 'Что-то пошло не так. Попробуйте повторить действие позже.';
     }
   }
 
-  String _validatorMessage(ValidatorErrorType type, String? msg) {
+  String _validatorMessage(ValidatorErrorType type) {
     switch (type) {
       case .validator:
-        return msg ?? 'Неизвестная ошибка валидации';
+        return 'Неизвестная ошибка валидации';
     }
   }
 }

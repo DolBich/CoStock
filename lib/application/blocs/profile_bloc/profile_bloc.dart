@@ -45,7 +45,11 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   Future<void> _init(_Init event, Emitter<ProfileState> emit) async {
     final id = SessionManager.id;
     if (id == null) {
-      const f = AppError.client(type: .state, msg: 'Couldn\'t get userId');
+      final f = AppError.client(
+        type: .state,
+        error: Exception('Couldn\'t get userId'),
+        stackTrace: StackTrace.current,
+      );
       f.report();
       return;
     }
@@ -77,9 +81,10 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
     final userId = state.user?.id;
     if (userId == null) {
-      const f = AppError.client(
+      final f = AppError.client(
         type: .state,
-        msg: 'Couldn\'t find userId for user info update',
+        error: Exception('Couldn\'t find userId for user info update'),
+        stackTrace: StackTrace.current,
       );
       f.report();
       return;
@@ -145,9 +150,10 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
     final userId = state.user?.id;
     if (userId == null) {
-      const f = AppError.client(
+      final f = AppError.client(
         type: .state,
-        msg: 'Couldn\'t find userId for user info update',
+        error: Exception('Couldn\'t find userId for user info update'),
+        stackTrace: StackTrace.current,
       );
       f.report();
       return;
@@ -187,9 +193,10 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
     final userId = state.user?.id;
     if (userId == null) {
-      const f = AppError.client(
+      final f = AppError.client(
         type: .state,
-        msg: 'Couldn\'t find userId for user info update',
+        error: Exception('Couldn\'t find userId for user info update'),
+        stackTrace: StackTrace.current,
       );
       f.report();
       return;

@@ -111,7 +111,8 @@ extension AuthStateExt on AuthState {
     if (currentField == null) {
       AppError.client(
         type: .state,
-        msg: '[${method.name}] currentField == null - WTF!?',
+        error: Exception('[${method.name}] currentField == null - WTF!?'),
+        stackTrace: StackTrace.current,
       ).report();
       return base;
     }

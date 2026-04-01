@@ -1,22 +1,25 @@
 part of 'snack_notification.dart';
 
-enum AuthSuccessType { available, registered, }
-
+enum AuthSuccessType { available, registered }
 
 @freezed
 sealed class AppSuccess extends Snack with _$AppSuccess {
   const AppSuccess._();
 
   const factory AppSuccess.auth({required AuthSuccessType type, String? msg}) =
-  _AuthSuccess;
+      _AuthSuccess;
 
   @override
-  String get userMessage => when(
-    auth: _authMessage,
-  );
+  String get userMessage => when(auth: _authMessage);
+
+  @override
+  String get devMessage => userMessage;
 
   @override
   void report() => SnackSuccess(this).report();
+
+  @override
+  void log() => SnackSuccess(this).log();
 
   String _authMessage(AuthSuccessType type, String? msg) {
     switch (type) {

@@ -16,12 +16,17 @@ abstract class Snack {
   const Snack();
 
   String get userMessage;
+  String get devMessage;
 
+  /// Для отображения на экране (уведомления для пользователя)
   void report();
+
+  /// Для логирования (уведомления для разработчика)
+  void log();
 }
 
 @freezed
-sealed class SnackNotification with _$SnackNotification {
+sealed class SnackNotification extends Snack with _$SnackNotification {
   const SnackNotification._();
 
   const factory SnackNotification.error(AppError error) = SnackError;
@@ -29,10 +34,18 @@ sealed class SnackNotification with _$SnackNotification {
   const factory SnackNotification.success(AppSuccess success) = SnackSuccess;
 
   /// Сообщение для показа пользователю (делегируется внутреннему объекту)
+  @override
   String get userMessage => map(
     error: (e) => e.error.userMessage,
     success: (s) => s.success.userMessage,
   );
+
+  @override
+  String get devMessage => map(
+    error: (e) => e.error.devMessage,
+    success: (s) => s.success.devMessage,
+  );
+
 
   /// Тип уведомления
   SnackNotificationType get type => map(
@@ -41,5 +54,9 @@ sealed class SnackNotification with _$SnackNotification {
   );
 
   /// Отправить уведомление в глобальный менеджер
+  @override
   void report() => SnackManager().reportSnack(this);
+
+  @override
+  void log() => SnackManager().logSnack(this);
 }

@@ -125,7 +125,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Future<void> _submitAuthIdentifier(Emitter<AuthState> emit) async {
     final identifier = state.identifier;
     if (identifier.isEmpty) {
-      const f = AppError.client(type: .state, msg: 'Identifier is empty');
+      final f = AppError.client(
+        type: .state,
+        error: Exception('Identifier is empty'),
+        stackTrace: StackTrace.current,
+      );
       f.report();
       emit(state.withIdentifierError(f));
       return;
@@ -154,7 +158,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Future<void> _submitRegIdentifier(Emitter<AuthState> emit) async {
     final identifier = state.identifier;
     if (identifier.isEmpty) {
-      const f = AppError.client(type: .state, msg: 'Identifier is empty');
+      final f = AppError.client(
+        type: .state,
+        error: Exception('Identifier is empty'),
+        stackTrace: StackTrace.current,
+      );
       f.report();
       emit(state.withIdentifierError(f));
       return;
@@ -192,7 +200,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Future<void> _submitAuthPassword(Emitter<AuthState> emit) async {
     final id = state.userId;
     if (id == null) {
-      const f = AppError.client(type: .state, msg: 'No user id');
+      final f = AppError.client(
+        type: .state,
+        error: Exception('No user id'),
+        stackTrace: StackTrace.current,
+      );
       f.report();
       emit(state.withPasswordError(f));
       return;
@@ -200,7 +212,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     final password = state.password;
     if (password.isEmpty) {
-      const f = AppError.client(type: .state, msg: 'Password is empty');
+      final f = AppError.client(
+        type: .state,
+        error: Exception('Password is empty'),
+        stackTrace: StackTrace.current,
+      );
       f.report();
       emit(state.withPasswordError(f));
       return;
@@ -238,7 +254,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Future<void> _submitRegPassword(Emitter<AuthState> emit) async {
     final password = state.password;
     if (password.isEmpty) {
-      const f = AppError.client(type: .state, msg: 'Password is empty');
+      final f = AppError.client(
+        type: .state,
+        error: Exception('Password is empty'),
+        stackTrace: StackTrace.current,
+      );
       f.report();
       emit(state.withPasswordError(f));
       return;
@@ -246,7 +266,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     final user = state.toUser;
     if (!user.isValid) {
-      const f = AppError.client(type: .state, msg: 'User is invalid');
+      final f = AppError.client(
+        type: .state,
+        error: Exception('User is invalid: [${user.toString()}]'),
+        stackTrace: StackTrace.current,
+      );
       f.report();
       emit(state.withPasswordError(f));
       return;
@@ -297,7 +321,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     final userId = state.user?.id;
     if (userId == null) {
-      const f = AppError.client(type: .state, msg: '[Auth 1] No user id');
+      final f = AppError.client(
+        type: .state,
+        error: Exception('[Auth 1] No user id'),
+        stackTrace: StackTrace.current,
+      );
       f.report();
       emit(state.withDetailError(event.method, f));
       return;
@@ -305,9 +333,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     final field = state.fields[event.method];
     if (field == null) {
-      const f = AppError.client(
+      final f = AppError.client(
         type: .state,
-        msg: '[Auth 1] Не было найдено поле ввода',
+        error: Exception('[Auth 1] Не было найдено поле ввода'),
+        stackTrace: StackTrace.current,
       );
       f.report();
       emit(state.withDetailError(event.method, f));
@@ -382,7 +411,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       (_) {
         final user = state.user;
         if (user == null) {
-          const f = AppError.client(type: .state, msg: '[Auth 2] No user');
+          final f = AppError.client(
+            type: .state,
+            error: Exception('[Auth 2] No user'),
+            stackTrace: StackTrace.current,
+          );
           f.report();
           emit(state.withDetailError(method, f));
           return;
@@ -466,7 +499,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     if (event.dontAskAgain ?? false) {
       final user = state.user;
       if (user == null) {
-        const f = AppError.client(type: .state, msg: '[Auth 3] No user');
+        final f = AppError.client(
+          type: .state,
+          error: Exception('[Auth 3] No user'),
+          stackTrace: StackTrace.current,
+        );
         f.report();
         return;
       }
@@ -520,9 +557,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   Future<void> _onCheckDetail(
-      _CheckDetail event,
-      Emitter<AuthState> emit,
-      ) async {
+    _CheckDetail event,
+    Emitter<AuthState> emit,
+  ) async {
     final userId = state.user?.id;
     if (userId == null) return;
 
@@ -558,9 +595,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     final currentField = state.fields[method];
     if (currentField == null) {
-      const f = AppError.client(
+      final f = AppError.client(
         type: .state,
-        msg: '[Auth 2] Не было найдено поле ввода',
+        error: Exception('[Auth 2] Не было найдено поле ввода'),
+        stackTrace: StackTrace.current,
       );
       f.report();
       emit(state.withDetailError(method, f));

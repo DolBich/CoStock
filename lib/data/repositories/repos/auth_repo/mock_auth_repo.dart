@@ -7,7 +7,7 @@ import 'package:co_stock/domain/screens_entities/auth_screen/auth_method.dart';
 import 'package:co_stock/domain/bases/user.dart';
 import 'package:fpdart/fpdart.dart';
 
-class MockAuthRepository  extends IAuthRepository  with MockRepoDelay {
+class MockAuthRepository extends IAuthRepository with MockRepoDelay {
   Map<String, User> savedUsers = {
     'UniqueId': const User.customId(
       id: 'UniqueId',
@@ -43,7 +43,7 @@ class MockAuthRepository  extends IAuthRepository  with MockRepoDelay {
     if (cancel) return null;
 
     final res = savedUsers.values.firstWhereOrNull(
-          (User e) => method.check(e, identifier),
+      (User e) => method.check(e, identifier),
     );
 
     return res == null ? right(unit) : left(AppError.auth(type: method.error));
@@ -59,7 +59,11 @@ class MockAuthRepository  extends IAuthRepository  with MockRepoDelay {
     final user = savedUsers[id];
     if (user == null) {
       return left(
-        .client(type: .state, msg: 'Пользователь с id [$id] не был найден'),
+        .client(
+          type: .state,
+          error: Exception('Пользователь с id [$id] не был найден'),
+          stackTrace: StackTrace.current,
+        ),
       );
     }
     final res = user.password == password;
@@ -85,7 +89,11 @@ class MockAuthRepository  extends IAuthRepository  with MockRepoDelay {
     final user = savedUsers[id];
     if (user == null) {
       return left(
-        .client(type: .state, msg: 'Не был найден пользователь с id [$id]'),
+        .client(
+          type: .state,
+          error: Exception('User with id [$id] not found'),
+          stackTrace: StackTrace.current,
+        ),
       );
     }
 
@@ -99,12 +107,16 @@ class MockAuthRepository  extends IAuthRepository  with MockRepoDelay {
     CancelToken? cancelToken,
   }) async {
     final cancel = await cancelableDelay(cancelToken);
-    if(cancel) return null;
+    if (cancel) return null;
 
     final user = savedUsers[id];
     if (user == null) {
       return left(
-            .client(type: .state, msg: 'Не был найден пользователь с id [$id]'),
+        .client(
+          type: .state,
+          error: Exception('Не был найден пользователь с id [$id]'),
+          stackTrace: StackTrace.current,
+        ),
       );
     }
 
@@ -119,12 +131,16 @@ class MockAuthRepository  extends IAuthRepository  with MockRepoDelay {
     CancelToken? cancelToken,
   }) async {
     final cancel = await cancelableDelay(cancelToken);
-    if(cancel) return null;
+    if (cancel) return null;
 
     final user = savedUsers[id];
     if (user == null) {
       return left(
-            .client(type: .state, msg: 'Не был найден пользователь с id [$id]'),
+        .client(
+          type: .state,
+          error: Exception('Не был найден пользователь с id [$id]'),
+          stackTrace: StackTrace.current,
+        ),
       );
     }
 
@@ -142,7 +158,11 @@ class MockAuthRepository  extends IAuthRepository  with MockRepoDelay {
     final user = savedUsers[id];
     if (user == null) {
       return left(
-            .client(type: .state, msg: 'Не был найден пользователь с id [$id]'),
+        .client(
+          type: .state,
+          error: Exception('Не был найден пользователь с id [$id]'),
+          stackTrace: StackTrace.current,
+        ),
       );
     }
 
@@ -157,12 +177,16 @@ class MockAuthRepository  extends IAuthRepository  with MockRepoDelay {
     CancelToken? cancelToken,
   }) async {
     final cancel = await cancelableDelay(cancelToken);
-    if(cancel) return null;
+    if (cancel) return null;
 
     final user = savedUsers[id];
     if (user == null) {
       return left(
-            .client(type: .state, msg: 'Не был найден пользователь с id [$id]'),
+        .client(
+          type: .state,
+          error: Exception('Не был найден пользователь с id [$id]'),
+          stackTrace: StackTrace.current,
+        ),
       );
     }
 
@@ -179,7 +203,13 @@ class MockAuthRepository  extends IAuthRepository  with MockRepoDelay {
     final user = savedUsers[id];
 
     if (user == null) {
-      return left(.client(type: .state, msg: 'Не был найден пользователь с id [$id]'));
+      return left(
+        .client(
+          type: .state,
+          error: Exception('Не был найден пользователь с id [$id]'),
+          stackTrace: StackTrace.current,
+        ),
+      );
     }
 
     savedUsers[id] = user.copyWith(name: name);
@@ -192,7 +222,15 @@ class MockAuthRepository  extends IAuthRepository  with MockRepoDelay {
     required UserSettings settings,
   }) async {
     final user = savedUsers[id];
-    if (user == null) return left(const .client(type: .state, msg: 'User not found'));
+    if (user == null) {
+      return left(
+        .client(
+          type: .state,
+          error: Exception('Не был найден пользователь с id [$id]'),
+          stackTrace: StackTrace.current,
+        ),
+      );
+    }
     savedUsers[id] = user.copyWith(settings: settings);
     return right(unit);
   }

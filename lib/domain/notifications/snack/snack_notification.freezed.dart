@@ -578,7 +578,7 @@ as String?,
 /// @nodoc
 mixin _$AppError {
 
- Enum get type; String? get msg;
+ Enum get type; Object? get error; StackTrace? get stackTrace;
 /// Create a copy of AppError
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -589,16 +589,16 @@ $AppErrorCopyWith<AppError> get copyWith => _$AppErrorCopyWithImpl<AppError>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AppError&&(identical(other.type, type) || other.type == type)&&(identical(other.msg, msg) || other.msg == msg));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AppError&&(identical(other.type, type) || other.type == type)&&const DeepCollectionEquality().equals(other.error, error)&&(identical(other.stackTrace, stackTrace) || other.stackTrace == stackTrace));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,type,msg);
+int get hashCode => Object.hash(runtimeType,type,const DeepCollectionEquality().hash(error),stackTrace);
 
 @override
 String toString() {
-  return 'AppError(type: $type, msg: $msg)';
+  return 'AppError(type: $type, error: $error, stackTrace: $stackTrace)';
 }
 
 
@@ -609,7 +609,7 @@ abstract mixin class $AppErrorCopyWith<$Res>  {
   factory $AppErrorCopyWith(AppError value, $Res Function(AppError) _then) = _$AppErrorCopyWithImpl;
 @useResult
 $Res call({
- String? msg
+ Object? error, StackTrace? stackTrace
 });
 
 
@@ -626,10 +626,10 @@ class _$AppErrorCopyWithImpl<$Res>
 
 /// Create a copy of AppError
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? msg = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? error = freezed,Object? stackTrace = freezed,}) {
   return _then(_self.copyWith(
-msg: freezed == msg ? _self.msg : msg // ignore: cast_nullable_to_non_nullable
-as String?,
+error: freezed == error ? _self.error : error ,stackTrace: freezed == stackTrace ? _self.stackTrace : stackTrace // ignore: cast_nullable_to_non_nullable
+as StackTrace?,
   ));
 }
 
@@ -720,13 +720,13 @@ return validator(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( AuthErrorType type,  String? msg)?  auth,TResult Function( ServerErrorType type,  String? msg)?  server,TResult Function( ClientErrorType type,  String? msg)?  client,TResult Function( ValidatorErrorType type,  String? msg)?  validator,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( AuthErrorType type,  Object? error,  StackTrace? stackTrace)?  auth,TResult Function( ServerErrorType type,  Object? error,  StackTrace? stackTrace)?  server,TResult Function( ClientErrorType type,  Object? error,  StackTrace? stackTrace)?  client,TResult Function( ValidatorErrorType type,  Object? error,  StackTrace? stackTrace)?  validator,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AuthError() when auth != null:
-return auth(_that.type,_that.msg);case _ServerError() when server != null:
-return server(_that.type,_that.msg);case _ClientError() when client != null:
-return client(_that.type,_that.msg);case _ValidatorError() when validator != null:
-return validator(_that.type,_that.msg);case _:
+return auth(_that.type,_that.error,_that.stackTrace);case _ServerError() when server != null:
+return server(_that.type,_that.error,_that.stackTrace);case _ClientError() when client != null:
+return client(_that.type,_that.error,_that.stackTrace);case _ValidatorError() when validator != null:
+return validator(_that.type,_that.error,_that.stackTrace);case _:
   return orElse();
 
 }
@@ -744,13 +744,13 @@ return validator(_that.type,_that.msg);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( AuthErrorType type,  String? msg)  auth,required TResult Function( ServerErrorType type,  String? msg)  server,required TResult Function( ClientErrorType type,  String? msg)  client,required TResult Function( ValidatorErrorType type,  String? msg)  validator,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( AuthErrorType type,  Object? error,  StackTrace? stackTrace)  auth,required TResult Function( ServerErrorType type,  Object? error,  StackTrace? stackTrace)  server,required TResult Function( ClientErrorType type,  Object? error,  StackTrace? stackTrace)  client,required TResult Function( ValidatorErrorType type,  Object? error,  StackTrace? stackTrace)  validator,}) {final _that = this;
 switch (_that) {
 case _AuthError():
-return auth(_that.type,_that.msg);case _ServerError():
-return server(_that.type,_that.msg);case _ClientError():
-return client(_that.type,_that.msg);case _ValidatorError():
-return validator(_that.type,_that.msg);}
+return auth(_that.type,_that.error,_that.stackTrace);case _ServerError():
+return server(_that.type,_that.error,_that.stackTrace);case _ClientError():
+return client(_that.type,_that.error,_that.stackTrace);case _ValidatorError():
+return validator(_that.type,_that.error,_that.stackTrace);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -764,13 +764,13 @@ return validator(_that.type,_that.msg);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( AuthErrorType type,  String? msg)?  auth,TResult? Function( ServerErrorType type,  String? msg)?  server,TResult? Function( ClientErrorType type,  String? msg)?  client,TResult? Function( ValidatorErrorType type,  String? msg)?  validator,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( AuthErrorType type,  Object? error,  StackTrace? stackTrace)?  auth,TResult? Function( ServerErrorType type,  Object? error,  StackTrace? stackTrace)?  server,TResult? Function( ClientErrorType type,  Object? error,  StackTrace? stackTrace)?  client,TResult? Function( ValidatorErrorType type,  Object? error,  StackTrace? stackTrace)?  validator,}) {final _that = this;
 switch (_that) {
 case _AuthError() when auth != null:
-return auth(_that.type,_that.msg);case _ServerError() when server != null:
-return server(_that.type,_that.msg);case _ClientError() when client != null:
-return client(_that.type,_that.msg);case _ValidatorError() when validator != null:
-return validator(_that.type,_that.msg);case _:
+return auth(_that.type,_that.error,_that.stackTrace);case _ServerError() when server != null:
+return server(_that.type,_that.error,_that.stackTrace);case _ClientError() when client != null:
+return client(_that.type,_that.error,_that.stackTrace);case _ValidatorError() when validator != null:
+return validator(_that.type,_that.error,_that.stackTrace);case _:
   return null;
 
 }
@@ -782,11 +782,12 @@ return validator(_that.type,_that.msg);case _:
 
 
 class _AuthError extends AppError {
-  const _AuthError({required this.type, this.msg}): super._();
+  const _AuthError({required this.type, this.error, this.stackTrace}): super._();
   
 
 @override final  AuthErrorType type;
-@override final  String? msg;
+@override final  Object? error;
+@override final  StackTrace? stackTrace;
 
 /// Create a copy of AppError
 /// with the given fields replaced by the non-null parameter values.
@@ -798,16 +799,16 @@ _$AuthErrorCopyWith<_AuthError> get copyWith => __$AuthErrorCopyWithImpl<_AuthEr
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AuthError&&(identical(other.type, type) || other.type == type)&&(identical(other.msg, msg) || other.msg == msg));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AuthError&&(identical(other.type, type) || other.type == type)&&const DeepCollectionEquality().equals(other.error, error)&&(identical(other.stackTrace, stackTrace) || other.stackTrace == stackTrace));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,type,msg);
+int get hashCode => Object.hash(runtimeType,type,const DeepCollectionEquality().hash(error),stackTrace);
 
 @override
 String toString() {
-  return 'AppError.auth(type: $type, msg: $msg)';
+  return 'AppError.auth(type: $type, error: $error, stackTrace: $stackTrace)';
 }
 
 
@@ -818,7 +819,7 @@ abstract mixin class _$AuthErrorCopyWith<$Res> implements $AppErrorCopyWith<$Res
   factory _$AuthErrorCopyWith(_AuthError value, $Res Function(_AuthError) _then) = __$AuthErrorCopyWithImpl;
 @override @useResult
 $Res call({
- AuthErrorType type, String? msg
+ AuthErrorType type, Object? error, StackTrace? stackTrace
 });
 
 
@@ -835,11 +836,11 @@ class __$AuthErrorCopyWithImpl<$Res>
 
 /// Create a copy of AppError
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? type = null,Object? msg = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? type = null,Object? error = freezed,Object? stackTrace = freezed,}) {
   return _then(_AuthError(
 type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
-as AuthErrorType,msg: freezed == msg ? _self.msg : msg // ignore: cast_nullable_to_non_nullable
-as String?,
+as AuthErrorType,error: freezed == error ? _self.error : error ,stackTrace: freezed == stackTrace ? _self.stackTrace : stackTrace // ignore: cast_nullable_to_non_nullable
+as StackTrace?,
   ));
 }
 
@@ -850,11 +851,12 @@ as String?,
 
 
 class _ServerError extends AppError {
-  const _ServerError({required this.type, this.msg}): super._();
+  const _ServerError({required this.type, this.error, this.stackTrace}): super._();
   
 
 @override final  ServerErrorType type;
-@override final  String? msg;
+@override final  Object? error;
+@override final  StackTrace? stackTrace;
 
 /// Create a copy of AppError
 /// with the given fields replaced by the non-null parameter values.
@@ -866,16 +868,16 @@ _$ServerErrorCopyWith<_ServerError> get copyWith => __$ServerErrorCopyWithImpl<_
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ServerError&&(identical(other.type, type) || other.type == type)&&(identical(other.msg, msg) || other.msg == msg));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ServerError&&(identical(other.type, type) || other.type == type)&&const DeepCollectionEquality().equals(other.error, error)&&(identical(other.stackTrace, stackTrace) || other.stackTrace == stackTrace));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,type,msg);
+int get hashCode => Object.hash(runtimeType,type,const DeepCollectionEquality().hash(error),stackTrace);
 
 @override
 String toString() {
-  return 'AppError.server(type: $type, msg: $msg)';
+  return 'AppError.server(type: $type, error: $error, stackTrace: $stackTrace)';
 }
 
 
@@ -886,7 +888,7 @@ abstract mixin class _$ServerErrorCopyWith<$Res> implements $AppErrorCopyWith<$R
   factory _$ServerErrorCopyWith(_ServerError value, $Res Function(_ServerError) _then) = __$ServerErrorCopyWithImpl;
 @override @useResult
 $Res call({
- ServerErrorType type, String? msg
+ ServerErrorType type, Object? error, StackTrace? stackTrace
 });
 
 
@@ -903,11 +905,11 @@ class __$ServerErrorCopyWithImpl<$Res>
 
 /// Create a copy of AppError
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? type = null,Object? msg = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? type = null,Object? error = freezed,Object? stackTrace = freezed,}) {
   return _then(_ServerError(
 type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
-as ServerErrorType,msg: freezed == msg ? _self.msg : msg // ignore: cast_nullable_to_non_nullable
-as String?,
+as ServerErrorType,error: freezed == error ? _self.error : error ,stackTrace: freezed == stackTrace ? _self.stackTrace : stackTrace // ignore: cast_nullable_to_non_nullable
+as StackTrace?,
   ));
 }
 
@@ -918,11 +920,12 @@ as String?,
 
 
 class _ClientError extends AppError {
-  const _ClientError({required this.type, this.msg}): super._();
+  const _ClientError({required this.type, this.error, this.stackTrace}): super._();
   
 
 @override final  ClientErrorType type;
-@override final  String? msg;
+@override final  Object? error;
+@override final  StackTrace? stackTrace;
 
 /// Create a copy of AppError
 /// with the given fields replaced by the non-null parameter values.
@@ -934,16 +937,16 @@ _$ClientErrorCopyWith<_ClientError> get copyWith => __$ClientErrorCopyWithImpl<_
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ClientError&&(identical(other.type, type) || other.type == type)&&(identical(other.msg, msg) || other.msg == msg));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ClientError&&(identical(other.type, type) || other.type == type)&&const DeepCollectionEquality().equals(other.error, error)&&(identical(other.stackTrace, stackTrace) || other.stackTrace == stackTrace));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,type,msg);
+int get hashCode => Object.hash(runtimeType,type,const DeepCollectionEquality().hash(error),stackTrace);
 
 @override
 String toString() {
-  return 'AppError.client(type: $type, msg: $msg)';
+  return 'AppError.client(type: $type, error: $error, stackTrace: $stackTrace)';
 }
 
 
@@ -954,7 +957,7 @@ abstract mixin class _$ClientErrorCopyWith<$Res> implements $AppErrorCopyWith<$R
   factory _$ClientErrorCopyWith(_ClientError value, $Res Function(_ClientError) _then) = __$ClientErrorCopyWithImpl;
 @override @useResult
 $Res call({
- ClientErrorType type, String? msg
+ ClientErrorType type, Object? error, StackTrace? stackTrace
 });
 
 
@@ -971,11 +974,11 @@ class __$ClientErrorCopyWithImpl<$Res>
 
 /// Create a copy of AppError
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? type = null,Object? msg = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? type = null,Object? error = freezed,Object? stackTrace = freezed,}) {
   return _then(_ClientError(
 type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
-as ClientErrorType,msg: freezed == msg ? _self.msg : msg // ignore: cast_nullable_to_non_nullable
-as String?,
+as ClientErrorType,error: freezed == error ? _self.error : error ,stackTrace: freezed == stackTrace ? _self.stackTrace : stackTrace // ignore: cast_nullable_to_non_nullable
+as StackTrace?,
   ));
 }
 
@@ -986,11 +989,12 @@ as String?,
 
 
 class _ValidatorError extends AppError {
-  const _ValidatorError({required this.type, this.msg}): super._();
+  const _ValidatorError({required this.type, this.error, this.stackTrace}): super._();
   
 
 @override final  ValidatorErrorType type;
-@override final  String? msg;
+@override final  Object? error;
+@override final  StackTrace? stackTrace;
 
 /// Create a copy of AppError
 /// with the given fields replaced by the non-null parameter values.
@@ -1002,16 +1006,16 @@ _$ValidatorErrorCopyWith<_ValidatorError> get copyWith => __$ValidatorErrorCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ValidatorError&&(identical(other.type, type) || other.type == type)&&(identical(other.msg, msg) || other.msg == msg));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ValidatorError&&(identical(other.type, type) || other.type == type)&&const DeepCollectionEquality().equals(other.error, error)&&(identical(other.stackTrace, stackTrace) || other.stackTrace == stackTrace));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,type,msg);
+int get hashCode => Object.hash(runtimeType,type,const DeepCollectionEquality().hash(error),stackTrace);
 
 @override
 String toString() {
-  return 'AppError.validator(type: $type, msg: $msg)';
+  return 'AppError.validator(type: $type, error: $error, stackTrace: $stackTrace)';
 }
 
 
@@ -1022,7 +1026,7 @@ abstract mixin class _$ValidatorErrorCopyWith<$Res> implements $AppErrorCopyWith
   factory _$ValidatorErrorCopyWith(_ValidatorError value, $Res Function(_ValidatorError) _then) = __$ValidatorErrorCopyWithImpl;
 @override @useResult
 $Res call({
- ValidatorErrorType type, String? msg
+ ValidatorErrorType type, Object? error, StackTrace? stackTrace
 });
 
 
@@ -1039,11 +1043,11 @@ class __$ValidatorErrorCopyWithImpl<$Res>
 
 /// Create a copy of AppError
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? type = null,Object? msg = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? type = null,Object? error = freezed,Object? stackTrace = freezed,}) {
   return _then(_ValidatorError(
 type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
-as ValidatorErrorType,msg: freezed == msg ? _self.msg : msg // ignore: cast_nullable_to_non_nullable
-as String?,
+as ValidatorErrorType,error: freezed == error ? _self.error : error ,stackTrace: freezed == stackTrace ? _self.stackTrace : stackTrace // ignore: cast_nullable_to_non_nullable
+as StackTrace?,
   ));
 }
 

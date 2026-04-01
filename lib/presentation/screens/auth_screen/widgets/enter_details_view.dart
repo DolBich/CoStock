@@ -141,7 +141,11 @@ class __DetailFieldState extends State<_DetailField>
   void _onTextChanged(FieldState newField) {
     final bloc = context.read<AuthBloc>();
 
+    final currentField = bloc.state.fields[widget.method];
     bloc.add(.updateField(field: widget.method.toField, value: newField));
+
+    /// Проверяем, изменилось ли значение поля
+    if (currentField != null && currentField.value == newField.value) return;
 
     _debounceTimer?.cancel();
     if (newField.completed) return;

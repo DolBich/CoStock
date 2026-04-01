@@ -137,7 +137,7 @@ class _BlocTextFieldState<B extends StateStreamable<S>, S>
     newField = newField.copyWith(
       notification: !_focusNode.hasFocus && (newField.errorPersisted ?? false)
           ? const .error(.validator(type: .validator))
-          : null,
+          : newField.notification,
     );
 
     if (field != newField) {

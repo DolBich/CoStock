@@ -182,4 +182,36 @@ extension AuthStateExt on AuthState {
       passwordField: const FieldState(),
     );
   }
+
+  /// Сбрасывает уведомления и ошибки валидации во всех полях,
+  /// но сохраняет введённые значения.
+  AuthState resetValidation() {
+    // Сброс полей деталей (email, phone, login)
+    final newFields = <AuthMethod, FieldState>{};
+    for (final entry in fields.entries) {
+      newFields[entry.key] = entry.value.copyWith(
+        notification: null,
+        errorPersisted: null,
+        // wasInteracted: false,
+      );
+    }
+
+    // Сброс пароля и имени
+    final newPasswordField = passwordField.copyWith(
+      notification: null,
+      errorPersisted: null,
+      // wasInteracted: false,
+    );
+    final newNameField = nameField.copyWith(
+      notification: null,
+      errorPersisted: null,
+      // wasInteracted: false,
+    );
+
+    return copyWith(
+      fields: newFields,
+      passwordField: newPasswordField,
+      nameField: newNameField,
+    );
+  }
 }

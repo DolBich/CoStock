@@ -88,7 +88,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final nameField = state.nameField;
 
     emit(
-      state.copyWith(
+      state.resetValidation().copyWith(
         mode: event.mode,
         step: event.mode == .register
             ? nameField.value.isNotEmpty

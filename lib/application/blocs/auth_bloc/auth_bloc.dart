@@ -355,6 +355,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final method = event.method;
     emit(state.withDetailLoading(method, true));
 
+    if (cancelToken.isCancelled) {
+      emit(state.withDetailLoading(method, false));
+      return;
+    }
+
     final detail = state.detail(method);
     final res = await _authRepository.updateDetail(
       method: method,
@@ -363,7 +368,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       cancelToken: cancelToken,
     );
 
-    if (cancelToken.isCancelled) return;
+    if (cancelToken.isCancelled) {
+      emit(state.withDetailLoading(method, false));
+      return;
+    }
     if (res == null) return; // отменено в репозитории
 
     res.fold(
@@ -512,9 +520,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   Future<void> _onCheckDetail(
-    _CheckDetail event,
-    Emitter<AuthState> emit,
-  ) async {
+      _CheckDetail event,
+      Emitter<AuthState> emit,
+      ) async {
     final userId = state.user?.id;
     if (userId == null) return;
 
@@ -528,10 +536,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     _cancelableOps[event.method] = operation;
 
-    await operation.valueOrCancellation();
+    final result = await operation.valueOrCancellation();
 
     if (_cancelableOps[event.method] == operation) {
       _cancelableOps.remove(event.method);
+    }
+
+    if (result == null) {
+      // Если операция отменена, сбрасываем загрузку
+      final currentField = state.fields[event.method];
+      if (currentField != null && currentField.isLoading) {
+        emit(state.withDetailLoading(event.method, false));
+      }
     }
   }
 
@@ -558,7 +574,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       cancelToken: cancelToken,
     );
 
-    if (cancelToken.isCancelled) return false;
+    if (cancelToken.isCancelled) {
+      emit(state.withDetailLoading(method, false));
+      return false;
+    }
     if (res == null) return false; // отменено в репозитории
 
     final availability = res.fold(

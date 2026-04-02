@@ -63,6 +63,11 @@ class _BlocTextFieldState<B extends StateStreamable<S>, S>
 
   late bool _obscureText;
 
+  /// Этот контроллер - костыль для вызова PhoneInputFormatter при изменении
+  /// selection
+  final TextEditingController _controller = TextEditingController(text: '+7 (');
+  TextEditingValue? _oldTextValue;
+
   @override
   void initState() {
     super.initState();
@@ -93,11 +98,30 @@ class _BlocTextFieldState<B extends StateStreamable<S>, S>
       if (mounted) _validate(errorPersist: !isVisible);
     });
 
+    if (widget.inputFormatters != null) {
+      _controller.addListener(_controllerListener);
+    }
+
     widget.controller?.attach(
       updateValue: _updateValue,
       validate: _validate,
       submit: _submit,
     );
+  }
+
+  /// Нужен только для отслеживания изменения selection в текстовом поле и
+  /// отправке его не форматирование
+  void _controllerListener() {
+    if (_oldTextValue == _controller.value) return;
+    final formatters = widget.inputFormatters;
+    if (formatters == null) return;
+    final oldValue = _oldTextValue ?? _controller.value;
+    TextEditingValue newValue = _controller.value;
+    for (final formatter in formatters) {
+      newValue = formatter.formatEditUpdate(oldValue, newValue);
+    }
+    _oldTextValue = newValue;
+    _controller.value = newValue;
   }
 
   void _updateValue(String newValue) {
@@ -177,6 +201,7 @@ class _BlocTextFieldState<B extends StateStreamable<S>, S>
     _animationController.dispose();
     if (widget.focusNode == null) _focusNode.dispose();
     _keyboardSubscription.cancel();
+    _controller.removeListener(_controllerListener);
     super.dispose();
   }
 
@@ -190,6 +215,12 @@ class _BlocTextFieldState<B extends StateStreamable<S>, S>
         final bool showValidation =
             validationResult != null && _focusNode.hasFocus;
         final bool completed = field.completed;
+
+        /// Делаем через [copyWith], а не через .text
+        /// Во втором случае меняеся selection на .invalid
+        _controller.value = _controller.value.copyWith(
+          text: field.value.isEmpty ? '+7 (' : field.value,
+        );
 
         /// --- ОТОБРАЖЕНИЕ ОШИБОК И УСПЕХА ---
         String? helperText;
@@ -205,7 +236,7 @@ class _BlocTextFieldState<B extends StateStreamable<S>, S>
           );
           helperText = 'Подтверждено';
           helperColor = AppThemeImpl.success;
-        }  else if (field.isLoading) {
+        } else if (field.isLoading) {
           statusIcon = const Padding(
             padding: .all(8.0),
             child: CircularProgressIndicator(strokeWidth: 2),
@@ -289,9 +320,9 @@ class _BlocTextFieldState<B extends StateStreamable<S>, S>
         return Column(
           children: [
             TextFormField(
+              controller: _controller,
               enabled: !completed,
               focusNode: _focusNode,
-              initialValue: field.value,
               decoration: InputDecoration(
                 hintText: widget.hintText,
                 errorText: isError ? helperText : null,
@@ -305,7 +336,6 @@ class _BlocTextFieldState<B extends StateStreamable<S>, S>
                 focusedBorder: focusedBorder,
               ),
               keyboardType: widget.keyboardType,
-              inputFormatters: widget.inputFormatters,
               obscureText: _obscureText,
               autofocus: widget.autofocus,
               textInputAction: widget.textInputAction,

@@ -105,4 +105,13 @@ extension AuthMethodKeyBoard on AuthMethod {
         return null;
     }
   }
+
+  TextSelectionControls? get textSelectionControls {
+    switch (this) {
+      case .phone:
+        return MaterialTextSelectionControls();
+      default:
+        return null;
+    }
+  }
 }

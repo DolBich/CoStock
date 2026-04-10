@@ -37,4 +37,8 @@ sealed class AuthEvent with _$AuthEvent {
   const factory AuthEvent.removeDetail(AuthMethod method) = _RemoveDetail;
 
   const factory AuthEvent.removeDetailFinal(AuthMethod method) = _RemoveDetailFinal;
+
+  const factory AuthEvent.systemGoBack() = _SystemGoBack;
+
+  const factory AuthEvent.uiGoBack() = _UiGoBack;
 }

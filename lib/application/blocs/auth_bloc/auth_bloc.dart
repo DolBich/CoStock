@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:async/async.dart';
 import 'package:co_stock/application/handlers/event_transformers.dart';
@@ -47,6 +48,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<_RegisterAllDetails>(_onRegisterAllDetails, transformer: droppable());
     on<_RemoveDetail>(_onRemoveDetail);
     on<_RemoveDetailFinal>(_onRemoveDetailFinal);
+    on<_SystemGoBack>(_onSystemGoBack);
+    on<_UiGoBack>(_onUiGoBack);
 
     _authRepository = InjectorManager().current.authRepository;
     add(const .init());
@@ -76,25 +79,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
                 .copyWith(step: .registerDetails, isLoading: false),
           );
         } else {
-          emit(
-            state.copyWith(user: user, step: .authenticated, isLoading: false),
-          );
+          emit(state.authenticated(user));
         }
       },
     );
   }
 
   void _onChangeMode(_ChangeMode event, Emitter<AuthState> emit) {
-    final nameField = state.nameField;
-
     emit(
       state.resetValidation().copyWith(
         mode: event.mode,
-        step: event.mode == .register
-            ? nameField.value.isNotEmpty
-                  ? .enterIdentifier
-                  : .enterName
-            : .enterIdentifier,
+        step: event.mode == .register ? .enterName : .enterIdentifier,
         user: null,
       ),
     );
@@ -230,9 +225,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(state.withPasswordError(f));
       },
       (user) async {
-        LocalStorageService.saveAuth(user.id);
-        SessionManager.id = user.id;
-
         if (user.needDetails) {
           emit(
             state
@@ -241,11 +233,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
                 .copyWith(step: .registerDetails),
           );
         } else {
-          emit(
-            state
-                .withPasswordLoading(false)
-                .copyWith(user: user, step: .authenticated),
-          );
+          emit(state.withPasswordLoading(false).authenticated(user));
         }
       },
     );
@@ -284,9 +272,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(state.withPasswordError(f));
       },
       (newId) async {
-        LocalStorageService.saveAuth(newId);
-        SessionManager.id = user.id;
-
         final updatedUser = user.copyWith(id: newId);
         if (updatedUser.needDetails) {
           emit(
@@ -296,11 +281,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
                 .copyWith(step: .registerDetails),
           );
         } else {
-          emit(
-            state
-                .withPasswordLoading(false)
-                .copyWith(user: updatedUser, step: .authenticated),
-          );
+          emit(state.withPasswordLoading(false).authenticated(user));
         }
       },
     );
@@ -435,14 +416,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         final newFields = Map<AuthMethod, FieldState>.from(state.fields);
         newFields[method] = updatedField;
 
-        final nextStep = newFields.isEmpty
-            ? AuthStep.authenticated
-            : AuthStep.registerDetails;
-
         emit(
           state
               .withDetailLoading(method, false)
-              .copyWith(user: updatedUser, fields: newFields, step: nextStep),
+              .copyWith(user: updatedUser, fields: newFields),
         );
 
         _removeTimers[method]?.cancel();
@@ -455,21 +432,24 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   void _onRemoveDetail(_RemoveDetail event, Emitter<AuthState> emit) {
     final fields = state.fields;
+
+    /// Если это последняя деталь, то не ждём анимации удаления
+    /// а сразу переходим на домашнюю страницу
     if (fields.length <= 1) {
-      emit(state.copyWith(step: .authenticated));
+      emit(state.authenticated(state.user));
       return;
     }
     final field = fields[event.method];
     if (field == null) return;
     if (field.removing) return;
 
-    // Переводим поле в состояние "удаляется"
+    /// Переводим поле в состояние "удаляется"
     final updatedField = field.copyWith(removing: true, isLoading: false);
     final newFields = Map<AuthMethod, FieldState>.from(state.fields);
     newFields[event.method] = updatedField;
     emit(state.copyWith(fields: newFields));
 
-    // Запускаем таймер на финальное удаление (длительность анимации)
+    /// Запускаем таймер на финальное удаление (длительность анимации)
     _removeTimers[event.method]?.cancel();
     _removeTimers[event.method] = Timer(FieldStateCompleted.removeDuration, () {
       add(.removeDetailFinal(event.method));
@@ -479,8 +459,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   void _onRemoveDetailFinal(_RemoveDetailFinal event, Emitter<AuthState> emit) {
     final finalFields = Map<AuthMethod, FieldState>.from(state.fields);
     finalFields.remove(event.method);
-    final nextStep = finalFields.isEmpty ? AuthStep.authenticated : state.step;
-    emit(state.copyWith(fields: finalFields, step: nextStep));
+
+    emit(state.copyWith(fields: finalFields));
     _removeTimers.remove(event.method);
   }
 
@@ -517,7 +497,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       res.then((v) => v.fold((f) => f.report(), (_) {}));
     }
 
-    emit(state.copyWith(step: .authenticated));
+    emit(state.authenticated(state.user));
   }
 
   void _onUpdateField(_UpdateField event, Emitter<AuthState> emit) {
@@ -580,7 +560,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
 
     if (result == null) {
-      // Если операция отменена, сбрасываем загрузку
+      /// Если операция отменена, сбрасываем загрузку
       final currentField = state.fields[event.method];
       if (currentField != null && currentField.isLoading) {
         emit(state.withDetailLoading(event.method, false));
@@ -616,7 +596,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(state.withDetailLoading(method, false));
       return false;
     }
-    if (res == null) return false; // отменено в репозитории
+
+    /// отменено в репозитории
+    if (res == null) return false;
 
     final availability = res.fold(
       (f) {
@@ -660,6 +642,36 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       timer.cancel();
     }
     _removeTimers.clear();
+  }
+
+  /// Возвращение назад, вызванное нажатием системной кнопки
+  /// Подразумевает возврат на предыдущий шаг
+  FutureOr<void> _onSystemGoBack(_SystemGoBack event, Emitter<AuthState> emit) async {
+    if (state.step == .registerDetails || state.step == .authenticated) {
+      /// После ввода пароля мы блокируем возврат через интерфейс и через
+      /// системный нажатия (дальше только вперёд)
+      return;
+    }
+
+    final prevStep = state.previousStep;
+    if (prevStep != null) {
+      emit(state.copyWith(step: prevStep));
+    }
+  }
+
+  /// Возвращение назад, вызванное нажатием отрисованной в UI кнопки
+  /// Подразумевает возврат на предыдущую страницу
+  FutureOr<void> _onUiGoBack(_UiGoBack event, Emitter<AuthState> emit) async {
+    if (state.step == .registerDetails || state.step == .authenticated) {
+      /// После ввода пароля мы блокируем возврат через интерфейс и через
+      /// системный нажатия (дальше только вперёд)
+      return;
+    }
+
+    final prevStep = state.previousScreen;
+    if (prevStep != null) {
+      emit(state.copyWith(step: prevStep));
+    }
   }
 
   @override

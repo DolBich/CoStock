@@ -180,7 +180,6 @@ extension AuthStateExt on AuthState {
     return copyWith(
       user: user,
       fields: missing,
-      passwordField: const FieldState(),
     );
   }
 
@@ -214,5 +213,68 @@ extension AuthStateExt on AuthState {
       passwordField: newPasswordField,
       nameField: newNameField,
     );
+  }
+
+  /// Тут возвращая null мы в UI обеспечиваем отсутстивие кнопки назад
+  /// Орабатывает через системную кнопку назад
+  AuthStep? get previousStep {
+    final currentStep = step;
+
+    switch (currentStep) {
+      case .enterPassword:
+        return .enterIdentifier;
+      case .enterIdentifier:
+        if (mode == .register) {
+          return .enterName;
+        }
+        return null;
+      case .registerDetails:
+      case .enterName:
+      default:
+        return null;
+    }
+  }
+
+  /// Тут возвращая null мы в UI обеспечиваем отсутстивие кнопки назад
+  /// Отрабатывает через отрисованную кнопку назад
+  AuthStep? get previousScreen {
+    final currentStep = step;
+
+    switch (currentStep) {
+      case .enterPassword:
+      case .enterIdentifier:
+        if (mode == .register) {
+          return .enterName;
+        }
+        return null;
+      case .registerDetails:
+      case .enterName:
+      default:
+        return null;
+    }
+  }
+
+  bool get isFirstStep {
+    if (mode == .login) {
+      return step == .enterIdentifier;
+    } else {
+      return step == .enterName;
+    }
+  }
+
+  /// Этот методо используем только в момент полной авторизации пользователя
+  /// Это происходит когда мы покидаем экран деталей (пропускаем его)
+  /// Находясь на экране деталей мы не .authenticated
+  AuthState authenticated(User? user) {
+    final u = user ?? this.user;
+    if(u == null) {
+      log('Неправильное использование метода [AuthState authenticated(User? user)]');
+      return this;
+    }
+
+    LocalStorageService.saveAuth(u.id);
+    SessionManager.id = u.id;
+
+    return copyWith(user: user, step: .authenticated);
   }
 }

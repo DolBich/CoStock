@@ -1,28 +1,31 @@
 import 'package:co_stock/domain/errors/validation/displayable_validation_rule.dart';
 
-
-class PhoneCountryCodeRule implements DisplayableValidationRule {
-  final String expectedPrefix;
-
-  const PhoneCountryCodeRule({required this.expectedPrefix});
-
-  @override
-  String? validate(String input) {
-    /// Удаляем все не-цифры, чтобы сравнивать цифры
-    final digitsOnly = input.replaceAll(RegExp(r'\D'), '');
-    final expectedDigits = expectedPrefix.replaceAll(RegExp(r'\D'), '');
-    if (!digitsOnly.startsWith(expectedDigits)) {
-      return 'Phone number must start with $expectedPrefix';
-    }
-    return null;
-  }
-
-  @override
-  String get description => 'начинаться с $expectedPrefix';
-
-  @override
-  bool get triggersImmediateError => false;
-}
+/// Этот валидатор проверяет, чтобы номер начинался с правильного префикса
+/// Например: +7 (
+/// Однако нынешняя система не позволяет начать не с такого префикса
+/// поэтому сейчас это правило только отвлекает
+// class PhoneCountryCodeRule implements DisplayableValidationRule {
+//   final String expectedPrefix;
+//
+//   const PhoneCountryCodeRule({required this.expectedPrefix});
+//
+//   @override
+//   String? validate(String input) {
+//     /// Удаляем все не-цифры, чтобы сравнивать цифры
+//     final digitsOnly = input.replaceAll(RegExp(r'\D'), '');
+//     final expectedDigits = expectedPrefix.replaceAll(RegExp(r'\D'), '');
+//     if (!digitsOnly.startsWith(expectedDigits)) {
+//       return 'Phone number must start with $expectedPrefix';
+//     }
+//     return null;
+//   }
+//
+//   @override
+//   String get description => 'начинаться с $expectedPrefix';
+//
+//   @override
+//   bool get triggersImmediateError => false;
+// }
 
 class PhoneOnlyDigitsRule implements DisplayableValidationRule {
   const PhoneOnlyDigitsRule();

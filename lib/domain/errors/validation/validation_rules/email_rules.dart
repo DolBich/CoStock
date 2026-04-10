@@ -19,23 +19,26 @@ class EmailAllowedCharsRule implements DisplayableValidationRule {
   bool get triggersImmediateError => true;
 }
 
-class EmailAtRule implements DisplayableValidationRule {
-  const EmailAtRule();
-
-  @override
-  String? validate(String input) {
-    if (!input.contains('@')) {
-      return 'Email must contain @';
-    }
-    return null;
-  }
-
-  @override
-  String get description => 'содержать символ @';
-
-  @override
-  bool get triggersImmediateError => false;
-}
+/// Это правило контроллирует, чтобы в почте содержался знак '@'
+/// Однако [EmailDomainRule] уже подразумевает его наличие
+/// поэтому данное правило избыточно
+// class EmailAtRule implements DisplayableValidationRule {
+//   const EmailAtRule();
+//
+//   @override
+//   String? validate(String input) {
+//     if (!input.contains('@')) {
+//       return 'Email must contain @';
+//     }
+//     return null;
+//   }
+//
+//   @override
+//   String get description => 'содержать символ @';
+//
+//   @override
+//   bool get triggersImmediateError => false;
+// }
 
 class EmailDomainRule implements DisplayableValidationRule {
   const EmailDomainRule();

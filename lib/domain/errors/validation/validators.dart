@@ -8,7 +8,11 @@ import 'package:co_stock/presentation/prefs/locale/locale_data.dart';
 
 class Validators {
   static const FieldValidator email = FieldValidator(
-    requirements: [EmailAllowedCharsRule(), EmailAtRule(), EmailDomainRule()],
+    requirements: [
+      EmailAllowedCharsRule(),
+      // EmailAtRule(),
+      EmailDomainRule(),
+    ],
   );
 
   static FieldValidator phoneWithLocale(LocaleData locale) {
@@ -17,7 +21,7 @@ class Validators {
     return FieldValidator(
       requirements: [
         const PhoneOnlyDigitsRule(),
-        PhoneCountryCodeRule(expectedPrefix: locale.phonePrefix),
+        // PhoneCountryCodeRule(expectedPrefix: locale.phonePrefix),
         PhoneFullDigitsRule(totalDigits: totalDigits),
       ],
     );
@@ -35,7 +39,7 @@ class Validators {
       PasswordDigitRule(),
       PasswordSpecialCharRule(),
     ],
-    suggestionsText: 'Для улучшения пароля:'
+    suggestionsText: 'Для улучшения пароля:',
   );
 
   static const FieldValidator name = FieldValidator(

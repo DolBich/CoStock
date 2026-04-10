@@ -3,13 +3,22 @@ part of 'prefs_bloc.dart';
 @freezed
 sealed class PrefsState with _$PrefsState {
   const factory PrefsState({
+    /// Опеределяет страну, язык которой используется
+    /// Под неё подстраивается реклама и требования этой страны
+    /// мы должны соблюдать в приложении (на будущее)
     required AppLocale appLocale,
+
+    /// Номер телефона какой страны использует
+    /// По умолчанию равен [appLocale]
+    required AppLocale phoneLocale,
+
     required ThemeData themeData,
     required bool useMock,
   }) = _PrefsState;
 
   factory PrefsState.initial({
-    AppLocale? locale,
+    AppLocale? appLocale,
+    AppLocale? phoneLocale,
     bool? useSeed,
     ThemeMode? themeMode,
     Color? colorSeed,
@@ -17,12 +26,13 @@ sealed class PrefsState with _$PrefsState {
 }) {
     ThemeHandler.init(
       useSeed: useSeed ?? false,
-      mode: themeMode ?? ThemeMode.light,
+      mode: themeMode ?? .light,
       seedColor: colorSeed ?? ThemeConfig.defaultSeed,
     );
 
     return PrefsState(
-      appLocale: locale ?? AppLocale.ru,
+      appLocale: appLocale ?? .ru,
+      phoneLocale: phoneLocale ?? appLocale ?? .ru,
       themeData: ThemeHandler.buildTheme(),
       useMock: useMock ?? true,
     );

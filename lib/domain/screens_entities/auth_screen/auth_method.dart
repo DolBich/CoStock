@@ -1,11 +1,6 @@
-import 'package:co_stock/application/handlers/phone_input_formatter.dart';
-import 'package:co_stock/domain/errors/validation/field_validator.dart';
 import 'package:co_stock/domain/notifications/snack/snack_notification.dart';
-import 'package:co_stock/domain/errors/validation/validators.dart';
 import 'package:co_stock/domain/screens_entities/auth_screen/auth_field.dart';
 import 'package:co_stock/domain/bases/user.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 enum AuthMethod { email, phone, login }
 
@@ -35,43 +30,6 @@ extension AuthMethodError on AuthMethod {
   }
 }
 
-extension AuthMethodUI on AuthMethod {
-  IconData get icon {
-    switch (this) {
-      case .email:
-        return Icons.email_outlined;
-      case .phone:
-        return Icons.phone_outlined;
-      case .login:
-        return Icons.person_outline;
-    }
-  }
-
-  String get text {
-    switch (this) {
-      case .email:
-        return 'Email';
-      case .phone:
-        return 'Phone';
-      case .login:
-        return 'Login';
-    }
-  }
-}
-
-extension AuthMethodValidators on AuthMethod {
-  FieldValidator get validator {
-    switch (this) {
-      case .email:
-        return Validators.email;
-      case .phone:
-        return Validators.phone;
-      case .login:
-        return Validators.login;
-    }
-  }
-}
-
 extension AuthMethodToField on AuthMethod {
   AuthField get toField {
     switch (this) {
@@ -81,37 +39,6 @@ extension AuthMethodToField on AuthMethod {
         return .phone;
       case .login:
         return .login;
-    }
-  }
-}
-
-extension AuthMethodKeyBoard on AuthMethod {
-  TextInputType get textInputType {
-    switch (this) {
-      case .email:
-        return .emailAddress;
-      case .phone:
-        return .phone;
-      case .login:
-        return .text;
-    }
-  }
-
-  List<TextInputFormatter>? get textInputFormatters {
-    switch (this) {
-      case .phone:
-        return [PhoneInputFormatter()];
-      default:
-        return null;
-    }
-  }
-
-  TextSelectionControls? get textSelectionControls {
-    switch (this) {
-      case .phone:
-        return MaterialTextSelectionControls();
-      default:
-        return null;
     }
   }
 }

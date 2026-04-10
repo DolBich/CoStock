@@ -358,6 +358,12 @@ class PhoneInputFormatter extends TextInputFormatter {
     _deleteCalculator = _DeleteCalculator();
   }
 
+  /// Возвращает полный префикс (код страны + символы форматирования для ключа 0).
+  String get getFullPrefix {
+    final prefixFormat = formatMap[0] ?? '';
+    return countryCode + prefixFormat;
+  }
+
   @override
   TextEditingValue formatEditUpdate(
     TextEditingValue oldValue,

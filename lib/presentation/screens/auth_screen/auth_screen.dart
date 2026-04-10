@@ -9,6 +9,7 @@ import 'package:co_stock/domain/screens_entities/auth_screen/auth_mode.dart';
 import 'package:co_stock/domain/widget_entities/field_state.dart';
 import 'package:co_stock/presentation/navigation/app_router.dart';
 import 'package:co_stock/presentation/widgets/app_segmented_button.dart';
+import 'package:co_stock/presentation/widgets/text_field/auth_method_bloc_text_field_builder.dart';
 import 'package:co_stock/presentation/widgets/text_field/bloc_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

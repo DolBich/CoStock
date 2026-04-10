@@ -2,19 +2,23 @@ import 'package:co_stock/domain/errors/validation/displayable_validation_rule.da
 
 
 class PhoneCountryCodeRule implements DisplayableValidationRule {
-  const PhoneCountryCodeRule();
+  final String expectedPrefix;
+
+  const PhoneCountryCodeRule({required this.expectedPrefix});
 
   @override
   String? validate(String input) {
-    final digits = input.replaceAll(RegExp(r'\D'), '');
-    if (digits.isNotEmpty && !digits.startsWith('7') && !digits.startsWith('8')) {
-      return 'Phone number must start with 7 or 8';
+    /// Удаляем все не-цифры, чтобы сравнивать цифры
+    final digitsOnly = input.replaceAll(RegExp(r'\D'), '');
+    final expectedDigits = expectedPrefix.replaceAll(RegExp(r'\D'), '');
+    if (!digitsOnly.startsWith(expectedDigits)) {
+      return 'Phone number must start with $expectedPrefix';
     }
     return null;
   }
 
   @override
-  String get description => 'начинаться с 7 или 8';
+  String get description => 'начинаться с $expectedPrefix';
 
   @override
   bool get triggersImmediateError => false;
@@ -40,19 +44,21 @@ class PhoneOnlyDigitsRule implements DisplayableValidationRule {
 }
 
 class PhoneFullDigitsRule implements DisplayableValidationRule {
-  const PhoneFullDigitsRule();
+  final int totalDigits; /// длина countryCodeDigits + nationalLength
+
+  const PhoneFullDigitsRule({required this.totalDigits});
 
   @override
   String? validate(String input) {
     final digits = input.replaceAll(RegExp(r'\D'), '');
-    if (digits.length != 11) {
-      return 'Phone number must have exactly 11 digits';
+    if (digits.length != totalDigits) {
+      return 'Phone number must have exactly $totalDigits digits';
     }
     return null;
   }
 
   @override
-  String get description => 'ровно 11 цифр';
+  String get description => 'ровно $totalDigits цифр';
 
   @override
   bool get triggersImmediateError => false;

@@ -17,7 +17,7 @@ part 'prefs_bloc.freezed.dart';
 /// Этот Bloc отвечает за все предпочтения пользователя
 /// Язык, Тема, Размер шрифта и во твсё такое
 class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
-  PrefsBloc() : super(PrefsState.initial()) {
+  PrefsBloc() : super(.initial()) {
     on<_Init>(_onInit);
 
     /// Theme
@@ -26,7 +26,8 @@ class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
     on<_ChangeUseSeed>(_changeUseSeed);
 
     /// Locale
-    on<_ChangeLocale>(_changeLocale);
+    on<_ChangeAppLocale>(_changeAppLocale);
+    on<_ChangePhoneLocale>(_changePhoneLocale);
 
     /// Repositories
     on<_ChangeRepo>(_changeRepo);
@@ -35,14 +36,16 @@ class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
   }
 
   Future<void> _onInit(_Init event, Emitter<PrefsState> emit) async {
-    final locale = await LocalStorageService.getLocale();
+    final appLocale = await LocalStorageService.getAppLocale();
+    final phoneLocale = await LocalStorageService.getPhoneLocale();
     final useSeed = await LocalStorageService.getUseSeed();
     final themeMode = await LocalStorageService.getThemeMode();
     final colorSeed = await LocalStorageService.getThemeSeed();
 
     emit(
-      PrefsState.initial(
-        locale: locale,
+      .initial(
+        appLocale: appLocale,
+        phoneLocale: phoneLocale,
         useSeed: useSeed,
         themeMode: themeMode,
         colorSeed: colorSeed,
@@ -77,10 +80,16 @@ class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
   ///
   /// Locale
   ///
-  void _changeLocale(_ChangeLocale event, Emitter<PrefsState> emit) {
-    LocalStorageService.saveLocale(event.appLocale);
+  void _changeAppLocale(_ChangeAppLocale event, Emitter<PrefsState> emit) {
+    LocalStorageService.saveAppLocale(event.appLocale);
 
     emit(state.copyWith(appLocale: event.appLocale));
+  }
+
+  void _changePhoneLocale(_ChangePhoneLocale event, Emitter<PrefsState> emit) {
+    LocalStorageService.savePhoneLocale(event.phoneLocale);
+
+    emit(state.copyWith(appLocale: event.phoneLocale));
   }
 
   ///

@@ -35,7 +35,7 @@ class __EnterIdentifierViewState extends State<_EnterIdentifierView> {
                 (e) => AppSegmentButton(
                   value: e,
                   icon: e.icon,
-                  label: Text(e.text),
+                  label: Text(e.hintText),
                 ),
               )
               .toList(),
@@ -58,15 +58,13 @@ class __EnterIdentifierViewState extends State<_EnterIdentifierView> {
         /// Эта заглушка спасает нас от бага срабатывания onChange
         /// от [s.fields[s.method] ?? const FieldState()] при определении
         /// missing fields для details
-        if(state.fields[state.method] == null) return const SizedBox();
+        if (state.fields[state.method] == null) return const SizedBox();
 
         final bloc = context.read<AuthBloc>();
         final method = state.method;
-        return BlocTextField<AuthBloc, AuthState>(
-          key: ValueKey('${state.method}'),
-          hintText: method.text,
-          keyboardType: method.textInputType,
-          inputFormatters: method.textInputFormatters,
+
+        /// Текстовое поле
+        return method.buildField<AuthBloc, AuthState>(
           selector: (s) => s.fields[s.method] ?? const FieldState(),
           controller: _identifierController,
           onChanged: (newField) {
@@ -75,9 +73,8 @@ class __EnterIdentifierViewState extends State<_EnterIdentifierView> {
           onFieldSubmitted: (_) {
             bloc.add(const .submitIdentifier());
           },
-          validator: method.validator,
-          autofocus: true,
           textInputAction: .done,
+          autofocus: true,
         );
       },
     );
@@ -93,8 +90,8 @@ class __EnterIdentifierViewState extends State<_EnterIdentifierView> {
           curve: Curves.easeInOut,
           child: state.step == .enterPassword
               ? Padding(
-                padding: const .symmetric(vertical: 12.0),
-                child: Column(
+                  padding: const .symmetric(vertical: 12.0),
+                  child: Column(
                     children: [
                       BlocTextField<AuthBloc, AuthState>(
                         hintText: 'Password',
@@ -116,7 +113,7 @@ class __EnterIdentifierViewState extends State<_EnterIdentifierView> {
                       ),
                     ],
                   ),
-              )
+                )
               : const SizedBox.shrink(),
         );
       },
@@ -193,7 +190,7 @@ class __EnterIdentifierViewState extends State<_EnterIdentifierView> {
       children: [
         _buildModeLabel(context),
         _segmentedButton,
-        const SizedBox(height: 12,),
+        const SizedBox(height: 12),
         _identifierField,
         _passwordField,
         _actionButton,

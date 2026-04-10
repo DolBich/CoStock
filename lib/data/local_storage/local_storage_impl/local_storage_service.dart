@@ -40,12 +40,23 @@ class LocalStorageService {
   /// Locale
   ///
 
-  static Future<void> saveLocale(AppLocale locale) async {
-    await saveData(key: LocalStorageKeys.locale.name, value: locale.name);
+  static Future<void> saveAppLocale(AppLocale locale) async {
+    await saveData(key: LocalStorageKeys.appLocale.name, value: locale.name);
   }
 
-  static Future<AppLocale?> getLocale() async {
-    final str = await getData<String>(key: LocalStorageKeys.locale.name);
+  static Future<AppLocale?> getAppLocale() async {
+    final str = await getData<String>(key: LocalStorageKeys.appLocale.name);
+    if (str == null) return null;
+
+    return AppLocale.byName(str);
+  }
+
+  static Future<void> savePhoneLocale(AppLocale locale) async {
+    await saveData(key: LocalStorageKeys.phoneLocale.name, value: locale.name);
+  }
+
+  static Future<AppLocale?> getPhoneLocale() async {
+    final str = await getData<String>(key: LocalStorageKeys.phoneLocale.name);
     if (str == null) return null;
 
     return AppLocale.byName(str);

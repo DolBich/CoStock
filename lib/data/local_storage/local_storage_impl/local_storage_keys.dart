@@ -1,5 +1,6 @@
 enum LocalStorageKeys {
-  locale,
+  appLocale,
+  phoneLocale,
   useSeed,
   themeMode,
   themeSeed,

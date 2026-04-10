@@ -181,7 +181,7 @@ class __DetailFieldState extends State<_DetailField>
 
         if (field.removing) _animationController.forward();
 
-        // Анимированная обёртка для плавного исчезновения
+        /// Анимированная обёртка для плавного исчезновения
         return AnimatedBuilder(
           animation: _animationController,
           builder: (context, child) {
@@ -199,15 +199,11 @@ class __DetailFieldState extends State<_DetailField>
               ),
             );
           },
-          child: BlocTextField<AuthBloc, AuthState>(
-            key: ValueKey(method.name),
-            hintText: method.text,
-            keyboardType: method.textInputType,
-            inputFormatters: method.textInputFormatters,
+          /// Текстовое поле
+          child: method.buildField<AuthBloc, AuthState>(
             selector: (s) => s.fields[method] ?? const FieldState(),
             controller: _controller,
             onChanged: _onTextChanged,
-            validator: method.validator,
             onFieldSubmitted: (_) =>
                 bloc.add(.registerDetail(method: widget.method)),
             textInputAction: .done,

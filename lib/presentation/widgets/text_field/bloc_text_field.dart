@@ -28,6 +28,8 @@ class BlocTextField<B extends StateStreamable<S>, S> extends StatefulWidget {
   final void Function(FieldState) onChanged;
   final void Function(String)? onFieldSubmitted;
   final bool showToggleObscure;
+  final Widget? leading;
+  final String? initialValue;
 
   const BlocTextField({
     super.key,
@@ -45,6 +47,8 @@ class BlocTextField<B extends StateStreamable<S>, S> extends StatefulWidget {
     this.focusNode,
     this.errorMaxLines = 3,
     this.showToggleObscure = false,
+    this.leading,
+    this.initialValue,
   });
 
   @override
@@ -65,12 +69,13 @@ class _BlocTextFieldState<B extends StateStreamable<S>, S>
 
   /// Этот контроллер - костыль для вызова PhoneInputFormatter при изменении
   /// selection
-  final TextEditingController _controller = TextEditingController(text: '+7 (');
+  late TextEditingController _controller;
   TextEditingValue? _oldTextValue;
 
   @override
   void initState() {
     super.initState();
+    _controller  = TextEditingController(text: widget.initialValue);
     _obscureText = widget.obscureText;
 
     _animationController = AnimationController(
@@ -218,9 +223,9 @@ class _BlocTextFieldState<B extends StateStreamable<S>, S>
 
         /// Делаем через [copyWith], а не через .text
         /// Во втором случае меняеся selection на .invalid
-        _controller.value = _controller.value.copyWith(
-          text: field.value.isEmpty ? '+7 (' : field.value,
-        );
+        if (_controller.text != field.value && field.value.isNotEmpty) {
+          _controller.value = _controller.value.copyWith(text: field.value);
+        }
 
         /// --- ОТОБРАЖЕНИЕ ОШИБОК И УСПЕХА ---
         String? helperText;
@@ -317,52 +322,61 @@ class _BlocTextFieldState<B extends StateStreamable<S>, S>
           }
         }
 
-        return Column(
+        return Row(
+          crossAxisAlignment: .start,
           children: [
-            TextFormField(
-              controller: _controller,
-              enabled: !completed,
-              focusNode: _focusNode,
-              decoration: InputDecoration(
-                hintText: widget.hintText,
-                errorText: isError ? helperText : null,
-                helperText: helperText,
-                helperStyle: helperColor != null
-                    ? TextStyle(color: helperColor)
-                    : null,
-                errorMaxLines: widget.errorMaxLines,
-                suffixIcon: suffixIcon,
-                enabledBorder: enabledBorder,
-                focusedBorder: focusedBorder,
-              ),
-              keyboardType: widget.keyboardType,
-              obscureText: _obscureText,
-              autofocus: widget.autofocus,
-              textInputAction: widget.textInputAction,
-              onChanged: _updateValue,
-              onEditingComplete: () {},
-              onFieldSubmitted: (_) => _submit(),
-            ),
-            AnimatedBuilder(
-              animation: _animationController,
-              builder: (context, child) {
-                return SizeTransition(
-                  sizeFactor: _slideAnimation,
-                  axisAlignment: -1.0,
-                  child: Opacity(
-                    opacity: _animationController.value,
-                    child: child,
-                  ),
-                );
-              },
-              child: validationResult != null
-                  ? _ValidationDisplay(
-                      validationResult: validationResult,
-                      errorPersisted: field.wasInteracted
-                          ? field.errorPersisted
+            if (widget.leading != null) widget.leading!,
+            if (widget.leading != null) const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                children: [
+                  TextFormField(
+                    controller: _controller,
+                    enabled: !completed,
+                    focusNode: _focusNode,
+                    decoration: InputDecoration(
+                      hintText: widget.hintText,
+                      errorText: isError ? helperText : null,
+                      helperText: helperText,
+                      helperStyle: helperColor != null
+                          ? TextStyle(color: helperColor)
                           : null,
-                    )
-                  : const SizedBox.shrink(),
+                      errorMaxLines: widget.errorMaxLines,
+                      suffixIcon: suffixIcon,
+                      enabledBorder: enabledBorder,
+                      focusedBorder: focusedBorder,
+                    ),
+                    keyboardType: widget.keyboardType,
+                    obscureText: _obscureText,
+                    autofocus: widget.autofocus,
+                    textInputAction: widget.textInputAction,
+                    onChanged: _updateValue,
+                    onEditingComplete: () {},
+                    onFieldSubmitted: (_) => _submit(),
+                  ),
+                  AnimatedBuilder(
+                    animation: _animationController,
+                    builder: (context, child) {
+                      return SizeTransition(
+                        sizeFactor: _slideAnimation,
+                        axisAlignment: -1.0,
+                        child: Opacity(
+                          opacity: _animationController.value,
+                          child: child,
+                        ),
+                      );
+                    },
+                    child: validationResult != null
+                        ? _ValidationDisplay(
+                            validationResult: validationResult,
+                            errorPersisted: field.wasInteracted
+                                ? field.errorPersisted
+                                : null,
+                          )
+                        : const SizedBox.shrink(),
+                  ),
+                ],
+              ),
             ),
           ],
         );

@@ -75,7 +75,7 @@ class _BlocTextFieldState<B extends StateStreamable<S>, S>
   @override
   void initState() {
     super.initState();
-    _controller  = TextEditingController(text: widget.initialValue);
+    _controller = TextEditingController(text: widget.initialValue);
     _obscureText = widget.obscureText;
 
     _animationController = AnimationController(
@@ -322,15 +322,15 @@ class _BlocTextFieldState<B extends StateStreamable<S>, S>
           }
         }
 
-        return Row(
-          crossAxisAlignment: .start,
+        return Column(
           children: [
-            if (widget.leading != null) widget.leading!,
-            if (widget.leading != null) const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                children: [
-                  TextFormField(
+            Row(
+              crossAxisAlignment: .start,
+              children: [
+                if (widget.leading != null) widget.leading!,
+                if (widget.leading != null) const SizedBox(width: 12),
+                Expanded(
+                  child: TextFormField(
                     controller: _controller,
                     enabled: !completed,
                     focusNode: _focusNode,
@@ -354,29 +354,29 @@ class _BlocTextFieldState<B extends StateStreamable<S>, S>
                     onEditingComplete: () {},
                     onFieldSubmitted: (_) => _submit(),
                   ),
-                  AnimatedBuilder(
-                    animation: _animationController,
-                    builder: (context, child) {
-                      return SizeTransition(
-                        sizeFactor: _slideAnimation,
-                        axisAlignment: -1.0,
-                        child: Opacity(
-                          opacity: _animationController.value,
-                          child: child,
-                        ),
-                      );
-                    },
-                    child: validationResult != null
-                        ? _ValidationDisplay(
-                            validationResult: validationResult,
-                            errorPersisted: field.wasInteracted
-                                ? field.errorPersisted
-                                : null,
-                          )
-                        : const SizedBox.shrink(),
+                ),
+              ],
+            ),
+            AnimatedBuilder(
+              animation: _animationController,
+              builder: (context, child) {
+                return SizeTransition(
+                  sizeFactor: _slideAnimation,
+                  axisAlignment: -1.0,
+                  child: Opacity(
+                    opacity: _animationController.value,
+                    child: child,
                   ),
-                ],
-              ),
+                );
+              },
+              child: validationResult != null
+                  ? _ValidationDisplay(
+                      validationResult: validationResult,
+                      errorPersisted: field.wasInteracted
+                          ? field.errorPersisted
+                          : null,
+                    )
+                  : const SizedBox.shrink(),
             ),
           ],
         );

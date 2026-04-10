@@ -89,7 +89,7 @@ class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
   void _changePhoneLocale(_ChangePhoneLocale event, Emitter<PrefsState> emit) {
     LocalStorageService.savePhoneLocale(event.phoneLocale);
 
-    emit(state.copyWith(appLocale: event.phoneLocale));
+    emit(state.copyWith(phoneLocale: event.phoneLocale));
   }
 
   ///

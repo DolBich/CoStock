@@ -38,33 +38,38 @@ class BlocPhoneTextField<B extends StateStreamable<S>, S>
 
   @override
   Widget build(BuildContext context) {
-    final prefsBloc = context.read<PrefsBloc>();
-    final locale = prefsBloc.state.appLocale.localeData;
-    final phoneValidator = Validators.phoneWithLocale(locale);
-    final phoneFormatter = PhoneInputFormatter(
-      countryCode: locale.phonePrefix,
-      nationalLength: locale.phoneNationalLength,
+    return BlocBuilder<PrefsBloc, PrefsState>(
+      builder: (context, state) {
+        final locale = state.phoneLocale.localeData;
+        final phoneValidator = Validators.phoneWithLocale(locale);
+        final phoneFormatter = PhoneInputFormatter(
+          countryCode: locale.phonePrefix,
+          nationalLength: locale.phoneNationalLength,
+        );
+
+        return BlocTextField<B, S>(
+          key: ValueKey('phone_${locale.code}_${locale.phonePrefix}'),
+          selector: selector,
+          onChanged: onChanged,
+          onFieldSubmitted: onFieldSubmitted,
+          controller: controller,
+          autofocus: autofocus,
+          textInputAction: textInputAction,
+          focusNode: focusNode,
+          initialValue: phoneFormatter.getFullPrefix,
+          hintText: hintText ?? 'Phone number',
+          keyboardType: .phone,
+          inputFormatters: [phoneFormatter],
+          validator: phoneValidator,
+          leading: PhoneCountrySelector(
+            currentLocale: locale,
+            onChanged: (newLocale) {
+              context.read<PrefsBloc>().add(.changePhoneLocale(newLocale));
+            },
+          ),
+        );
+      },
     );
 
-    return BlocTextField<B, S>(
-      key: ValueKey('phone_${locale.code}_${locale.phonePrefix}'),
-      selector: selector,
-      onChanged: onChanged,
-      onFieldSubmitted: onFieldSubmitted,
-      controller: controller,
-      autofocus: autofocus,
-      textInputAction: textInputAction,
-      focusNode: focusNode,
-      hintText: hintText ?? 'Phone number',
-      keyboardType: .phone,
-      inputFormatters: [phoneFormatter],
-      validator: phoneValidator,
-      leading: PhoneCountrySelector(
-        currentLocale: locale,
-        onChanged: (newLocale) {
-          prefsBloc.add(.changePhoneLocale(newLocale));
-        },
-      ),
-    );
   }
 }

@@ -62,7 +62,7 @@ class MockAuthRepository extends IAuthRepository with MockRepoDelay {
         .client(
           type: .state,
           error: Exception('Пользователь с id [$id] не был найден'),
-          stackTrace: StackTrace.current,
+          stackTrace: .current,
         ),
       );
     }
@@ -92,7 +92,7 @@ class MockAuthRepository extends IAuthRepository with MockRepoDelay {
         .client(
           type: .state,
           error: Exception('User with id [$id] not found'),
-          stackTrace: StackTrace.current,
+          stackTrace: .current,
         ),
       );
     }
@@ -115,7 +115,7 @@ class MockAuthRepository extends IAuthRepository with MockRepoDelay {
         .client(
           type: .state,
           error: Exception('Не был найден пользователь с id [$id]'),
-          stackTrace: StackTrace.current,
+          stackTrace: .current,
         ),
       );
     }
@@ -139,7 +139,7 @@ class MockAuthRepository extends IAuthRepository with MockRepoDelay {
         .client(
           type: .state,
           error: Exception('Не был найден пользователь с id [$id]'),
-          stackTrace: StackTrace.current,
+          stackTrace: .current,
         ),
       );
     }
@@ -161,7 +161,7 @@ class MockAuthRepository extends IAuthRepository with MockRepoDelay {
         .client(
           type: .state,
           error: Exception('Не был найден пользователь с id [$id]'),
-          stackTrace: StackTrace.current,
+          stackTrace: .current,
         ),
       );
     }
@@ -185,7 +185,7 @@ class MockAuthRepository extends IAuthRepository with MockRepoDelay {
         .client(
           type: .state,
           error: Exception('Не был найден пользователь с id [$id]'),
-          stackTrace: StackTrace.current,
+          stackTrace: .current,
         ),
       );
     }
@@ -207,7 +207,7 @@ class MockAuthRepository extends IAuthRepository with MockRepoDelay {
         .client(
           type: .state,
           error: Exception('Не был найден пользователь с id [$id]'),
-          stackTrace: StackTrace.current,
+          stackTrace: .current,
         ),
       );
     }
@@ -227,7 +227,7 @@ class MockAuthRepository extends IAuthRepository with MockRepoDelay {
         .client(
           type: .state,
           error: Exception('Не был найден пользователь с id [$id]'),
-          stackTrace: StackTrace.current,
+          stackTrace: .current,
         ),
       );
     }

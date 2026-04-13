@@ -112,7 +112,7 @@ extension AuthStateExt on AuthState {
       AppError.client(
         type: .state,
         error: Exception('[${method.name}] currentField == null - WTF!?'),
-        stackTrace: StackTrace.current,
+        stackTrace: .current,
       ).report();
       return base;
     }

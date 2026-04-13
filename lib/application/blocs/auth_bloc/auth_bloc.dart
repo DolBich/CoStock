@@ -123,7 +123,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final f = AppError.client(
         type: .state,
         error: Exception('Identifier is empty'),
-        stackTrace: StackTrace.current,
+        stackTrace: .current,
       );
       f.report();
       emit(state.withIdentifierError(f));
@@ -156,7 +156,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final f = AppError.client(
         type: .state,
         error: Exception('Identifier is empty'),
-        stackTrace: StackTrace.current,
+        stackTrace: .current,
       );
       f.report();
       emit(state.withIdentifierError(f));
@@ -198,7 +198,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final f = AppError.client(
         type: .state,
         error: Exception('No user id'),
-        stackTrace: StackTrace.current,
+        stackTrace: .current,
       );
       f.report();
       emit(state.withPasswordError(f));
@@ -210,7 +210,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final f = AppError.client(
         type: .state,
         error: Exception('Password is empty'),
-        stackTrace: StackTrace.current,
+        stackTrace: .current,
       );
       f.report();
       emit(state.withPasswordError(f));
@@ -245,7 +245,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final f = AppError.client(
         type: .state,
         error: Exception('Password is empty'),
-        stackTrace: StackTrace.current,
+        stackTrace: .current,
       );
       f.report();
       emit(state.withPasswordError(f));
@@ -257,7 +257,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final f = AppError.client(
         type: .state,
         error: Exception('User is invalid: [${user.toString()}]'),
-        stackTrace: StackTrace.current,
+        stackTrace: .current,
       );
       f.report();
       emit(state.withPasswordError(f));
@@ -305,7 +305,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final f = AppError.client(
         type: .state,
         error: Exception('[Auth 1] No user id'),
-        stackTrace: StackTrace.current,
+        stackTrace: .current,
       );
       f.report();
       emit(state.withDetailError(event.method, f));
@@ -317,7 +317,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final f = AppError.client(
         type: .state,
         error: Exception('[Auth 1] Не было найдено поле ввода'),
-        stackTrace: StackTrace.current,
+        stackTrace: .current,
       );
       f.report();
       emit(state.withDetailError(event.method, f));
@@ -395,7 +395,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           final f = AppError.client(
             type: .state,
             error: Exception('[Auth 2] No user'),
-            stackTrace: StackTrace.current,
+            stackTrace: .current,
           );
           f.report();
           emit(state.withDetailError(method, f));
@@ -482,7 +482,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         final f = AppError.client(
           type: .state,
           error: Exception('[Auth 3] No user'),
-          stackTrace: StackTrace.current,
+          stackTrace: .current,
         );
         f.report();
         return;
@@ -578,7 +578,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final f = AppError.client(
         type: .state,
         error: Exception('[Auth 2] Не было найдено поле ввода'),
-        stackTrace: StackTrace.current,
+        stackTrace: .current,
       );
       f.report();
       emit(state.withDetailError(method, f));

@@ -48,7 +48,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       final f = AppError.client(
         type: .state,
         error: Exception('Couldn\'t get userId'),
-        stackTrace: StackTrace.current,
+        stackTrace: .current,
       );
       f.report();
       return;
@@ -84,7 +84,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       final f = AppError.client(
         type: .state,
         error: Exception('Couldn\'t find userId for user info update'),
-        stackTrace: StackTrace.current,
+        stackTrace: .current,
       );
       f.report();
       return;
@@ -153,7 +153,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       final f = AppError.client(
         type: .state,
         error: Exception('Couldn\'t find userId for user info update'),
-        stackTrace: StackTrace.current,
+        stackTrace: .current,
       );
       f.report();
       return;
@@ -196,7 +196,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       final f = AppError.client(
         type: .state,
         error: Exception('Couldn\'t find userId for user info update'),
-        stackTrace: StackTrace.current,
+        stackTrace: .current,
       );
       f.report();
       return;

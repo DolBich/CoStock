@@ -36,7 +36,7 @@ class SnackManager {
       final directory = await getApplicationDocumentsDirectory();
       final file = File('${directory.path}/app_errors.log');
       // Добавляем строку в конец файла
-      await file.writeAsString('$line\n', mode: FileMode.append);
+      await file.writeAsString('$line\n', mode: .append);
     } catch (e) {
       log('Failed to write log to file: $e');
     }

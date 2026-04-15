@@ -58,7 +58,11 @@ class __EnterIdentifierViewState extends State<_EnterIdentifierView> {
         /// Эта заглушка спасает нас от бага срабатывания onChange
         /// от [s.fields[s.method] ?? const FieldState()] при определении
         /// missing fields для details
-        if (state.fields[state.method] == null) return const SizedBox();
+        if (state.step != .enterIdentifier &&
+            state.step != .enterPassword ||
+            state.fields[state.method] == null) {
+          return const SizedBox();
+        }
 
         final bloc = context.read<AuthBloc>();
         final method = state.method;

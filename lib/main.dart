@@ -1,4 +1,5 @@
 import 'package:co_stock/application/blocs/prefs_bloc/prefs_bloc.dart';
+import 'package:co_stock/application/blocs/profile_bloc/profile_bloc.dart';
 import 'package:co_stock/application/managers/session_manager.dart';
 import 'package:co_stock/data/local_storage/i_local_storage.dart';
 import 'package:co_stock/data/local_storage/local_storage_impl/local_storage_service.dart';
@@ -37,7 +38,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-      providers: [BlocProvider(create: (_) => PrefsBloc())],
+      providers: [
+        BlocProvider(create: (_) => PrefsBloc()),
+
+        /// Отключаем [lazy], чтобы он сразу выполнил внутри себя [.init()]
+        BlocProvider(create: (_) => ProfileBloc(), lazy: false),
+      ],
       child: const _App(),
     );
   }

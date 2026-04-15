@@ -2,7 +2,7 @@ part of 'profile_bloc.dart';
 
 @freezed
 sealed class ProfileEvent with _$ProfileEvent {
-  const factory ProfileEvent.init() = _Init;
+  const factory ProfileEvent.init([User? user]) = _Init;
 
   const factory ProfileEvent.changeLogin(String? login) = _ChangeLogin;
 

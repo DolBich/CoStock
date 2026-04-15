@@ -5,7 +5,7 @@ class AuthForm extends StatelessWidget {
 
   void _listener(BuildContext context, AuthState state) {
     if (state.step == .authenticated) {
-      context.router.replaceAll([MyHomeRoute()]);
+      context.router.replaceAll([WelcomeRoute(userName: state.user?.name, user: state.user)]);
     }
   }
 

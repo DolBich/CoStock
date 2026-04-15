@@ -131,10 +131,10 @@ return changeName(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  init,TResult Function( String? login)?  changeLogin,TResult Function( String? phone)?  changePhone,TResult Function( String? email)?  changeEmail,TResult Function( String password)?  changePassword,TResult Function( String name)?  changeName,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( User? user)?  init,TResult Function( String? login)?  changeLogin,TResult Function( String? phone)?  changePhone,TResult Function( String? email)?  changeEmail,TResult Function( String password)?  changePassword,TResult Function( String name)?  changeName,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Init() when init != null:
-return init();case _ChangeLogin() when changeLogin != null:
+return init(_that.user);case _ChangeLogin() when changeLogin != null:
 return changeLogin(_that.login);case _ChangePhone() when changePhone != null:
 return changePhone(_that.phone);case _ChangeEmail() when changeEmail != null:
 return changeEmail(_that.email);case _ChangePassword() when changePassword != null:
@@ -157,10 +157,10 @@ return changeName(_that.name);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  init,required TResult Function( String? login)  changeLogin,required TResult Function( String? phone)  changePhone,required TResult Function( String? email)  changeEmail,required TResult Function( String password)  changePassword,required TResult Function( String name)  changeName,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( User? user)  init,required TResult Function( String? login)  changeLogin,required TResult Function( String? phone)  changePhone,required TResult Function( String? email)  changeEmail,required TResult Function( String password)  changePassword,required TResult Function( String name)  changeName,}) {final _that = this;
 switch (_that) {
 case _Init():
-return init();case _ChangeLogin():
+return init(_that.user);case _ChangeLogin():
 return changeLogin(_that.login);case _ChangePhone():
 return changePhone(_that.phone);case _ChangeEmail():
 return changeEmail(_that.email);case _ChangePassword():
@@ -179,10 +179,10 @@ return changeName(_that.name);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  init,TResult? Function( String? login)?  changeLogin,TResult? Function( String? phone)?  changePhone,TResult? Function( String? email)?  changeEmail,TResult? Function( String password)?  changePassword,TResult? Function( String name)?  changeName,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( User? user)?  init,TResult? Function( String? login)?  changeLogin,TResult? Function( String? phone)?  changePhone,TResult? Function( String? email)?  changeEmail,TResult? Function( String password)?  changePassword,TResult? Function( String name)?  changeName,}) {final _that = this;
 switch (_that) {
 case _Init() when init != null:
-return init();case _ChangeLogin() when changeLogin != null:
+return init(_that.user);case _ChangeLogin() when changeLogin != null:
 return changeLogin(_that.login);case _ChangePhone() when changePhone != null:
 return changePhone(_that.phone);case _ChangeEmail() when changeEmail != null:
 return changeEmail(_that.email);case _ChangePassword() when changePassword != null:
@@ -199,33 +199,79 @@ return changeName(_that.name);case _:
 
 
 class _Init implements ProfileEvent {
-  const _Init();
+  const _Init([this.user]);
   
 
+ final  User? user;
 
-
+/// Create a copy of ProfileEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$InitCopyWith<_Init> get copyWith => __$InitCopyWithImpl<_Init>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Init);
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Init&&(identical(other.user, user) || other.user == user));
 }
 
 
 @override
-int get hashCode => runtimeType.hashCode;
+int get hashCode => Object.hash(runtimeType,user);
 
 @override
 String toString() {
-  return 'ProfileEvent.init()';
+  return 'ProfileEvent.init(user: $user)';
 }
 
 
 }
 
+/// @nodoc
+abstract mixin class _$InitCopyWith<$Res> implements $ProfileEventCopyWith<$Res> {
+  factory _$InitCopyWith(_Init value, $Res Function(_Init) _then) = __$InitCopyWithImpl;
+@useResult
+$Res call({
+ User? user
+});
 
 
+$UserCopyWith<$Res>? get user;
+
+}
+/// @nodoc
+class __$InitCopyWithImpl<$Res>
+    implements _$InitCopyWith<$Res> {
+  __$InitCopyWithImpl(this._self, this._then);
+
+  final _Init _self;
+  final $Res Function(_Init) _then;
+
+/// Create a copy of ProfileEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? user = freezed,}) {
+  return _then(_Init(
+freezed == user ? _self.user : user // ignore: cast_nullable_to_non_nullable
+as User?,
+  ));
+}
+
+/// Create a copy of ProfileEvent
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$UserCopyWith<$Res>? get user {
+    if (_self.user == null) {
+    return null;
+  }
+
+  return $UserCopyWith<$Res>(_self.user!, (value) {
+    return _then(_self.copyWith(user: value));
+  });
+}
+}
 
 /// @nodoc
 

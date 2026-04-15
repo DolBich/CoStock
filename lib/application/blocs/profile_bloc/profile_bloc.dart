@@ -17,7 +17,7 @@ part 'profile_state.dart';
 part 'profile_bloc.freezed.dart';
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
-  ProfileBloc() : super(ProfileState.initial()) {
+  ProfileBloc() : super(.initial()) {
     on<_Init>(_init);
     on<_ChangeLogin>(
       (e, m) => _updateDetail(e.login, .login, m),
@@ -35,40 +35,52 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<_ChangeName>(_changeName);
 
     _authRepository = InjectorManager().current.authRepository;
-    add(const ProfileEvent.init());
+
+    /// Это тот случай, когда мы подтягиваем юзера от сохранённого
+    /// id при автоматической авторизации при входе в приложение
+    if (SessionManager.id != null) add(const .init());
   }
 
   late final IAuthRepository _authRepository;
 
   final Map<AuthMethod, CancelableOperation> _cancelableOps = {};
 
+  Future<void> waitForInit({User? user}) async {
+    /// Если уже загружено или загрузка неактивна — выходим сразу
+    if (state.user != null) return;
+    add(.init(user));
+
+    await stream.firstWhere((state) => !state.isLoading);
+    return;
+  }
+
   Future<void> _init(_Init event, Emitter<ProfileState> emit) async {
-    final id = SessionManager.id;
-    if (id == null) {
-      final f = AppError.client(
-        type: .state,
-        error: Exception('Couldn\'t get userId'),
-        stackTrace: .current,
-      );
-      f.report();
-      return;
-    }
+    User? user = event.user;
 
-    final res = await _authRepository.getCurrentUser(id: id);
+    if (user == null) {
+      final id = SessionManager.id;
+      if (id == null) {
+        final f = AppError.client(
+          type: .state,
+          error: Exception('Couldn\'t get userId'),
+          stackTrace: .current,
+        );
+        f.report();
+        return;
+      }
 
-    res.fold(
-      (f) {
+      final res = await _authRepository.getCurrentUser(id: id);
+
+      user = res.fold<User?>((f) {
         f.report();
 
         /// На стороне UI сделать проверку
         /// [if(!isLoading && user == null) - отображать на экране ошибку загрузки данных]
-        emit(state.copyWith(isLoading: false));
-        return;
-      },
-      (user) {
-        emit(state.copyWith(user: user, isLoading: false));
-      },
-    );
+        return null;
+      }, (user) => user);
+    }
+
+    emit(state.copyWith(user: user, isLoading: false));
   }
 
   /// Для этого метода воспользоваться в UI _DetailField

@@ -78,11 +78,12 @@ flutter {
 dependencies {
     // Импортируем Bill of Materials (BOM) для Firebase.
     // BOM автоматически управляет версиями всех библиотек Firebase ниже.
-    implementation(platform("com.google.firebase:firebase-bom:34.7.0"))
+    implementation(platform("com.google.firebase:firebase-bom:34.12.0"))
 
     // Добавляем необходимые Firebase-библиотеки.
     // Конкретные версии будут взяты из BOM выше.
     implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-auth")
     // Раскомментируйте следующие строки по мере необходимости:
     // implementation("com.google.firebase:firebase-auth-ktx")
     // implementation("com.google.firebase:firebase-firestore-ktx")

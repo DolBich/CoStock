@@ -598,7 +598,12 @@ String toString() {
 /// @nodoc
 mixin _$PrefsState {
 
- AppLocale get appLocale; AppLocale get phoneLocale; ThemeData get themeData; bool get useMock;
+/// Опеределяет страну, язык которой используется
+/// Под неё подстраивается реклама и требования этой страны
+/// мы должны соблюдать в приложении (на будущее)
+ AppLocale get appLocale;/// Номер телефона какой страны использует
+/// По умолчанию равен [appLocale]
+ AppLocale get phoneLocale; ThemeData get themeData; bool get useMock;
 /// Create a copy of PrefsState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -790,7 +795,12 @@ class _PrefsState implements PrefsState {
   const _PrefsState({required this.appLocale, required this.phoneLocale, required this.themeData, required this.useMock});
   
 
+/// Опеределяет страну, язык которой используется
+/// Под неё подстраивается реклама и требования этой страны
+/// мы должны соблюдать в приложении (на будущее)
 @override final  AppLocale appLocale;
+/// Номер телефона какой страны использует
+/// По умолчанию равен [appLocale]
 @override final  AppLocale phoneLocale;
 @override final  ThemeData themeData;
 @override final  bool useMock;

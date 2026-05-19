@@ -27,52 +27,63 @@ class AuthRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [MyHomePage]
-class MyHomeRoute extends PageRouteInfo<MyHomeRouteArgs> {
-  MyHomeRoute({
-    Key? key,
-    String title = 'CoStock',
-    List<PageRouteInfo>? children,
-  }) : super(
-         MyHomeRoute.name,
-         args: MyHomeRouteArgs(key: key, title: title),
-         initialChildren: children,
-       );
+/// [GroupsScreen]
+class GroupsRoute extends PageRouteInfo<void> {
+  const GroupsRoute({List<PageRouteInfo>? children})
+    : super(GroupsRoute.name, initialChildren: children);
 
-  static const String name = 'MyHomeRoute';
+  static const String name = 'GroupsRoute';
 
   static PageInfo page = PageInfo(
     name,
     builder: (data) {
-      final args = data.argsAs<MyHomeRouteArgs>(
-        orElse: () => const MyHomeRouteArgs(),
-      );
-      return MyHomePage(key: args.key, title: args.title);
+      return const GroupsScreen();
     },
   );
 }
 
-class MyHomeRouteArgs {
-  const MyHomeRouteArgs({this.key, this.title = 'CoStock'});
+/// generated route for
+/// [StockScreen]
+class StockRoute extends PageRouteInfo<StockRouteArgs> {
+  StockRoute({required String stockId, Key? key, List<PageRouteInfo>? children})
+    : super(
+        StockRoute.name,
+        args: StockRouteArgs(stockId: stockId, key: key),
+        initialChildren: children,
+      );
+
+  static const String name = 'StockRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<StockRouteArgs>();
+      return StockScreen(args.stockId, key: args.key);
+    },
+  );
+}
+
+class StockRouteArgs {
+  const StockRouteArgs({required this.stockId, this.key});
+
+  final String stockId;
 
   final Key? key;
 
-  final String title;
-
   @override
   String toString() {
-    return 'MyHomeRouteArgs{key: $key, title: $title}';
+    return 'StockRouteArgs{stockId: $stockId, key: $key}';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-    if (other is! MyHomeRouteArgs) return false;
-    return key == other.key && title == other.title;
+    if (other is! StockRouteArgs) return false;
+    return stockId == other.stockId && key == other.key;
   }
 
   @override
-  int get hashCode => key.hashCode ^ title.hashCode;
+  int get hashCode => stockId.hashCode ^ key.hashCode;
 }
 
 /// generated route for

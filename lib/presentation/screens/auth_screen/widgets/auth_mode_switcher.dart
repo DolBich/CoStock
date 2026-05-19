@@ -37,7 +37,7 @@ class _AuthModeSwitcher extends StatelessWidget {
             ),
             if (state.mode == .login) ...[
               const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8),
+                padding: .symmetric(horizontal: 8),
                 child: Text('|'),
               ),
               if (state.mode == .login)

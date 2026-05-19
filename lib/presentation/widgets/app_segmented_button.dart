@@ -41,7 +41,7 @@ class AppSegmentedButton<T> extends StatelessWidget {
           child: Stack(
             children: [
               /// sliding pill
-              AnimatedPositioned(
+              if(index != -1) AnimatedPositioned(
                 duration: theme.animationDuration,
                 curve: Curves.ease,
                 left: index * width,
@@ -67,6 +67,7 @@ class AppSegmentedButton<T> extends StatelessWidget {
                       child: Padding(
                         padding: theme.padding,
                         child: Row(
+                          mainAxisAlignment: .center,
                           children: [
                             if (segment.icon != null)
                               Icon(segment.icon, size: 18),

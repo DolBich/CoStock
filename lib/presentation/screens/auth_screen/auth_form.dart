@@ -1,11 +1,18 @@
 part of 'auth_screen.dart';
 
-class AuthForm extends StatelessWidget {
+class AuthForm extends StatefulWidget {
   const AuthForm({super.key});
 
+  @override
+  State<AuthForm> createState() => _AuthFormState();
+}
+
+class _AuthFormState extends State<AuthForm> {
   void _listener(BuildContext context, AuthState state) {
     if (state.step == .authenticated) {
-      context.router.replaceAll([WelcomeRoute(userName: state.user?.name, user: state.user)]);
+      context.router.replaceAll([
+        WelcomeRoute(userName: state.user?.name, user: state.user),
+      ]);
     }
   }
 
@@ -36,7 +43,83 @@ class AuthForm extends StatelessWidget {
         );
       },
     );
+  }
 
+  /// Отслеживаем появление/исчезновение клавиатуры для анимации на логотипе
+  bool _isKeyboardVisible = false;
+  late StreamSubscription _keyboardVisibilitySubscription;
+
+  @override
+  void initState() {
+    /// Подписка на изменение видимости клавиатуры
+    _keyboardVisibilitySubscription = KeyboardVisibilityController().onChange
+        .listen((isVisible) {
+          setState(() => _isKeyboardVisible = isVisible);
+        });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _keyboardVisibilitySubscription.cancel();
+    super.dispose();
+  }
+
+  /// Время анимации перехода логотипа из тела в шапку и обратно
+  /// А также анимация смены форм данных
+  static const Duration _animationDuration = Duration(milliseconds: 300);
+
+  /// Анимированный логотип в шапке с появлением/исчезновением из-за клавиатуры
+  Widget _title(BuildContext context) {
+    return AnimatedSwitcher(
+      duration: _animationDuration,
+      transitionBuilder: (child, animation) {
+        return FadeTransition(
+          opacity: animation,
+          child: SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(0, -1),
+              end: .zero,
+            ).animate(animation),
+            child: child,
+          ),
+        );
+      },
+      child: _isKeyboardVisible
+          ? _buildLogo(context, inAppBar: true)
+          : const SizedBox.shrink(key: ValueKey('AppBarEmpty')),
+    );
+  }
+
+  /// Высота логотипа в теле
+  static const double _bodyLogoHeight = 100;
+
+  /// Анимированный логотип в теле с появлением/исчезновением из-за клавиатуры
+  Widget _buildBodyLogo(BuildContext context) {
+    return AnimatedSwitcher(
+      duration: _animationDuration,
+      switchInCurve: Curves.easeInOut,
+      switchOutCurve: Curves.easeInOut,
+      child: _isKeyboardVisible
+          ? const SizedBox.shrink(key: ValueKey('empty'))
+          : Container(
+        key: const ValueKey('logo'),
+        height: _bodyLogoHeight,
+        padding: const .only(bottom: 8.0),
+        alignment: .center,
+        child: _buildLogo(context, inAppBar: false),
+      ),
+      transitionBuilder: (child, animation) {
+        return SizeTransition(
+          sizeFactor: animation,
+          axis: .vertical,
+          child: FadeTransition(
+            opacity: animation,
+            child: child,
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -49,28 +132,32 @@ class AuthForm extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           leading: _leading,
+          title: _title(context),
+          centerTitle: true,
         ),
         body: SafeArea(
           child: Padding(
             padding: const .only(left: 24.0, right: 24.0, top: 12),
-            child: Column(
-              spacing: 4,
-              children: [
-                Flexible(flex: 2, child: _buildHeader(context)),
-                Flexible(
-                  flex: 5,
-                  child: SingleChildScrollView(
-                    child: Align(
-                      alignment: .topCenter,
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 400),
-                        child: _buildFields(),
-                      ),
+            child: SingleChildScrollView(
+              child: Column(
+                spacing: 4,
+                children: [
+                  /// Построение логотипа в теле
+                  _buildBodyLogo(context),
+
+                  /// Форма для заполнения данными
+                  Align(
+                    alignment: .topCenter,
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 400),
+                      child: _buildFields(),
                     ),
                   ),
-                ),
-                const _AuthModeSwitcher(),
-              ],
+
+                  /// Для смены регистрации/авторизации/забыл пароль
+                  const _AuthModeSwitcher(),
+                ],
+              ),
             ),
           ),
         ),
@@ -78,6 +165,7 @@ class AuthForm extends StatelessWidget {
     );
   }
 
+  /// Построение форм для заполнения данными на каждом из этапов
   Widget _buildFields() {
     return BlocConsumer<AuthBloc, AuthState>(
       listenWhen: (p, c) => p.step != c.step,
@@ -102,7 +190,7 @@ class AuthForm extends StatelessWidget {
         }
 
         return AnimatedSwitcher(
-          duration: const Duration(milliseconds: 300),
+          duration: _animationDuration,
           transitionBuilder: (child, animation) {
             return FadeTransition(
               opacity: animation,
@@ -121,36 +209,48 @@ class AuthForm extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
-    return Column(
-      mainAxisAlignment: .center,
-      spacing: 16,
-      children: [
-        Flexible(
-          child: Image.asset(
-            'assets/images/logos/co_stock_logo.png',
-            errorBuilder: (_, _, _) => const SizedBox.shrink(),
-          ),
+  /// Построение логотипа в двух вариантах расстановки его состовляющих
+  Widget _buildLogo(BuildContext context, {required bool inAppBar}) {
+    return inAppBar
+        ? Row(
+            key: const ValueKey('InAppBar'),
+            mainAxisAlignment: .center,
+            spacing: 4,
+            children: _logoChildren(context),
+          )
+        : Column(
+            key: const ValueKey('InBody'),
+            mainAxisAlignment: .center,
+            spacing: 4,
+            children: _logoChildren(context),
+          );
+  }
+
+  /// Построение отдельных элементов логотипа
+  List<Widget> _logoChildren(BuildContext context) {
+    return [
+      Flexible(
+        child: Image.asset(
+          'assets/images/logos/co_stock_logo.png',
+          errorBuilder: (_, _, _) => const SizedBox.shrink(),
         ),
-        RichText(
-          textAlign: TextAlign.center,
-          text: TextSpan(
-            style: Theme.of(context).textTheme.bodyLarge,
-            children: [
-              const TextSpan(
-                text: 'Order in your stock. ',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              TextSpan(
-                text: 'No clutter.',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.secondary,
-                ),
-              ),
-            ],
-          ),
+      ),
+      RichText(
+        textAlign: .center,
+        text: TextSpan(
+          style: Theme.of(context).textTheme.bodyLarge,
+          children: [
+            const TextSpan(
+              text: 'Order in your stock. ',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            TextSpan(
+              text: 'No clutter.',
+              style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+            ),
+          ],
         ),
-      ],
-    );
+      ),
+    ];
   }
 }

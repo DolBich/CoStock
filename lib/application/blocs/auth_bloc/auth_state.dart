@@ -273,7 +273,7 @@ extension AuthStateExt on AuthState {
     }
 
     LocalStorageService.saveAuth(u.id);
-    SessionManager.id = u.id;
+    SessionService.id = u.id;
 
     return copyWith(user: user, step: .authenticated);
   }

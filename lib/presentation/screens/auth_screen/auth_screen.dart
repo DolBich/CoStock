@@ -14,6 +14,7 @@ import 'package:co_stock/presentation/widgets/text_field/bloc_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:fpdart/fpdart.dart' show FpdartOnIterable;
 
 part 'auth_form.dart';

@@ -3,7 +3,8 @@ import 'package:co_stock/domain/bases/user.dart';
 import 'package:co_stock/presentation/navigation/guards/guards.dart';
 import 'package:co_stock/presentation/screens/auth_screen/auth_screen.dart';
 import 'package:co_stock/presentation/screens/auth_screen/welcome_screen.dart';
-import 'package:co_stock/presentation/screens/some_screen/some_screen_screen.dart';
+import 'package:co_stock/presentation/screens/groups_screen/groups_screen.dart';
+import 'package:co_stock/presentation/screens/stock_screen/stock_screen.dart';
 import 'package:flutter/material.dart';
 
 part 'app_router.gr.dart';
@@ -14,7 +15,8 @@ class AppRouter extends RootStackRouter {
 
   @override
   List<AutoRoute> get routes => [
-    AutoRoute(page: MyHomeRoute.page, path: '/home').guarded,
+    AutoRoute(page: StockRoute.page, path: '/stock').guarded,
+    AutoRoute(page: GroupsRoute.page, path: '/groups').guarded,
     AutoRoute(page: WelcomeRoute.page, path: '/welcome').guarded,
     AutoRoute(
       page: AuthRoute.page,

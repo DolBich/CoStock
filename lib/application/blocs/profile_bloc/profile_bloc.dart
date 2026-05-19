@@ -1,9 +1,8 @@
 import 'package:async/async.dart';
 import 'package:co_stock/application/handlers/event_transformers.dart';
+import 'package:co_stock/application/services/session_service.dart';
 import 'package:co_stock/data/repositories/repo_di/injector_manager.dart';
-import 'package:co_stock/data/repositories/repos/auth_repo/i_auth_repo.dart';
 import 'package:co_stock/application/tools/cancel_token.dart';
-import 'package:co_stock/application/managers/session_manager.dart';
 import 'package:co_stock/domain/notifications/snack/snack_notification.dart';
 import 'package:co_stock/domain/screens_entities/auth_screen/auth_method.dart';
 import 'package:co_stock/domain/bases/user.dart';
@@ -34,14 +33,12 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<_ChangePassword>(_changePassword);
     on<_ChangeName>(_changeName);
 
-    _authRepository = InjectorManager().current.authRepository;
-
     /// Это тот случай, когда мы подтягиваем юзера от сохранённого
     /// id при автоматической авторизации при входе в приложение
-    if (SessionManager.id != null) add(const .init());
+    if (SessionService.registered) add(const .init());
   }
 
-  late final IAuthRepository _authRepository;
+  final _authRepository = InjectorManager().current.authRepository;
 
   final Map<AuthMethod, CancelableOperation> _cancelableOps = {};
 
@@ -58,16 +55,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     User? user = event.user;
 
     if (user == null) {
-      final id = SessionManager.id;
-      if (id == null) {
-        final f = AppError.client(
-          type: .state,
-          error: Exception('Couldn\'t get userId'),
-          stackTrace: .current,
-        );
-        f.report();
-        return;
-      }
+      final id = SessionService.id;
 
       final res = await _authRepository.getCurrentUser(id: id);
 

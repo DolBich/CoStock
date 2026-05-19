@@ -3,11 +3,11 @@ import 'dart:developer';
 
 import 'package:async/async.dart';
 import 'package:co_stock/application/handlers/event_transformers.dart';
+import 'package:co_stock/application/services/session_service.dart';
 import 'package:co_stock/data/local_storage/local_storage_impl/local_storage_service.dart';
 import 'package:co_stock/data/repositories/repo_di/injector_manager.dart';
 import 'package:co_stock/data/repositories/repos/auth_repo/i_auth_repo.dart';
 import 'package:co_stock/application/tools/cancel_token.dart';
-import 'package:co_stock/application/managers/session_manager.dart';
 import 'package:co_stock/domain/notifications/snack/snack_notification.dart';
 import 'package:co_stock/domain/screens_entities/auth_screen/auth_field.dart';
 import 'package:co_stock/domain/screens_entities/auth_screen/auth_method.dart';

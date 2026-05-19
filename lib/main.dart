@@ -1,6 +1,6 @@
 import 'package:co_stock/application/blocs/prefs_bloc/prefs_bloc.dart';
 import 'package:co_stock/application/blocs/profile_bloc/profile_bloc.dart';
-import 'package:co_stock/application/managers/session_manager.dart';
+import 'package:co_stock/application/services/session_service.dart';
 import 'package:co_stock/data/local_storage/i_local_storage.dart';
 import 'package:co_stock/data/local_storage/local_storage_impl/local_storage_service.dart';
 import 'package:co_stock/data/local_storage/local_storage_impl/shared_preferences_storage.dart';
@@ -20,7 +20,7 @@ void main() async {
 
   /// Для срабатывания AuthGuards
   final userId = await LocalStorageService.getAuth();
-  SessionManager.id = userId;
+  SessionService.id = userId;
 
   runApp(
     EasyLocalization(
@@ -42,6 +42,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => PrefsBloc()),
 
         /// Отключаем [lazy], чтобы он сразу выполнил внутри себя [.init()]
+        /// Иначе вызовет [.init()] только при первом обращении к нему
         BlocProvider(create: (_) => ProfileBloc(), lazy: false),
       ],
       child: const _App(),

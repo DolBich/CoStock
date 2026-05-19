@@ -17,12 +17,12 @@ class WelcomeScreen extends StatefulWidget {
   /// Дополнительные данные для подгрузки
   final User? user;
 
-  WelcomeScreen({
+  const WelcomeScreen({
     super.key,
     required this.userName,
-    PageRouteInfo ? nextRoute,
+    PageRouteInfo? nextRoute,
     required this.user,
-  }) : nextRoute = nextRoute ?? MyHomeRoute();
+  }) : nextRoute = nextRoute ?? const GroupsRoute();
 
   @override
   State<WelcomeScreen> createState() => _WelcomeScreenState();

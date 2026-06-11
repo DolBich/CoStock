@@ -1,5 +1,9 @@
 import 'dart:math';
 
+/// Устанавливает уникальный id
 class IdSetter {
-  static String get setId => '${DateTime.now().microsecondsSinceEpoch.toString()}+${Random().nextInt(1000)}';
+  const IdSetter();
+
+  /// Можно использовать этот метод через вызов [IdSetter()()]
+  String call() => '${DateTime.now().microsecondsSinceEpoch.toString()}+${Random().nextInt(1000)}';
 }

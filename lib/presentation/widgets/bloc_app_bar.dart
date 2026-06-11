@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+/// Используется для создания своего [AppBar] с системой Bloc
 class BlocAppBar<B extends BlocBase<S>, S> extends StatelessWidget
     implements PreferredSizeWidget {
   final bool Function(S p, S c)? buildWhen;

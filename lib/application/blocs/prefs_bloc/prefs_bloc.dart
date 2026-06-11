@@ -32,9 +32,10 @@ class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
     /// Repositories
     on<_ChangeRepo>(_changeRepo);
 
-    add(const PrefsEvent.init());
+    add(const .init());
   }
 
+  /// Инициализация начального состояния приложения
   Future<void> _onInit(_Init event, Emitter<PrefsState> emit) async {
     final appLocale = await LocalStorageService.getAppLocale();
     final phoneLocale = await LocalStorageService.getPhoneLocale();
@@ -54,8 +55,10 @@ class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
   }
 
   ///
-  /// Theme
+  /// Тема
   ///
+
+  /// Установка яркост темы (светлая/тёмная/системная)
   void _changeUseSeed(_ChangeUseSeed event, Emitter<PrefsState> emit) {
     ThemeHandler.changeThemeConfig(useSeed: event.useSeed);
     LocalStorageService.saveUseSeed(event.useSeed);
@@ -63,6 +66,7 @@ class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
     emit(state.copyWith(themeData: ThemeHandler.buildTheme()));
   }
 
+  /// Установка цвета сида для темы на основе сида
   void _onSetThemeMode(_SetThemeMode event, Emitter<PrefsState> emit) {
     ThemeHandler.themeMode = event.mode;
     LocalStorageService.saveThemeMode(event.mode);
@@ -70,6 +74,7 @@ class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
     emit(state.copyWith(themeData: ThemeHandler.buildTheme()));
   }
 
+  /// Использовать тему на основе сида, или нет
   void _onSetSeedColor(_SetSeedColor event, Emitter<PrefsState> emit) {
     ThemeHandler.changeThemeConfig(seed: event.seed);
     LocalStorageService.saveThemeSeed(event.seed);
@@ -78,14 +83,17 @@ class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
   }
 
   ///
-  /// Locale
+  /// Локализация
   ///
+
+  /// Смена локали приложения
   void _changeAppLocale(_ChangeAppLocale event, Emitter<PrefsState> emit) {
     LocalStorageService.saveAppLocale(event.appLocale);
 
     emit(state.copyWith(appLocale: event.appLocale));
   }
 
+  /// Смена локали номера телефона (для номера страны +7, +344 и тд.)
   void _changePhoneLocale(_ChangePhoneLocale event, Emitter<PrefsState> emit) {
     LocalStorageService.savePhoneLocale(event.phoneLocale);
 
@@ -93,9 +101,10 @@ class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
   }
 
   ///
-  /// Repositories
+  /// Репозитории
   ///
 
+  /// Переключение действующего типа репозитории (mock/firebase)
   void _changeRepo(_ChangeRepo event, Emitter<PrefsState> emit) {
     LocalStorageService.saveUseMock(!state.useMock);
 

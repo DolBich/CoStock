@@ -16,6 +16,7 @@ final GlobalKey<ScaffoldMessengerState> rootScaffoldMessengerKey = GlobalKey();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
+  /// Инициализация локального хранилища через его реализацию через shared_preferences
   await ILocalStorage.init(SharedPreferencesManager());
 
   /// Для срабатывания AuthGuards

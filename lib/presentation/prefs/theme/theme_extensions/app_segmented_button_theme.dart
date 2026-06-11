@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
+/// Цветовая тема для [AppSegmentedButton]
 @immutable
 class AppSegmentedButtonTheme extends ThemeExtension<AppSegmentedButtonTheme> {
   final Color backgroundColor;

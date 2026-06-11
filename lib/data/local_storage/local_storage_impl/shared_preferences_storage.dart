@@ -1,6 +1,10 @@
 import 'package:co_stock/data/local_storage/i_local_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+/// Реализация абстрактного локального хранилища на основе бибилиотеки
+/// shared_preferences
+///
+/// Реализует все методы локального хранилища через свои внутренние методы
 class SharedPreferencesManager implements ILocalStorage {
   static SharedPreferences? _prefs;
 

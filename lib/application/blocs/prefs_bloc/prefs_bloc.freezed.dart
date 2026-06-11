@@ -603,7 +603,8 @@ mixin _$PrefsState {
 /// мы должны соблюдать в приложении (на будущее)
  AppLocale get appLocale;/// Номер телефона какой страны использует
 /// По умолчанию равен [appLocale]
- AppLocale get phoneLocale; ThemeData get themeData; bool get useMock;
+ AppLocale get phoneLocale; ThemeData get themeData;/// Используется mock репозитории (если нет - firebase)
+ bool get useMock;
 /// Create a copy of PrefsState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -803,6 +804,7 @@ class _PrefsState implements PrefsState {
 /// По умолчанию равен [appLocale]
 @override final  AppLocale phoneLocale;
 @override final  ThemeData themeData;
+/// Используется mock репозитории (если нет - firebase)
 @override final  bool useMock;
 
 /// Create a copy of PrefsState

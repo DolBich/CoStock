@@ -1,7 +1,11 @@
 part of 'bloc_text_field.dart';
 
+/// Отображает текст с ошибкой поля/успехом/валидацией
 class _ValidationDisplay extends StatelessWidget {
+  /// Результат валидации
   final ValidationResult validationResult;
+
+  /// Есть ли сейчас постоянно отображаемая ошибка
   final bool? errorPersisted;
 
   const _ValidationDisplay({
@@ -19,34 +23,40 @@ class _ValidationDisplay extends StatelessWidget {
       padding: const .only(top: 8, left: 12, right: 12),
       child: Column(
         crossAxisAlignment: .start,
+        spacing: 4,
         children: [
-          // Требования (если есть)
+          /// Требования валидации (если есть)
           if (validationResult.requirements.isNotEmpty) ...[
             if (validationResult.requirementText.isNotEmpty)
+              /// Название заголовка
               Text(
                 validationResult.requirementText,
                 style: textStyle.copyWith(fontWeight: FontWeight.w500),
               ),
-            const SizedBox(height: 4),
+
+            /// Требования
             ...validationResult.requirements.map(
               (rs) => _buildRequirementText(rs, textStyle),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
           ],
 
-          // Советы (если есть)
+          /// Советы по улучшению значения поля (если есть)
           if (validationResult.suggestions.isNotEmpty) ...[
             if (validationResult.suggestionsText.isNotEmpty)
+              /// Название заголовка
               Text(
                 validationResult.suggestionsText,
                 style: textStyle.copyWith(fontWeight: FontWeight.w500),
               ),
-            const SizedBox(height: 4),
+
+            /// Советы
             ...validationResult.suggestions.map(
               (rs) => _buildSuggestionText(rs, textStyle),
             ),
-            const SizedBox(height: 12),
-            // Прогресс-бар и подпись
+            const SizedBox(height: 8),
+
+            /// Прогресс-бар выполнения советов
             LinearProgressIndicator(
               value: validationResult.suggestionsProgress,
               backgroundColor: Colors.grey[300],
@@ -54,7 +64,9 @@ class _ValidationDisplay extends StatelessWidget {
                 _getProgressColor(validationResult.suggestionsProgress),
               ),
             ),
-            const SizedBox(height: 4),
+
+            /// Показывает текстом насколько значение соответствует всем советам
+            /// Связано с прогресс-баром
             Text(
               validationResult.strengthLabel,
               style: textStyle.copyWith(
@@ -70,6 +82,7 @@ class _ValidationDisplay extends StatelessWidget {
     );
   }
 
+  /// Построение текста требований
   Widget _buildRequirementText(RuleStatus rs, TextStyle baseStyle) {
     return Padding(
       padding: const EdgeInsets.only(left: 8, bottom: 2),
@@ -80,6 +93,7 @@ class _ValidationDisplay extends StatelessWidget {
     );
   }
 
+  /// Построение текста советов
   Widget _buildSuggestionText(RuleStatus rs, TextStyle baseStyle) {
     return Padding(
       padding: const EdgeInsets.only(left: 8, bottom: 2),

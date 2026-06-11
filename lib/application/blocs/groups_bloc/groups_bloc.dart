@@ -18,8 +18,9 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'groups_bloc.freezed.dart';
 
 part 'groups_event.dart';
-
 part 'groups_state.dart';
+
+part 'handlers/groups_error_handler.dart';
 
 class GroupsBloc extends Bloc<GroupsEvent, GroupsState> {
   CancelToken? _cancelToken;
@@ -225,14 +226,7 @@ class GroupsBloc extends Bloc<GroupsEvent, GroupsState> {
     /// Поиск группы по id в дереве
     final node = _treeService.findEntityById(entity.id);
     if (node == null) {
-      AppError.client(
-        type: .state,
-        error: Exception(
-          'Не был найден соответствующий узел для навигации [${entity.id}]:'
-          '\n${{...StockEntityDto.fromDomain(entity).toJson(), 'parent': entity.parent}} ',
-        ),
-        stackTrace: .current,
-      );
+      _GroupsErrorHandler.noNode(entity);
       return;
     }
 
@@ -315,7 +309,7 @@ class GroupsBloc extends Bloc<GroupsEvent, GroupsState> {
   /// На сервер эти данные добавятся через сохранение [_onSaveEditedTree]
   void _onEditAddNode(_AddNode event, Emitter<GroupsState> emit) {
     /// Создаём новую сущность
-    final localId = IdSetter.setId;
+    final localId = IdSetter()();
     StockEntity newEntity;
     if (event.type == .group) {
       newEntity = StockGroup(
@@ -363,12 +357,7 @@ class GroupsBloc extends Bloc<GroupsEvent, GroupsState> {
     /// Поиск целевой сущности на удаление
     final target = _treeService.findEntityById(event.nodeId);
     if (target == null) {
-      AppError.client(
-        type: .state,
-        error: Exception('Цель удаления не найдена'),
-        stackTrace: .current,
-      ).report();
-
+      _GroupsErrorHandler.noNodeId(event.nodeId);
       emit(state.copyWith(isLoading: false));
       return;
     }
@@ -426,11 +415,7 @@ class GroupsBloc extends Bloc<GroupsEvent, GroupsState> {
     /// Ищем цель удаления
     final target = _treeService.findEntityById(event.nodeId);
     if (target == null) {
-      AppError.client(
-        type: .state,
-        error: Exception('Цель удаления не найдена'),
-        stackTrace: .current,
-      ).report();
+      _GroupsErrorHandler.noNodeId(event.nodeId);
       return;
     }
 
@@ -522,11 +507,7 @@ class GroupsBloc extends Bloc<GroupsEvent, GroupsState> {
     /// Поиск обовляемой сущности
     final target = _treeService.findEntityById(event.nodeId);
     if (target == null) {
-      AppError.client(
-        type: .state,
-        error: Exception('Цель обновления не найдена'),
-        stackTrace: .current,
-      ).report();
+      _GroupsErrorHandler.noNodeId(event.nodeId);
       return;
     }
 

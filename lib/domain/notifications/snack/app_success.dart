@@ -1,7 +1,14 @@
 part of 'snack_notification.dart';
 
-enum AuthSuccessType { available, registered }
+/// Виды успехов авторизации
+enum AuthSuccessType {
+  /// Доступно для регистрации
+  available,
+  /// Получилось зарегистрировать
+  registered
+}
 
+/// Уведомление об успехе
 @freezed
 sealed class AppSuccess extends Snack with _$AppSuccess {
   const AppSuccess._();
@@ -21,6 +28,7 @@ sealed class AppSuccess extends Snack with _$AppSuccess {
   @override
   void log() => SnackSuccess(this).log();
 
+  /// Пользовательские сообщения об успехе авторизации
   String _authMessage(AuthSuccessType type, String? msg) {
     switch (type) {
       case AuthSuccessType.available:

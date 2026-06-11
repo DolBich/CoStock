@@ -1,6 +1,8 @@
 import 'package:co_stock/presentation/prefs/theme/theme_extensions/app_segmented_button_theme.dart';
 import 'package:flutter/material.dart';
 
+/// Кастомный виджет для выбора одного варианта из нескольких
+/// Выглядит как SegmentedButton с закосом под стиль telegram
 class AppSegmentButton<T> {
   final T value;
   final Widget label;
@@ -40,7 +42,7 @@ class AppSegmentedButton<T> extends StatelessWidget {
           ),
           child: Stack(
             children: [
-              /// sliding pill
+              /// Ездящая таблетка
               if(index != -1) AnimatedPositioned(
                 duration: theme.animationDuration,
                 curve: Curves.ease,
@@ -56,6 +58,7 @@ class AppSegmentedButton<T> extends StatelessWidget {
                 ),
               ),
 
+              /// Варианты выбора
               Row(
                 children: segments.map((segment) {
                   final isSelected = segment.value == selected;

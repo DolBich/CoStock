@@ -4,6 +4,7 @@ import 'package:co_stock/data/repositories/repos/auth_repo/i_auth_repo.dart';
 import 'package:co_stock/data/repositories/repos/stock_repo/firebase_stock_repository.dart';
 import 'package:co_stock/data/repositories/repos/stock_repo/i_stock_repository.dart';
 
+/// Набор репозиториев реализованных на основе firebase
 class FirebaseInjector implements IInjector {
   const FirebaseInjector();
 

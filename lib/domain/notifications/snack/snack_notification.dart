@@ -12,10 +12,14 @@ part 'snack_notification.freezed.dart';
 /// Тип уведомления для выбора стиля отображения
 enum SnackNotificationType { error, success }
 
+/// Уведомление о чём либо
 abstract class Snack {
   const Snack();
 
+  /// Что видит пользователь в уведомлении на экране
   String get userMessage;
+
+  /// Что видит разработчик в логах
   String get devMessage;
 
   /// Для отображения на экране (уведомления для пользователя)
@@ -25,15 +29,20 @@ abstract class Snack {
   void log();
 }
 
+/// Единая форма для любого вида уведомления
+///
+/// Нужна для унификации уведомлений. Чтобы можно было вне зависимости от типа
+/// уведомления работать с ними в единой системе управления уведомлениями [SnackManager]
 @freezed
 sealed class SnackNotification extends Snack with _$SnackNotification {
   const SnackNotification._();
 
+  /// Уведомления об ошибках
   const factory SnackNotification.error(AppError error) = SnackError;
 
+  /// Уведомления об успехах
   const factory SnackNotification.success(AppSuccess success) = SnackSuccess;
 
-  /// Сообщение для показа пользователю (делегируется внутреннему объекту)
   @override
   String get userMessage => map(
     error: (e) => e.error.userMessage,

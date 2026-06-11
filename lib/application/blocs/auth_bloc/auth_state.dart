@@ -1,12 +1,27 @@
 part of 'auth_bloc.dart';
 
+/// Состояние блока аутентификации. Хранит данные всех шагов, включая временные
+/// поля ввода и подтверждённого пользователя.
+/// Поля [fields] (по методам входа), [passwordField] и [nameField] разделены,
+/// чтобы упростить обновление и валидацию на разных этапах.
 @freezed
 sealed class AuthState with _$AuthState {
+  const AuthState._();
+
   const factory AuthState({
+    /// На каком этапе авторизации/регистрации сейчас пользователь (для навигации/смены виджетов)
     required AuthStep step,
+
+    /// Авторизовывается или регистрируется пользователь
     required AuthMode mode,
+
+    /// Описывает каким именно способом человек пытается авторизоаваться (телефон/почта/логин)
     required AuthMethod method,
     required bool isLoading,
+
+    /// Поле [userId] используется только на этапе enterPassword для хранения идентификатора,
+    /// полученного при проверке существования аккаунта, чтобы знать к какому аккаунту мы
+    /// подбираем пароль
     required String? userId,
 
     /// Временные поля для ввода.
@@ -39,16 +54,19 @@ sealed class AuthState with _$AuthState {
       user: null,
     );
   }
-}
 
-extension AuthStateExt on AuthState {
+  ///--------------------------------------------------------------------------
+/// Основные методы и геттеры
+/// -----------------------------------------------------------------------------
+
+  /// Получение юзера для регистрации
   User get toUser {
     return User(
       name: nameField.value,
       password: passwordField.value,
-      email: method == AuthMethod.email ? identifier : null,
-      phone: method == AuthMethod.phone ? identifier : null,
-      login: method == AuthMethod.login ? identifier : null,
+      email: method == .email ? identifier : null,
+      phone: method == .phone ? identifier : null,
+      login: method == .login ? identifier : null,
     );
   }
 
@@ -58,12 +76,15 @@ extension AuthStateExt on AuthState {
 
   String detail(AuthMethod method) => fields[method]?.value ?? '';
 
+  /// Сброс всех полей идентификации
   Map<AuthMethod, FieldState> resetFields() => <AuthMethod, FieldState>{
-    .email: const FieldState(),
-    .phone: const FieldState(),
-    .login: const FieldState(),
+        .email: const FieldState(),
+        .phone: const FieldState(),
+        .login: const FieldState(),
   };
 
+  /// Обновление состояния полей [fields], [passwordField], [nameField]
+  /// в соответствии с тем, от какого типа текстового поля [field] пришёл запрос
   AuthState withFieldState({
     required AuthField field,
     bool? isLoading,
@@ -71,6 +92,8 @@ extension AuthStateExt on AuthState {
   }) {
     final base = copyWith(isLoading: isLoading ?? this.isLoading);
     AuthMethod method = this.method;
+
+    /// Переводим [field] в то, какое именно поле в state нам надо обновить
     switch (field) {
       case .name:
         return base.copyWith(
@@ -92,6 +115,8 @@ extension AuthStateExt on AuthState {
       case .login:
         method = field.toMethod ?? this.method;
     }
+
+    /// Обновляем поле
     return _updateField(
       base: base,
       method: method,
@@ -100,6 +125,7 @@ extension AuthStateExt on AuthState {
     );
   }
 
+  /// Обновление полей идентификации с учётом всех проверок
   AuthState _updateField({
     required AuthState base,
     required AuthMethod method,
@@ -123,11 +149,16 @@ extension AuthStateExt on AuthState {
     return base.copyWith(fields: updatedFields);
   }
 
-  // Для идентификатора (логин/телефон/почта)
+  ///----------------------------------------------------------------------
+  /// Обновление состояния для этапа идентификации
+  /// ---------------------------------------------------------------------
+
+  /// Отправка нынешнего поля из [fields] в загрузку
   AuthState withIdentifierLoading(bool loading) {
     return withFieldState(field: .identifier, isLoading: loading);
   }
 
+  /// Отправка нынешнего поля из [fields] в состояние ошибки
   AuthState withIdentifierError(AppError error) {
     return withFieldState(
       field: .identifier,
@@ -136,11 +167,16 @@ extension AuthStateExt on AuthState {
     );
   }
 
-  // Для пароля
+  ///----------------------------------------------------------------------
+  /// Обновление состояния для этапа пароля
+  /// ---------------------------------------------------------------------
+
+  /// Отправка нынешнего поля [passwordField] в состояние загрузки
   AuthState withPasswordLoading(bool loading) {
     return withFieldState(field: .password, isLoading: loading);
   }
 
+  /// Отправка нынешнего поля [passwordField] в состояние ошибки
   AuthState withPasswordError(AppError error) {
     return withFieldState(
       field: .password,
@@ -149,11 +185,16 @@ extension AuthStateExt on AuthState {
     );
   }
 
-  // Для деталей
+  ///----------------------------------------------------------------------
+  /// Обновление состояния для этапа деталей
+  /// ---------------------------------------------------------------------
+
+  /// Отправка нынешнего поля из [fields] в деталях в состояние загрузки
   AuthState withDetailLoading(AuthMethod method, bool loading) {
     return withFieldState(field: method.toField, isLoading: loading);
   }
 
+  /// Отправка нынешнего поля из [fields] в деталях в состояние ошибки
   AuthState withDetailError(AuthMethod method, AppError error) {
     return withFieldState(
       field: method.toField,
@@ -162,6 +203,8 @@ extension AuthStateExt on AuthState {
     );
   }
 
+  /// Отправка нынешнего поля из [fields] в деталях в состояние успеха
+  /// Такой метод есть только для деталей из-за специфики этих полей
   AuthState withDetailSuccess(AuthMethod method, AppSuccess success) {
     return withFieldState(
       field: method.toField,
@@ -183,29 +226,27 @@ extension AuthStateExt on AuthState {
     );
   }
 
-  /// Сбрасывает уведомления и ошибки валидации во всех полях,
-  /// но сохраняет введённые значения.
+  /// Сбрасывает уведомления [notification] и ошибки валидации [errorPersisted] во всех полях,
+  /// но сохраняет введённые значения [value].
+  /// Используется при смене режима (login/register) или метода входа, чтобы скрыть предыдущие ошибки.
   AuthState resetValidation() {
-    // Сброс полей деталей (email, phone, login)
+    /// Сброс полей деталей (email, phone, login)
     final newFields = <AuthMethod, FieldState>{};
     for (final entry in fields.entries) {
       newFields[entry.key] = entry.value.copyWith(
         notification: null,
         errorPersisted: null,
-        // wasInteracted: false,
       );
     }
 
-    // Сброс пароля и имени
+    /// Сброс пароля и имени
     final newPasswordField = passwordField.copyWith(
       notification: null,
       errorPersisted: null,
-      // wasInteracted: false,
     );
     final newNameField = nameField.copyWith(
       notification: null,
       errorPersisted: null,
-      // wasInteracted: false,
     );
 
     return copyWith(
@@ -215,8 +256,10 @@ extension AuthStateExt on AuthState {
     );
   }
 
-  /// Тут возвращая null мы в UI обеспечиваем отсутстивие кнопки назад
-  /// Орабатывает через системную кнопку назад
+  /// Возвращает предыдущий шаг для системной кнопки «Назад»
+  /// (например, при нажатии системной клавиши возврата).
+  /// Отличается от [previousScreen] тем, что в некоторых сценариях (регистрация)
+  /// системный возврат должен обрабатываться иначе.
   AuthStep? get previousStep {
     final currentStep = step;
 
@@ -235,8 +278,9 @@ extension AuthStateExt on AuthState {
     }
   }
 
-  /// Тут возвращая null мы в UI обеспечиваем отсутстивие кнопки назад
-  /// Отрабатывает через отрисованную кнопку назад
+  /// Возвращает предыдущий шаг для отрисованной в UI кнопки «Назад».
+  /// Различие с [previousStep] сделано для более гибкого управления навигацией
+  /// на разных устройствах (например, Android системная кнопка может иметь другое поведение).
   AuthStep? get previousScreen {
     final currentStep = step;
 
@@ -254,6 +298,7 @@ extension AuthStateExt on AuthState {
     }
   }
 
+  /// Нужен для выходя из приложения, если мы на первом этапе нажимаем системный назад
   bool get isFirstStep {
     if (mode == .login) {
       return step == .enterIdentifier;
@@ -262,7 +307,7 @@ extension AuthStateExt on AuthState {
     }
   }
 
-  /// Этот методо используем только в момент полной авторизации пользователя
+  /// Этот метод используем только в момент полной авторизации пользователя
   /// Это происходит когда мы покидаем экран деталей (пропускаем его)
   /// Находясь на экране деталей мы не .authenticated
   AuthState authenticated(User? user) {

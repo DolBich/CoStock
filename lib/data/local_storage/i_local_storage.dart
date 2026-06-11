@@ -1,5 +1,9 @@
+/// Абстрактный класс локального хранилища
+/// Описывает все основные методы для работы с любым локальных хранилищем
 abstract class ILocalStorage {
   static ILocalStorage? _instance;
+
+  /// Требует обязательно инициализации перед использованием
 
   static ILocalStorage get instance {
     if (_instance == null) {
@@ -8,6 +12,9 @@ abstract class ILocalStorage {
     return _instance!;
   }
 
+  /// Инициализация подразумевает под собой выбор конкретной реализации
+  /// этого абстрактного класса
+  /// [implementation] - реализация локального хранилища
   static Future<void> init(ILocalStorage implementation) async {
     await implementation.initialize();
     _instance = implementation;

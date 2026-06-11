@@ -6,6 +6,8 @@ import 'package:co_stock/main.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 
+/// Надстройка, позволяющая слушать любые репорты об уведомлениях [SnackNotification]
+/// ниже по дереву виджетов
 class SnackListener extends StatefulWidget {
   final Widget child;
 
@@ -16,10 +18,14 @@ class SnackListener extends StatefulWidget {
 }
 
 class _SnackListenerState extends State<SnackListener> {
+  /// Отслеживает и управляет уведомлениями
   final SnackManager _snackManager = SnackManager();
+
+  /// Подписка на новые уведомления
   late final StreamSubscription<SnackNotification> _subscription;
 
   static const _snackBarDuration = Duration(seconds: 4);
+  /// Нужно для отслеживания того, как часто показывать уведомления
   DateTime _lastShownTime = DateTime.fromMillisecondsSinceEpoch(0);
 
   @override
@@ -27,7 +33,7 @@ class _SnackListenerState extends State<SnackListener> {
     super.initState();
     _subscription = _snackManager.snacks
         .scan<SnackNotification?>((prev, current, index) {
-          // не показываем одинаковые уведомления слишком часто
+          /// Не показываем одинаковые уведомления слишком часто
           if (prev == null || prev != current) {
             return current;
           }
@@ -40,6 +46,7 @@ class _SnackListenerState extends State<SnackListener> {
         .listen(_onNotification);
   }
 
+  /// При появлении нового уведомления в потоке уведомлений отображаем его на экране
   void _onNotification(SnackNotification notification) {
     _lastShownTime = DateTime.now();
 

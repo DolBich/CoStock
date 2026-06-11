@@ -293,7 +293,9 @@ as String?,
 /// @nodoc
 mixin _$StockItemDto {
 
- String get id; String get name; int get count; int get preferredCount; int get lowLevelCount;
+ String get id; String get name;/// [count] может превышать [preferredCount] и может быть ниже [lowLevelCount]
+/// Они служат исключительно в качестве индикаторов
+ int get count; int get preferredCount; int get lowLevelCount;
 /// Create a copy of StockItemDto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -490,6 +492,8 @@ class _StockItemDto implements StockItemDto {
 
 @override final  String id;
 @override final  String name;
+/// [count] может превышать [preferredCount] и может быть ниже [lowLevelCount]
+/// Они служат исключительно в качестве индикаторов
 @override@JsonKey() final  int count;
 @override@JsonKey() final  int preferredCount;
 @override@JsonKey() final  int lowLevelCount;

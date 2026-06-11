@@ -13,20 +13,25 @@ import 'package:co_stock/domain/screens_entities/auth_screen/auth_field.dart';
 import 'package:co_stock/domain/screens_entities/auth_screen/auth_method.dart';
 import 'package:co_stock/domain/screens_entities/auth_screen/auth_mode.dart';
 import 'package:co_stock/domain/screens_entities/auth_screen/auth_step.dart';
-import 'package:co_stock/domain/bases/user.dart';
+import 'package:co_stock/domain/core/user.dart';
 import 'package:co_stock/domain/widget_entities/field_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'auth_event.dart';
-
 part 'auth_state.dart';
+
+part 'handlers/auth_error_handler.dart';
 
 part 'auth_bloc.freezed.dart';
 
+/// Блок аутентификации. Управляет всем процессом входа/регистрации, включая
+/// проверку идентификатора, пароля, добавление деталей (email/phone/login) и
+/// навигацию между шагами.
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   late final IAuthRepository _authRepository;
 
+  /// [restartableByKey] - при вызове второго события подряд он отменит первый
   AuthBloc() : super(.initial()) {
     on<_Init>(_onInit);
     on<_ChangeMode>(_onChangeMode);
@@ -55,15 +60,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     add(const .init());
   }
 
-  final Map<AuthMethod, Timer> _removeTimers = {};
-
   Future<void> _onInit(_Init event, Emitter<AuthState> emit) async {
+    /// Проверяем идёт ли сейчас уже активная сессия (есть ли уже авторизация)
     final savedId = await LocalStorageService.getAuth();
     if (savedId == null) {
       emit(state.copyWith(isLoading: false));
       return;
     }
 
+    /// Получаем информацию от авторизованном аккаунте
     final res = await _authRepository.getCurrentUser(id: savedId);
 
     await res.fold(
@@ -73,12 +78,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       },
       (user) async {
         if (user.needDetails) {
+          /// Переводим на этап заполнения деталей, если нужно
           emit(
             state
                 .fromUser(user)
                 .copyWith(step: .registerDetails, isLoading: false),
           );
         } else {
+          /// Иначе авторизовываем
           emit(state.authenticated(user));
         }
       },
@@ -89,6 +96,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(
       state.resetValidation().copyWith(
         mode: event.mode,
+        /// переводим на первый шаг режима
         step: event.mode == .register ? .enterName : .enterIdentifier,
         user: null,
       ),
@@ -99,6 +107,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(
       state.copyWith(
         method: event.method,
+        /// Сбрасываем этап пароля, если взаимодействуем с идентификатором
         step: state.step == .enterPassword ? .enterIdentifier : state.step,
       ),
     );
@@ -117,19 +126,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
+  /// Подтверждение идентификатора при авторизации
   Future<void> _submitAuthIdentifier(Emitter<AuthState> emit) async {
     final identifier = state.identifier;
     if (identifier.isEmpty) {
-      final f = AppError.client(
-        type: .state,
-        error: Exception('Identifier is empty'),
-        stackTrace: .current,
-      );
-      f.report();
+      final f = _AuthErrorHandler.emptyIdentifier();
       emit(state.withIdentifierError(f));
       return;
     }
 
+    /// Проверка на наличие аккаунта с таким идентификатором
     final res = await _authRepository.checkAuthAccount(
       method: state.method,
       identifier: identifier,
@@ -150,19 +156,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
   }
 
+  /// Подтверждение идентификатора при регистрации
   Future<void> _submitRegIdentifier(Emitter<AuthState> emit) async {
     final identifier = state.identifier;
     if (identifier.isEmpty) {
-      final f = AppError.client(
-        type: .state,
-        error: Exception('Identifier is empty'),
-        stackTrace: .current,
-      );
-      f.report();
+      final f = _AuthErrorHandler.emptyIdentifier();
       emit(state.withIdentifierError(f));
       return;
     }
 
+    /// Проверка на отсутствие аккаунтов с таким идентификатором
     final res = await _authRepository.checkRegAccount(
       method: state.method,
       identifier: identifier,
@@ -179,6 +182,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
   }
 
+  /// Подтверждение пароля
   Future<void> _onSubmitPassword(
     _SubmitPassword event,
     Emitter<AuthState> emit,
@@ -192,31 +196,23 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
+  /// Подтверждение пароля при авторизации
   Future<void> _submitAuthPassword(Emitter<AuthState> emit) async {
     final id = state.userId;
     if (id == null) {
-      final f = AppError.client(
-        type: .state,
-        error: Exception('No user id'),
-        stackTrace: .current,
-      );
-      f.report();
+      final f = _AuthErrorHandler.noId();
       emit(state.withPasswordError(f));
       return;
     }
 
     final password = state.password;
     if (password.isEmpty) {
-      final f = AppError.client(
-        type: .state,
-        error: Exception('Password is empty'),
-        stackTrace: .current,
-      );
-      f.report();
+      final f = _AuthErrorHandler.emptyPassword();
       emit(state.withPasswordError(f));
       return;
     }
 
+    /// Вход в аккаунт
     final res = await _authRepository.login(id: id, password: password);
 
     await res.fold(
@@ -226,6 +222,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       },
       (user) async {
         if (user.needDetails) {
+          /// Если нужны детали - переходим на их заполнение
           emit(
             state
                 .withPasswordLoading(false)
@@ -233,37 +230,30 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
                 .copyWith(step: .registerDetails),
           );
         } else {
+          /// Иначе авторизован
           emit(state.withPasswordLoading(false).authenticated(user));
         }
       },
     );
   }
 
+  /// Регистрация аккаунта
   Future<void> _submitRegPassword(Emitter<AuthState> emit) async {
     final password = state.password;
     if (password.isEmpty) {
-      final f = AppError.client(
-        type: .state,
-        error: Exception('Password is empty'),
-        stackTrace: .current,
-      );
-      f.report();
+      final f = _AuthErrorHandler.emptyPassword();
       emit(state.withPasswordError(f));
       return;
     }
 
     final user = state.toUser;
     if (!user.isValid) {
-      final f = AppError.client(
-        type: .state,
-        error: Exception('User is invalid: [${user.toString()}]'),
-        stackTrace: .current,
-      );
-      f.report();
+      final f = _AuthErrorHandler.invalidUser(user);
       emit(state.withPasswordError(f));
       return;
     }
 
+    /// Регистрация аккаунта
     final res = await _authRepository.register(user);
 
     await res.fold(
@@ -274,6 +264,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       (newId) async {
         final updatedUser = user.copyWith(id: newId);
         if (updatedUser.needDetails) {
+          /// Переходим на детали, если нужно
           emit(
             state
                 .withPasswordLoading(false)
@@ -287,75 +278,87 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
   }
 
-  /// [restartableByKey] - при вызове второго события подряд он отменит первый
-  /// Тут при отмене он просто отключает [Emitter]
-  /// Т.е. мы получим ответ от репозитория, но не внедрим его в State
   /// [CancelableOperation] - обёртка для [CancelToken], чтобы через него
   /// отменить токен
   /// [CancelToken] - работает на уровне репозитория, если пришла отмена, то там
   /// проверяется [isCanceled] и не выполняет код, возвращает null (экономит трафик)
+  /// [_cancelableOps] - мапа для отмены операций для разных методов идентификации
+  /// Т.е. разные методы идентификации могут идти параллельно
   final Map<AuthMethod, CancelableOperation> _cancelableOps = {};
 
+  /// Нам тут важен мкханизм отмены, поскольку это событие вызывается автоматически
+  /// и пользователь легко может своими действиями вызвать последовательно несколько
+  /// таких событий. Нам надо обработать только одно из них - последнее
   Future<void> _onRegisterDetail(
     _RegisterDetail event,
     Emitter<AuthState> emit,
   ) async {
     final userId = state.user?.id;
     if (userId == null) {
-      final f = AppError.client(
-        type: .state,
-        error: Exception('[Auth 1] No user id'),
-        stackTrace: .current,
-      );
-      f.report();
+      final f = _AuthErrorHandler.noId();
       emit(state.withDetailError(event.method, f));
       return;
     }
 
     final field = state.fields[event.method];
     if (field == null) {
-      final f = AppError.client(
-        type: .state,
-        error: Exception('[Auth 1] Не было найдено поле ввода'),
-        stackTrace: .current,
-      );
-      f.report();
+      final f = _AuthErrorHandler.noField();
       emit(state.withDetailError(event.method, f));
       return;
     }
 
+    /// Отменяем предыдущую операцию отого метода авторизации
+    /// Также должен сработать [restartableByKey], но он закрывает именно emit
+    /// А сам код может продолжаться, поэтому надо в дополнение отменить так
     await _cancelableOps[event.method]?.cancel();
 
+    /// Запускаем новую операцию с возможностью отмены
+    /// Операция - проверка возможности зарегистрировать эту деталь
+    /// Если до этой операции уже была проверка на возможность зарегистрировать
+    /// [_onCheckDetail], то сразу идём к обновлению данных
     final cancelToken = CancelToken();
-
     if (!field.isAvailable) {
       final operation = CancelableOperation.fromFuture(
         _checkAvailability(event.method, cancelToken, emit),
         onCancel: cancelToken.cancel,
       );
+
+      /// Добавляем эту операцию к списку отменяемых
       _cancelableOps[event.method] = operation;
+
+      /// Ждём ответа от операции или её отмены
       final availability = await operation.valueOrCancellation();
       if (_cancelableOps[event.method] == operation) {
         _cancelableOps.remove(event.method);
       }
 
+      /// Если нельзя зарегистрировать такое - просто выходим
+      /// На экране у детали появится ошибка через метод [_checkAvailability]
       if (!(availability ?? false)) return;
     }
 
+    /// Проверка на отмену
     if (cancelToken.isCancelled) return;
 
+    /// Если не отменилось и можно регистрировать - регистрируем деталь
     final operation = CancelableOperation.fromFuture(
       _performUpdate(event, emit, userId, cancelToken),
       onCancel: cancelToken.cancel,
     );
 
     _cancelableOps[event.method] = operation;
+    /// Ждём окончания операции или её отмены
     await operation.valueOrCancellation();
+    /// Убираем операцию из списка операций
     if (_cancelableOps[event.method] == operation) {
       _cancelableOps.remove(event.method);
     }
   }
 
+  /// Таймеры для убирания полей зарегестрированных деталей
+  final Map<AuthMethod, Timer> _removeTimers = {};
+
+  /// Осуществуляет обновление/регистрацию деталей
   Future<void> _performUpdate(
     _RegisterDetail event,
     Emitter<AuthState> emit,
@@ -370,6 +373,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       return;
     }
 
+    /// Обновляем деталь на сервере
     final detail = state.detail(method);
     final res = await _authRepository.updateDetail(
       method: method,
@@ -378,11 +382,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       cancelToken: cancelToken,
     );
 
-    if (cancelToken.isCancelled) {
+    /// Проверка на отмену
+    if (cancelToken.isCancelled || res == null) {
       emit(state.withDetailLoading(method, false));
       return;
     }
-    if (res == null) return; // отменено в репозитории
 
     res.fold(
       (f) {
@@ -392,21 +396,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       (_) {
         final user = state.user;
         if (user == null) {
-          final f = AppError.client(
-            type: .state,
-            error: Exception('[Auth 2] No user'),
-            stackTrace: .current,
-          );
-          f.report();
+          final f = _AuthErrorHandler.noUser();
           emit(state.withDetailError(method, f));
           return;
         }
 
+        /// Локальное обновление детали пользователя
         User updatedUser = user;
         if (method == .email) updatedUser = updatedUser.withEmail(detail);
         if (method == .phone) updatedUser = updatedUser.withPhone(detail);
         if (method == .login) updatedUser = updatedUser.withLogin(detail);
 
+        /// Отмечаем успех на этом поле, чтобы показать на ui стороне
+        /// что получилось зарегистрировать
         final currentField = state.fields[method]!;
         final updatedField = currentField.copyWith(
           isLoading: false,
@@ -422,14 +424,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
               .copyWith(user: updatedUser, fields: newFields),
         );
 
+        /// После показа успеха регистрации поля запускаем процесс удаления этого
+        /// поля, чтобы это больше там не мешалось
+        /// Запускаем через [removeDelay] чтобы успеть показать [success]
         _removeTimers[method]?.cancel();
-        _removeTimers[method] = Timer(FieldStateCompleted.removeDelay, () {
+        _removeTimers[method] = Timer(FieldState.removeDelay, () {
           add(.removeDetail(method));
         });
       },
     );
   }
 
+  /// Удаляет поле деталей после его регистрации и показа успеха регистрации
   void _onRemoveDetail(_RemoveDetail event, Emitter<AuthState> emit) {
     final fields = state.fields;
 
@@ -449,13 +455,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     newFields[event.method] = updatedField;
     emit(state.copyWith(fields: newFields));
 
-    /// Запускаем таймер на финальное удаление (длительность анимации)
+    /// Запускаем таймер на финальное удаление также через время для того, чтобы
+    /// за время [removeDuration] успела пройти анимация убирания поля, а затем уже
+    /// оно было убрано здесь (без задержки анимация будет либо резкой, либо поле
+    /// исчезнет во время анимации)
     _removeTimers[event.method]?.cancel();
-    _removeTimers[event.method] = Timer(FieldStateCompleted.removeDuration, () {
+    _removeTimers[event.method] = Timer(FieldState.removeDuration, () {
       add(.removeDetailFinal(event.method));
     });
   }
 
+  /// Финальное удаление поле детали после регистрации, показа успеха и анимации
+  /// исчезновения поля
   void _onRemoveDetailFinal(_RemoveDetailFinal event, Emitter<AuthState> emit) {
     final finalFields = Map<AuthMethod, FieldState>.from(state.fields);
     finalFields.remove(event.method);
@@ -464,29 +475,35 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     _removeTimers.remove(event.method);
   }
 
+  /// При каком-либо взаимодействии с идентификатором - возвращаемся на этап
+  /// идентификации
   void _onToggleIdentifier(_ToggleIdentifier event, Emitter<AuthState> emit) {
     emit(state.copyWith(step: .enterIdentifier));
   }
 
+  /// Смена имени
+  /// Просто переходим на следующий этап, имя уже записано в state
   void _onChangeName(_ChangeName event, Emitter<AuthState> emit) {
     emit(state.copyWith(step: .enterIdentifier));
   }
 
+  /// Пропуск деталей, чтобы их не заполнять
   void _onSkipDetails(_SkipDetails event, Emitter<AuthState> emit) {
+    /// Отменяем все операции и анимации
     closeRemoveTimers();
     closeCancelableOps();
 
+    /// Флаг для того, чтобы больше никогда не напоминать пользователю о заполнении
+    /// деталей
     if (event.dontAskAgain ?? false) {
       final user = state.user;
       if (user == null) {
-        final f = AppError.client(
-          type: .state,
-          error: Exception('[Auth 3] No user'),
-          stackTrace: .current,
-        );
-        f.report();
+        _AuthErrorHandler.noUser();
         return;
       }
+
+      /// Обновление настроек аккаунта на сервере, чтобы на других устройствах
+      /// для этого аккаунта также не просились детали больше
       final res = _authRepository.updateUserSettings(
         id: user.id,
         settings: (user.settings ?? const UserSettings()).copyWith(
@@ -497,9 +514,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       res.then((v) => v.fold((f) => f.report(), (_) {}));
     }
 
+    /// После деталей мы считаемся авторизованными
     emit(state.authenticated(state.user));
   }
 
+  /// Универсальный метод обновления состояния любого поля
   void _onUpdateField(_UpdateField event, Emitter<AuthState> emit) {
     final newField = event.value;
 
@@ -536,30 +555,42 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
+  /// Проверка на возможность зарегистрировать эту деталь
+  /// Нет ли уже другого аккаунта с такими данными
   Future<void> _onCheckDetail(
     _CheckDetail event,
     Emitter<AuthState> emit,
   ) async {
     final userId = state.user?.id;
-    if (userId == null) return;
+    if (userId == null) {
+      _AuthErrorHandler.noId();
+      return;
+    }
 
+    /// Отменяем предыдущую операцию отого метода авторизации
+    /// Также должен сработать [restartableByKey], но он закрывает именно emit
+    /// А сам код может продолжаться, поэтому надо в дополнение отменить так
     await _cancelableOps[event.method]?.cancel();
 
+    /// Запускаем новую операцию с возможностью отмены
+    /// Операция - проверка возможности зарегистрировать эту деталь
+    /// Флаг на [isAvailable] будем поставлен внутри самой операции
     final cancelToken = CancelToken();
     final operation = CancelableOperation.fromFuture(
       _checkAvailability(event.method, cancelToken, emit),
       onCancel: cancelToken.cancel,
     );
 
+    /// Добавляем эту операцию к списку отменяемых
     _cancelableOps[event.method] = operation;
 
+    /// Ждём ответа от операции или её отмены
     final result = await operation.valueOrCancellation();
-
     if (_cancelableOps[event.method] == operation) {
       _cancelableOps.remove(event.method);
     }
 
-    if (result == null) {
+    if (operation.isCanceled || result == null) {
       /// Если операция отменена, сбрасываем загрузку
       final currentField = state.fields[event.method];
       if (currentField != null && currentField.isLoading) {
@@ -568,6 +599,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
+  /// Проверяет можно ли зарегистрировать эту деталь
+  /// Выставляет на деталь флг
   Future<bool> _checkAvailability(
     AuthMethod method,
     CancelToken cancelToken,
@@ -575,12 +608,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     final currentField = state.fields[method];
     if (currentField == null) {
-      final f = AppError.client(
-        type: .state,
-        error: Exception('[Auth 2] Не было найдено поле ввода'),
-        stackTrace: .current,
-      );
-      f.report();
+      final f = _AuthErrorHandler.noField();
       emit(state.withDetailError(method, f));
       return false;
     }
@@ -592,14 +620,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       cancelToken: cancelToken,
     );
 
-    if (cancelToken.isCancelled) {
+    /// Отменено в репозитории
+    if (cancelToken.isCancelled || res == null) {
       emit(state.withDetailLoading(method, false));
       return false;
     }
 
-    /// отменено в репозитории
-    if (res == null) return false;
-
+    /// Устанавливаем доступ в состоянии и возвращаем для дальнейших манипуляцией
+    /// с этой информацией
     final availability = res.fold(
       (f) {
         emit(state.withDetailError(method, f));
@@ -614,6 +642,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     return availability;
   }
 
+  /// Метод для регистрации всех уже проверенных деталей
   void _onRegisterAllDetails(
     _RegisterAllDetails event,
     Emitter<AuthState> emit,
@@ -630,6 +659,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
+  /// Отменить все операции
   void closeCancelableOps() {
     for (final op in _cancelableOps.values) {
       op.cancel();
@@ -637,6 +667,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     _cancelableOps.clear();
   }
 
+  /// Отмена всех анимаций закрытия
   void closeRemoveTimers() {
     for (final timer in _removeTimers.values) {
       timer.cancel();

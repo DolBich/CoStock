@@ -1,5 +1,6 @@
 part of 'snack_notification.dart';
 
+/// Виды ошибок авторизации
 enum AuthErrorType {
   identifier,
   password,
@@ -9,34 +10,46 @@ enum AuthErrorType {
   lastDetail,
 }
 
+/// Виды ошибок сервера
 enum ServerErrorType { internet, server, timeout, notFound }
 
-enum ClientErrorType { state, smth }
+/// Виды ошибок софта
+enum ClientErrorType {
+  /// Ошибка, которую мы сами поймали при проверке if
+  state,
+  /// Ошибка, которую мы просто поймали где-то через catch
+  smth
+}
 
+/// Виды ошибок валидации
 enum ValidatorErrorType { validator }
 
 @freezed
 sealed class AppError extends Snack with _$AppError implements Exception {
   const AppError._();
 
+  /// Ошибка авторизации
   const factory AppError.auth({
     required AuthErrorType type,
     Object? error,
     StackTrace? stackTrace,
   }) = _AuthError;
 
+  /// Серверная ошибка
   const factory AppError.server({
     required ServerErrorType type,
     Object? error,
     StackTrace? stackTrace,
   }) = _ServerError;
 
+  /// Ошибка софта
   const factory AppError.client({
     required ClientErrorType type,
     Object? error,
     StackTrace? stackTrace,
   }) = _ClientError;
 
+  /// Ошибка валидации
   const factory AppError.validator({
     required ValidatorErrorType type,
     Object? error,
@@ -80,6 +93,7 @@ sealed class AppError extends Snack with _$AppError implements Exception {
   @override
   void log() => SnackError(this).log();
 
+  /// Пользовательское уведомление для всех видов ошибок авторизации
   String _authMessage(AuthErrorType type) {
     switch (type) {
       case .identifier:
@@ -97,6 +111,7 @@ sealed class AppError extends Snack with _$AppError implements Exception {
     }
   }
 
+  /// Пользовательское уведомление для всех видов ошибок сервера
   String _serverMessage(ServerErrorType type) {
     switch (type) {
       case .timeout:
@@ -110,6 +125,7 @@ sealed class AppError extends Snack with _$AppError implements Exception {
     }
   }
 
+  /// Пользовательское уведомление для всех видов ошибок софта
   String _clientMessage(ClientErrorType type) {
     switch (type) {
       case .state:
@@ -119,6 +135,7 @@ sealed class AppError extends Snack with _$AppError implements Exception {
     }
   }
 
+  /// Пользовательское уведомление для всех видов ошибок валидации
   String _validatorMessage(ValidatorErrorType type) {
     switch (type) {
       case .validator:

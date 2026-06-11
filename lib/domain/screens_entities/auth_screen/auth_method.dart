@@ -1,10 +1,13 @@
 import 'package:co_stock/domain/notifications/snack/snack_notification.dart';
 import 'package:co_stock/domain/screens_entities/auth_screen/auth_field.dart';
-import 'package:co_stock/domain/bases/user.dart';
+import 'package:co_stock/domain/core/user.dart';
 
+/// Метода авторизации/регистрации
 enum AuthMethod { email, phone, login }
 
 extension AuthMethodCheck on AuthMethod {
+  /// Проверка на равенство нынешнего идентификатора с полем юзера, которое
+  /// соотвествует выбранному методу
   bool check(User user, String identifier) {
     switch (this) {
       case .email:
@@ -18,6 +21,7 @@ extension AuthMethodCheck on AuthMethod {
 }
 
 extension AuthMethodError on AuthMethod {
+  /// Тип ошибки в зависимости от метода регистрации
   AuthErrorType get error {
     switch (this) {
       case .email:
@@ -30,6 +34,7 @@ extension AuthMethodError on AuthMethod {
   }
 }
 
+/// Соответствие метода авторизации с видом поля, которое ответствененно за него
 extension AuthMethodToField on AuthMethod {
   AuthField get toField {
     switch (this) {

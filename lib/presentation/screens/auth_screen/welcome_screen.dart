@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:co_stock/application/blocs/profile_bloc/profile_bloc.dart';
-import 'package:co_stock/domain/bases/user.dart';
+import 'package:co_stock/domain/core/user.dart';
 import 'package:co_stock/presentation/navigation/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
@@ -42,6 +42,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     final profileBloc = context.read<ProfileBloc>();
 
     /// Запускаем загрузку данных
+    /// Потому добавим сюда загрузку других данных, которые будут нужны дальше
+    /// Например данные о дереве хранилищ
     Future.wait([
       profileBloc.waitForInit(user: widget.user)
     ]).then((_) {
@@ -61,6 +63,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     });
   }
 
+  /// Пробуем перейти на следующую страницу, если уже не перенеслись и все данные
+  /// загрузились, а также если прошло минимальное время показа приветственного
+  /// экрана
   void _tryTransition() {
     if (_hasNavigated) return;
     if (!_isLoadingComplete) return;
@@ -80,6 +85,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     }
   }
 
+  /// Навигация к следующему экрану
   void _navigateToNext() {
     if (_hasNavigated) return;
     _hasNavigated = true;

@@ -55,7 +55,7 @@ extension AuthEventPatterns on AuthEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Init value)?  init,TResult Function( _ChangeMode value)?  changeMode,TResult Function( _ChangeMethod value)?  changeMethod,TResult Function( _SubmitIdentifier value)?  submitIdentifier,TResult Function( _SubmitPassword value)?  submitPassword,TResult Function( _RegisterDetail value)?  registerDetail,TResult Function( _ToggleIdentifier value)?  toggleIdentifier,TResult Function( _ChangeName value)?  changeName,TResult Function( _SkipDetails value)?  skipDetails,TResult Function( _UpdateField value)?  updateField,TResult Function( _CheckDetail value)?  checkDetail,TResult Function( _TrySubmit value)?  trySubmit,TResult Function( _RegisterAllDetails value)?  registerAllDetails,TResult Function( _RemoveDetail value)?  removeDetail,TResult Function( _RemoveDetailFinal value)?  removeDetailFinal,TResult Function( _SystemGoBack value)?  systemGoBack,TResult Function( _UiGoBack value)?  uiGoBack,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Init value)?  init,TResult Function( _ChangeMode value)?  changeMode,TResult Function( _ChangeMethod value)?  changeMethod,TResult Function( _SubmitIdentifier value)?  submitIdentifier,TResult Function( _SubmitPassword value)?  submitPassword,TResult Function( _RegisterDetail value)?  registerDetail,TResult Function( _ToggleIdentifier value)?  toggleIdentifier,TResult Function( _ChangeName value)?  changeName,TResult Function( _SkipDetails value)?  skipDetails,TResult Function( _UpdateField value)?  updateField,TResult Function( _CheckDetail value)?  checkDetail,TResult Function( _RegisterAllDetails value)?  registerAllDetails,TResult Function( _RemoveDetail value)?  removeDetail,TResult Function( _RemoveDetailFinal value)?  removeDetailFinal,TResult Function( _SystemGoBack value)?  systemGoBack,TResult Function( _UiGoBack value)?  uiGoBack,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case _Init() when init != null:
@@ -69,8 +69,7 @@ return toggleIdentifier(_that);case _ChangeName() when changeName != null:
 return changeName(_that);case _SkipDetails() when skipDetails != null:
 return skipDetails(_that);case _UpdateField() when updateField != null:
 return updateField(_that);case _CheckDetail() when checkDetail != null:
-return checkDetail(_that);case _TrySubmit() when trySubmit != null:
-return trySubmit(_that);case _RegisterAllDetails() when registerAllDetails != null:
+return checkDetail(_that);case _RegisterAllDetails() when registerAllDetails != null:
 return registerAllDetails(_that);case _RemoveDetail() when removeDetail != null:
 return removeDetail(_that);case _RemoveDetailFinal() when removeDetailFinal != null:
 return removeDetailFinal(_that);case _SystemGoBack() when systemGoBack != null:
@@ -93,7 +92,7 @@ return uiGoBack(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Init value)  init,required TResult Function( _ChangeMode value)  changeMode,required TResult Function( _ChangeMethod value)  changeMethod,required TResult Function( _SubmitIdentifier value)  submitIdentifier,required TResult Function( _SubmitPassword value)  submitPassword,required TResult Function( _RegisterDetail value)  registerDetail,required TResult Function( _ToggleIdentifier value)  toggleIdentifier,required TResult Function( _ChangeName value)  changeName,required TResult Function( _SkipDetails value)  skipDetails,required TResult Function( _UpdateField value)  updateField,required TResult Function( _CheckDetail value)  checkDetail,required TResult Function( _TrySubmit value)  trySubmit,required TResult Function( _RegisterAllDetails value)  registerAllDetails,required TResult Function( _RemoveDetail value)  removeDetail,required TResult Function( _RemoveDetailFinal value)  removeDetailFinal,required TResult Function( _SystemGoBack value)  systemGoBack,required TResult Function( _UiGoBack value)  uiGoBack,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Init value)  init,required TResult Function( _ChangeMode value)  changeMode,required TResult Function( _ChangeMethod value)  changeMethod,required TResult Function( _SubmitIdentifier value)  submitIdentifier,required TResult Function( _SubmitPassword value)  submitPassword,required TResult Function( _RegisterDetail value)  registerDetail,required TResult Function( _ToggleIdentifier value)  toggleIdentifier,required TResult Function( _ChangeName value)  changeName,required TResult Function( _SkipDetails value)  skipDetails,required TResult Function( _UpdateField value)  updateField,required TResult Function( _CheckDetail value)  checkDetail,required TResult Function( _RegisterAllDetails value)  registerAllDetails,required TResult Function( _RemoveDetail value)  removeDetail,required TResult Function( _RemoveDetailFinal value)  removeDetailFinal,required TResult Function( _SystemGoBack value)  systemGoBack,required TResult Function( _UiGoBack value)  uiGoBack,}){
 final _that = this;
 switch (_that) {
 case _Init():
@@ -107,8 +106,7 @@ return toggleIdentifier(_that);case _ChangeName():
 return changeName(_that);case _SkipDetails():
 return skipDetails(_that);case _UpdateField():
 return updateField(_that);case _CheckDetail():
-return checkDetail(_that);case _TrySubmit():
-return trySubmit(_that);case _RegisterAllDetails():
+return checkDetail(_that);case _RegisterAllDetails():
 return registerAllDetails(_that);case _RemoveDetail():
 return removeDetail(_that);case _RemoveDetailFinal():
 return removeDetailFinal(_that);case _SystemGoBack():
@@ -127,7 +125,7 @@ return uiGoBack(_that);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Init value)?  init,TResult? Function( _ChangeMode value)?  changeMode,TResult? Function( _ChangeMethod value)?  changeMethod,TResult? Function( _SubmitIdentifier value)?  submitIdentifier,TResult? Function( _SubmitPassword value)?  submitPassword,TResult? Function( _RegisterDetail value)?  registerDetail,TResult? Function( _ToggleIdentifier value)?  toggleIdentifier,TResult? Function( _ChangeName value)?  changeName,TResult? Function( _SkipDetails value)?  skipDetails,TResult? Function( _UpdateField value)?  updateField,TResult? Function( _CheckDetail value)?  checkDetail,TResult? Function( _TrySubmit value)?  trySubmit,TResult? Function( _RegisterAllDetails value)?  registerAllDetails,TResult? Function( _RemoveDetail value)?  removeDetail,TResult? Function( _RemoveDetailFinal value)?  removeDetailFinal,TResult? Function( _SystemGoBack value)?  systemGoBack,TResult? Function( _UiGoBack value)?  uiGoBack,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Init value)?  init,TResult? Function( _ChangeMode value)?  changeMode,TResult? Function( _ChangeMethod value)?  changeMethod,TResult? Function( _SubmitIdentifier value)?  submitIdentifier,TResult? Function( _SubmitPassword value)?  submitPassword,TResult? Function( _RegisterDetail value)?  registerDetail,TResult? Function( _ToggleIdentifier value)?  toggleIdentifier,TResult? Function( _ChangeName value)?  changeName,TResult? Function( _SkipDetails value)?  skipDetails,TResult? Function( _UpdateField value)?  updateField,TResult? Function( _CheckDetail value)?  checkDetail,TResult? Function( _RegisterAllDetails value)?  registerAllDetails,TResult? Function( _RemoveDetail value)?  removeDetail,TResult? Function( _RemoveDetailFinal value)?  removeDetailFinal,TResult? Function( _SystemGoBack value)?  systemGoBack,TResult? Function( _UiGoBack value)?  uiGoBack,}){
 final _that = this;
 switch (_that) {
 case _Init() when init != null:
@@ -141,8 +139,7 @@ return toggleIdentifier(_that);case _ChangeName() when changeName != null:
 return changeName(_that);case _SkipDetails() when skipDetails != null:
 return skipDetails(_that);case _UpdateField() when updateField != null:
 return updateField(_that);case _CheckDetail() when checkDetail != null:
-return checkDetail(_that);case _TrySubmit() when trySubmit != null:
-return trySubmit(_that);case _RegisterAllDetails() when registerAllDetails != null:
+return checkDetail(_that);case _RegisterAllDetails() when registerAllDetails != null:
 return registerAllDetails(_that);case _RemoveDetail() when removeDetail != null:
 return removeDetail(_that);case _RemoveDetailFinal() when removeDetailFinal != null:
 return removeDetailFinal(_that);case _SystemGoBack() when systemGoBack != null:
@@ -164,7 +161,7 @@ return uiGoBack(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  init,TResult Function( AuthMode mode)?  changeMode,TResult Function( AuthMethod method)?  changeMethod,TResult Function()?  submitIdentifier,TResult Function()?  submitPassword,TResult Function( AuthMethod method)?  registerDetail,TResult Function()?  toggleIdentifier,TResult Function()?  changeName,TResult Function( bool? dontAskAgain)?  skipDetails,TResult Function( AuthField field,  FieldState value)?  updateField,TResult Function( AuthMethod method)?  checkDetail,TResult Function()?  trySubmit,TResult Function()?  registerAllDetails,TResult Function( AuthMethod method)?  removeDetail,TResult Function( AuthMethod method)?  removeDetailFinal,TResult Function()?  systemGoBack,TResult Function()?  uiGoBack,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  init,TResult Function( AuthMode mode)?  changeMode,TResult Function( AuthMethod method)?  changeMethod,TResult Function()?  submitIdentifier,TResult Function()?  submitPassword,TResult Function( AuthMethod method)?  registerDetail,TResult Function()?  toggleIdentifier,TResult Function()?  changeName,TResult Function( bool? dontAskAgain)?  skipDetails,TResult Function( AuthField field,  FieldState value)?  updateField,TResult Function( AuthMethod method)?  checkDetail,TResult Function()?  registerAllDetails,TResult Function( AuthMethod method)?  removeDetail,TResult Function( AuthMethod method)?  removeDetailFinal,TResult Function()?  systemGoBack,TResult Function()?  uiGoBack,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Init() when init != null:
 return init();case _ChangeMode() when changeMode != null:
@@ -177,8 +174,7 @@ return toggleIdentifier();case _ChangeName() when changeName != null:
 return changeName();case _SkipDetails() when skipDetails != null:
 return skipDetails(_that.dontAskAgain);case _UpdateField() when updateField != null:
 return updateField(_that.field,_that.value);case _CheckDetail() when checkDetail != null:
-return checkDetail(_that.method);case _TrySubmit() when trySubmit != null:
-return trySubmit();case _RegisterAllDetails() when registerAllDetails != null:
+return checkDetail(_that.method);case _RegisterAllDetails() when registerAllDetails != null:
 return registerAllDetails();case _RemoveDetail() when removeDetail != null:
 return removeDetail(_that.method);case _RemoveDetailFinal() when removeDetailFinal != null:
 return removeDetailFinal(_that.method);case _SystemGoBack() when systemGoBack != null:
@@ -201,7 +197,7 @@ return uiGoBack();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  init,required TResult Function( AuthMode mode)  changeMode,required TResult Function( AuthMethod method)  changeMethod,required TResult Function()  submitIdentifier,required TResult Function()  submitPassword,required TResult Function( AuthMethod method)  registerDetail,required TResult Function()  toggleIdentifier,required TResult Function()  changeName,required TResult Function( bool? dontAskAgain)  skipDetails,required TResult Function( AuthField field,  FieldState value)  updateField,required TResult Function( AuthMethod method)  checkDetail,required TResult Function()  trySubmit,required TResult Function()  registerAllDetails,required TResult Function( AuthMethod method)  removeDetail,required TResult Function( AuthMethod method)  removeDetailFinal,required TResult Function()  systemGoBack,required TResult Function()  uiGoBack,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  init,required TResult Function( AuthMode mode)  changeMode,required TResult Function( AuthMethod method)  changeMethod,required TResult Function()  submitIdentifier,required TResult Function()  submitPassword,required TResult Function( AuthMethod method)  registerDetail,required TResult Function()  toggleIdentifier,required TResult Function()  changeName,required TResult Function( bool? dontAskAgain)  skipDetails,required TResult Function( AuthField field,  FieldState value)  updateField,required TResult Function( AuthMethod method)  checkDetail,required TResult Function()  registerAllDetails,required TResult Function( AuthMethod method)  removeDetail,required TResult Function( AuthMethod method)  removeDetailFinal,required TResult Function()  systemGoBack,required TResult Function()  uiGoBack,}) {final _that = this;
 switch (_that) {
 case _Init():
 return init();case _ChangeMode():
@@ -214,8 +210,7 @@ return toggleIdentifier();case _ChangeName():
 return changeName();case _SkipDetails():
 return skipDetails(_that.dontAskAgain);case _UpdateField():
 return updateField(_that.field,_that.value);case _CheckDetail():
-return checkDetail(_that.method);case _TrySubmit():
-return trySubmit();case _RegisterAllDetails():
+return checkDetail(_that.method);case _RegisterAllDetails():
 return registerAllDetails();case _RemoveDetail():
 return removeDetail(_that.method);case _RemoveDetailFinal():
 return removeDetailFinal(_that.method);case _SystemGoBack():
@@ -234,7 +229,7 @@ return uiGoBack();}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  init,TResult? Function( AuthMode mode)?  changeMode,TResult? Function( AuthMethod method)?  changeMethod,TResult? Function()?  submitIdentifier,TResult? Function()?  submitPassword,TResult? Function( AuthMethod method)?  registerDetail,TResult? Function()?  toggleIdentifier,TResult? Function()?  changeName,TResult? Function( bool? dontAskAgain)?  skipDetails,TResult? Function( AuthField field,  FieldState value)?  updateField,TResult? Function( AuthMethod method)?  checkDetail,TResult? Function()?  trySubmit,TResult? Function()?  registerAllDetails,TResult? Function( AuthMethod method)?  removeDetail,TResult? Function( AuthMethod method)?  removeDetailFinal,TResult? Function()?  systemGoBack,TResult? Function()?  uiGoBack,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  init,TResult? Function( AuthMode mode)?  changeMode,TResult? Function( AuthMethod method)?  changeMethod,TResult? Function()?  submitIdentifier,TResult? Function()?  submitPassword,TResult? Function( AuthMethod method)?  registerDetail,TResult? Function()?  toggleIdentifier,TResult? Function()?  changeName,TResult? Function( bool? dontAskAgain)?  skipDetails,TResult? Function( AuthField field,  FieldState value)?  updateField,TResult? Function( AuthMethod method)?  checkDetail,TResult? Function()?  registerAllDetails,TResult? Function( AuthMethod method)?  removeDetail,TResult? Function( AuthMethod method)?  removeDetailFinal,TResult? Function()?  systemGoBack,TResult? Function()?  uiGoBack,}) {final _that = this;
 switch (_that) {
 case _Init() when init != null:
 return init();case _ChangeMode() when changeMode != null:
@@ -247,8 +242,7 @@ return toggleIdentifier();case _ChangeName() when changeName != null:
 return changeName();case _SkipDetails() when skipDetails != null:
 return skipDetails(_that.dontAskAgain);case _UpdateField() when updateField != null:
 return updateField(_that.field,_that.value);case _CheckDetail() when checkDetail != null:
-return checkDetail(_that.method);case _TrySubmit() when trySubmit != null:
-return trySubmit();case _RegisterAllDetails() when registerAllDetails != null:
+return checkDetail(_that.method);case _RegisterAllDetails() when registerAllDetails != null:
 return registerAllDetails();case _RemoveDetail() when removeDetail != null:
 return removeDetail(_that.method);case _RemoveDetailFinal() when removeDetailFinal != null:
 return removeDetailFinal(_that.method);case _SystemGoBack() when systemGoBack != null:
@@ -831,38 +825,6 @@ as AuthMethod,
 /// @nodoc
 
 
-class _TrySubmit implements AuthEvent {
-  const _TrySubmit();
-  
-
-
-
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TrySubmit);
-}
-
-
-@override
-int get hashCode => runtimeType.hashCode;
-
-@override
-String toString() {
-  return 'AuthEvent.trySubmit()';
-}
-
-
-}
-
-
-
-
-/// @nodoc
-
-
 class _RegisterAllDetails implements AuthEvent {
   const _RegisterAllDetails();
   
@@ -1091,7 +1053,13 @@ String toString() {
 /// @nodoc
 mixin _$AuthState {
 
- AuthStep get step; AuthMode get mode; AuthMethod get method; bool get isLoading; String? get userId;/// Временные поля для ввода.
+/// На каком этапе авторизации/регистрации сейчас пользователь (для навигации/смены виджетов)
+ AuthStep get step;/// Авторизовывается или регистрируется пользователь
+ AuthMode get mode;/// Описывает каким именно способом человек пытается авторизоаваться (телефон/почта/логин)
+ AuthMethod get method; bool get isLoading;/// Поле [userId] используется только на этапе enterPassword для хранения идентификатора,
+/// полученного при проверке существования аккаунта, чтобы знать к какому аккаунту мы
+/// подбираем пароль
+ String? get userId;/// Временные поля для ввода.
 /// На этапах [enterIdentifier] и [enterPassword] содержит поля для идентификатора (по методу).
 /// На этапе [registerDetails] содержит поля для недостающих атрибутов (ключи по методу).
  Map<AuthMethod, FieldState> get fields;/// Временное поле для пароля (используется только на [enterPassword]).
@@ -1319,14 +1287,20 @@ return $default(_that.step,_that.mode,_that.method,_that.isLoading,_that.userId,
 /// @nodoc
 
 
-class _AuthState implements AuthState {
-  const _AuthState({required this.step, required this.mode, required this.method, required this.isLoading, required this.userId, required final  Map<AuthMethod, FieldState> fields, required this.passwordField, required this.nameField, required this.user}): _fields = fields;
+class _AuthState extends AuthState {
+  const _AuthState({required this.step, required this.mode, required this.method, required this.isLoading, required this.userId, required final  Map<AuthMethod, FieldState> fields, required this.passwordField, required this.nameField, required this.user}): _fields = fields,super._();
   
 
+/// На каком этапе авторизации/регистрации сейчас пользователь (для навигации/смены виджетов)
 @override final  AuthStep step;
+/// Авторизовывается или регистрируется пользователь
 @override final  AuthMode mode;
+/// Описывает каким именно способом человек пытается авторизоаваться (телефон/почта/логин)
 @override final  AuthMethod method;
 @override final  bool isLoading;
+/// Поле [userId] используется только на этапе enterPassword для хранения идентификатора,
+/// полученного при проверке существования аккаунта, чтобы знать к какому аккаунту мы
+/// подбираем пароль
 @override final  String? userId;
 /// Временные поля для ввода.
 /// На этапах [enterIdentifier] и [enterPassword] содержит поля для идентификатора (по методу).

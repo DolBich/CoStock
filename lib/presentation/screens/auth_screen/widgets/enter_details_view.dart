@@ -126,7 +126,7 @@ class __DetailFieldState extends State<_DetailField>
     _controller = BlocTextFieldController();
     _animationController = AnimationController(
       vsync: this,
-      duration: FieldStateCompleted.removeDuration,
+      duration: FieldState.removeDuration,
     );
   }
 

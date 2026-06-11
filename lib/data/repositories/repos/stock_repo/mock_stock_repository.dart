@@ -195,7 +195,7 @@ class MockStockRepository extends IStockRepository with MockRepoDelay {
 
     try {
       /// Добавление id сущности на сервере
-      final id = IdSetter.setId;
+      final id = IdSetter()();
       final dto = StockEntityDto(id: id, name: name, type: type, children: []);
 
       /// Сохранение на сервере и проверка, что сохранилось корректно

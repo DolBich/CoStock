@@ -1,10 +1,14 @@
 part of 'stock_dtos.dart';
 
+/// DTO для объекта хранилища
 @freezed
 sealed class StockItemDto with _$StockItemDto {
   const factory StockItemDto({
     required String id,
     required String name,
+
+    /// [count] может превышать [preferredCount] и может быть ниже [lowLevelCount]
+    /// Они служат исключительно в качестве индикаторов
     @Default(0) int count,
     @Default(0) int preferredCount,
     @Default(0) int lowLevelCount,

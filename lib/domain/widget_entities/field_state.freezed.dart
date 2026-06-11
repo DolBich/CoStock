@@ -233,8 +233,8 @@ return $default(_that.value,_that.isLoading,_that.wasInteracted,_that.errorPersi
 /// @nodoc
 
 
-class _FieldState implements FieldState {
-  const _FieldState({this.value = '', this.isLoading = false, this.wasInteracted = false, this.errorPersisted = false, this.validationResult, this.notification, this.removing = false});
+class _FieldState extends FieldState {
+  const _FieldState({this.value = '', this.isLoading = false, this.wasInteracted = false, this.errorPersisted = false, this.validationResult, this.notification, this.removing = false}): super._();
   
 
 @override@JsonKey() final  String value;

@@ -217,8 +217,8 @@ return customId(_that.id,_that.name,_that.email,_that.phone,_that.login,_that.pa
 /// @nodoc
 
 
-class _User implements User {
-  const _User({required this.id, required this.name, this.email, this.phone, this.login, required this.password, this.settings});
+class _User extends User {
+  const _User({required this.id, required this.name, this.email, this.phone, this.login, required this.password, this.settings}): super._();
   
 
 @override final  String id;
@@ -307,6 +307,8 @@ $UserSettingsCopyWith<$Res>? get settings {
 /// @nodoc
 mixin _$UserSettings {
 
+/// Больше никогда не спрашивать/просить заполнить дополнительную
+/// информацию
  bool? get dontAskDetails;
 /// Create a copy of UserSettings
 /// with the given fields replaced by the non-null parameter values.
@@ -496,6 +498,8 @@ class _UserSettings implements UserSettings {
   const _UserSettings({this.dontAskDetails});
   
 
+/// Больше никогда не спрашивать/просить заполнить дополнительную
+/// информацию
 @override final  bool? dontAskDetails;
 
 /// Create a copy of UserSettings

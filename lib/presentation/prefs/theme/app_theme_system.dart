@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Система тем
+/// Система возможных тем для набора
 abstract class AppThemeSystem {
   const AppThemeSystem();
 

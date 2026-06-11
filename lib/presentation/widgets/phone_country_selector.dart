@@ -2,15 +2,17 @@ import 'package:co_stock/presentation/prefs/locale/locale_data.dart';
 import 'package:country_flags/country_flags.dart';
 import 'package:flutter/material.dart';
 
+/// Виджет для выбора страны номера телефона
 class PhoneCountrySelector extends StatefulWidget {
+  /// Страна номера телефона
   final LocaleData currentLocale;
   final ValueChanged<AppLocale> onChanged;
 
   const PhoneCountrySelector({
-    Key? key,
+    super.key,
     required this.currentLocale,
     required this.onChanged,
-  }) : super(key: key);
+  });
 
   @override
   State<PhoneCountrySelector> createState() => _PhoneCountrySelectorState();
@@ -21,15 +23,15 @@ class _PhoneCountrySelectorState extends State<PhoneCountrySelector> {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: _showCountryPicker,
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: .circular(8),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+        padding: const .symmetric(horizontal: 12, vertical: 14),
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey.shade300),
-          borderRadius: BorderRadius.circular(8),
+          border: .all(color: Colors.grey.shade300),
+          borderRadius: .circular(8),
         ),
         child: Row(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisSize: .min,
           children: [
             CountryFlag.fromCountryCode(
               widget.currentLocale.countryCode,
@@ -44,12 +46,13 @@ class _PhoneCountrySelectorState extends State<PhoneCountrySelector> {
     );
   }
 
+  /// Показать форму выбора страны теелфона
   void _showCountryPicker() {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: .vertical(top: .circular(20)),
       ),
       builder: (context) => CountryPickerSheet(
         onSelected: (locale) {
@@ -65,19 +68,22 @@ class _PhoneCountrySelectorState extends State<PhoneCountrySelector> {
   }
 }
 
+/// Форма выбора страны номера телефона
 class CountryPickerSheet extends StatefulWidget {
   final ValueChanged<LocaleData> onSelected;
 
-  const CountryPickerSheet({Key? key, required this.onSelected})
-    : super(key: key);
+  const CountryPickerSheet({super.key, required this.onSelected});
 
   @override
   State<CountryPickerSheet> createState() => _CountryPickerSheetState();
 }
 
 class _CountryPickerSheetState extends State<CountryPickerSheet> {
+  /// Страны доступные для выбора номера телефона
   late List<LocaleData> _allCountries;
+  /// Отфильтрованные страны
   List<LocaleData> _filteredCountries = [];
+  /// Текст поиска страны
   final TextEditingController _searchController = TextEditingController();
 
   @override
@@ -94,6 +100,17 @@ class _CountryPickerSheetState extends State<CountryPickerSheet> {
     super.dispose();
   }
 
+  /// Фильтрация стран для выбора по тексту в поисковике
+  /// Ищем по [name], [nativeName], [countryCode], [phonePrefix]
+  /// Ищем по английскому навзанию, по нативному названию, по коду страны ...
+  /// TODO[325y03727532616]: тут надо переделать логику, её надо вынести в LocaleData + enum AppLocale
+  /// сделать список для фильтрации по поиску
+  /// А также изменить сам виджет для отображения/выделения текста в тайлах, что находится
+  /// в тайлах страны, также заменять название [nativeName] на [name], если поиск идёт
+  /// на английском языке. Если после этого пользователь стирает полностью поле -
+  /// снова отображаем на [nativeName]
+  /// А также в целом надо отформатировать этот виджет и сделать его хоть сколько
+  /// то адекватно выглядящим
   void _filterCountries() {
     final query = _searchController.text.trim().toLowerCase();
     setState(() {
@@ -103,6 +120,7 @@ class _CountryPickerSheetState extends State<CountryPickerSheet> {
         _filteredCountries = _allCountries.where((c) {
           return c.name.toLowerCase().contains(query) ||
               c.nativeName.toLowerCase().contains(query) ||
+              c.code.toLowerCase().contains(query) ||
               c.countryCode.toLowerCase().contains(query) ||
               c.phonePrefix.contains(query);
         }).toList();

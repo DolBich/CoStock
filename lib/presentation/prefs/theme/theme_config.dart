@@ -1,11 +1,15 @@
 import 'dart:ui';
 
+/// Глобальная настройка темы
 class ThemeConfig {
+  /// ПОзволяет выбрать, использовать ли тему на основе сида и какого
   const ThemeConfig({Color? seed, this.useSeed = false})
     : seed = seed ?? defaultSeed;
 
+  /// Построение классической темы
   factory ThemeConfig.classic() => const ThemeConfig(useSeed: false);
 
+  /// Построение темы на основе сида
   factory ThemeConfig.seeded(Color seed) =>
       ThemeConfig(seed: seed, useSeed: true);
 

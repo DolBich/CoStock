@@ -5,8 +5,12 @@ part 'user_settings.dart';
 
 part 'user.freezed.dart';
 
+/// Класс настройки аккаунта
 @freezed
 sealed class User with _$User {
+  const User._();
+
+  /// Фабрика для юзера с кастомным id
   const factory User.customId({
     required String id,
     required String name,
@@ -17,6 +21,7 @@ sealed class User with _$User {
     UserSettings? settings,
   }) = _User;
 
+  /// Стандартный конструктор с автоматическим определением id
   factory User({
     required String name,
     String? email,
@@ -25,7 +30,7 @@ sealed class User with _$User {
     required String password,
     UserSettings? settings,
   }) => User.customId(
-    id: IdSetter.setId,
+    id: const IdSetter()(),
     name: name,
     email: email,
     phone: phone,
@@ -33,9 +38,7 @@ sealed class User with _$User {
     password: password,
     settings: settings,
   );
-}
 
-extension UserExtension on User {
   bool get needEmail => email == null;
 
   bool get needLogin => login == null;
@@ -44,13 +47,13 @@ extension UserExtension on User {
 
   bool get needDetails =>
       email == null ||
-      login == null ||
-      phone == null && settings?.dontAskDetails != true;
+          login == null ||
+          phone == null && settings?.dontAskDetails != true;
 
   bool get isValid =>
       email != null ||
-      phone != null ||
-      login != null && name.isNotEmpty && password.isNotEmpty;
+          phone != null ||
+          login != null && name.isNotEmpty && password.isNotEmpty;
 
   User withEmail(String? email) => copyWith(email: email);
 
@@ -62,3 +65,4 @@ extension UserExtension on User {
   User withUpdatedSettings(UserSettings newSettings) =>
       copyWith(settings: newSettings);
 }
+

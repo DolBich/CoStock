@@ -7,12 +7,11 @@ sealed class PrefsState with _$PrefsState {
     /// Под неё подстраивается реклама и требования этой страны
     /// мы должны соблюдать в приложении (на будущее)
     required AppLocale appLocale,
-
     /// Номер телефона какой страны использует
     /// По умолчанию равен [appLocale]
     required AppLocale phoneLocale,
-
     required ThemeData themeData,
+    /// Используется mock репозитории (если нет - firebase)
     required bool useMock,
   }) = _PrefsState;
 

@@ -5,8 +5,11 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'field_state.freezed.dart';
 
+/// Определяет состояние текстового поля
 @freezed
 sealed class FieldState with _$FieldState {
+  const FieldState._();
+
   const factory FieldState({
     @Default('') String value,
     @Default(false) bool isLoading,
@@ -16,31 +19,35 @@ sealed class FieldState with _$FieldState {
     /// пользователь уже что-то сделал с полем
     @Default(false) bool wasInteracted,
 
-    /// null - пустая строка
+    /// Отображает ошибку поля всё то время, пока она не будет исправлена
+    /// В основном работает с ошибками от сервера из разряда "Неправильный пароль"
+    /// Тогда ошибка будет висеть (persisted) пока мы не получим успех или пока
+    /// строка не станет пустой, тогда поле принимает значение null
     @Default(false) bool? errorPersisted,
     ValidationResult? validationResult,
     SnackNotification? notification,
     @Default(false) bool removing,
   }) = _FieldState;
-}
 
-extension FieldStateValid on FieldState {
-  /// Поле считается валидным, если:
-  /// - нет серверной ошибки (notification.error)
-  /// - и (если есть validationResult) у него нет ошибок
-  /// - иначе (для полей без валидации) просто не пустое
+  ///
+  /// Логика валидации поля
+  ///
+
+
+  /// Можно подтверждать если нет уведомления об ошибке и значение валидно
   bool get canSubmit {
     if (notification?.type == .error) return false;
     return isValid;
   }
 
+  /// Нет ошибки валидации и есть текст - валидный
   bool get isValid {
     if (validationResult != null) {
       return !validationResult!.hasError;
     }
     return value.isNotEmpty;
   }
-  
+
   /// Есть ошибка, если:
   /// - серверная ошибка
   /// - или validationResult имеет ошибку
@@ -59,15 +66,16 @@ extension FieldStateValid on FieldState {
 
   bool get showSuccess => wasInteracted && hasSuccess;
 
+  /// Применяется для полей регистрации
+  /// Используется для определения, жоступно ли это значение для регистрации
+  /// с учётом ответа от сервера
   bool get isAvailable {
     final notification = this.notification;
     if (notification == null) return false;
     if (notification.type != .success) return false;
     return (notification as SnackSuccess).success.type == .available;
   }
-}
 
-extension FieldStateValidation on FieldState {
   /// Вычисляет новое состояние поля на основе введённого значения и валидатора.
   /// - [newValue] – новое значение поля
   /// - [validator] – валидатор поля (может быть null)
@@ -113,12 +121,15 @@ extension FieldStateValidation on FieldState {
       errorPersisted: newErrorPersisted,
     );
   }
-}
 
-extension FieldStateCompleted on FieldState {
+  ///
+  /// Логика завершённости поля
+  ///
+
   static const Duration removeDelay = Duration(seconds: 2);
   static const Duration removeDuration = Duration(milliseconds: 500);
 
+  /// Когда мы считаем поле завершённым (показываем его завершённую версию)
   bool get completed {
     final notification = this.notification;
     if (notification?.type != .success) return false;

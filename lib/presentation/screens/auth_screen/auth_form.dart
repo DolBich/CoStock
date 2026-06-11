@@ -8,6 +8,8 @@ class AuthForm extends StatefulWidget {
 }
 
 class _AuthFormState extends State<AuthForm> {
+  /// Отслеживаем момент, когда пользователь авторизуется и переводим его на
+  /// экран приветствия
   void _listener(BuildContext context, AuthState state) {
     if (state.step == .authenticated) {
       context.router.replaceAll([
@@ -16,6 +18,8 @@ class _AuthFormState extends State<AuthForm> {
     }
   }
 
+  /// Вызывается при нажатии системного назад - отлавливаем и переносим на
+  /// предыдущий этап. Иначе протсо закроет приложение
   void _onPop(BuildContext context, bool didPop) {
     if (!didPop) {
       final bloc = context.read<AuthBloc>();
@@ -29,6 +33,7 @@ class _AuthFormState extends State<AuthForm> {
     }
   }
 
+  /// Стрелка назад дял перехода на предыдущий этап
   Widget get _leading {
     return BlocBuilder<AuthBloc, AuthState>(
       buildWhen: (p, c) => p.step != c.step || p.mode != c.mode,

@@ -14,21 +14,53 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 part 'validation_display.dart';
 
 class BlocTextField<B extends StateStreamable<S>, S> extends StatefulWidget {
+  /// Подсказывающий текст
   final String? hintText;
+
+  /// Тип используемой клавиатуры
   final TextInputType keyboardType;
+
+  /// Внутренние форматеры текста (как он будет автоматически преобразовываться)
+  /// Какие символы можно физически ввести, какие нет
   final List<TextInputFormatter>? inputFormatters;
+
+  /// Скрыть текст
   final bool obscureText;
+
+  /// Автофокус на этом поел
   final bool autofocus;
+
+  /// Что делать после подтверждения поля
   final TextInputAction? textInputAction;
+
+  /// Контроль фокуса на этом поле
   final FocusNode? focusNode;
+
+  /// Сколько строчек может занимать текст описания ошибки
   final int? errorMaxLines;
+
+  /// Получение обновляемых значений поля от bloc
   final FieldState Function(S) selector;
+
+  /// Особый контроллер для управления [BlocTextField] извне
   final BlocTextFieldController? controller;
+
+  /// Валидатор текста, как проверяем текст на правильность написания
   final FieldValidator? validator;
+
+  /// При изменении текста
   final void Function(FieldState) onChanged;
+
+  /// При попытке подтвердить поле
   final void Function(String)? onFieldSubmitted;
+
+  /// Показывать глазик видимости текста
   final bool showToggleObscure;
+
+  /// Виджет в начале поля
   final Widget? leading;
+
+  /// Изначальное значение текста в поле
   final String? initialValue;
 
   const BlocTextField({
@@ -59,9 +91,13 @@ class _BlocTextFieldState<B extends StateStreamable<S>, S>
     extends State<BlocTextField<B, S>>
     with SingleTickerProviderStateMixin {
   late FocusNode _focusNode;
+
+  /// Отслеживание и управление появлением/исчезновением клавиатуры для
+  /// автоматического запуска валидации при убирании клавиатуры
   late KeyboardVisibilityController _keyboardVisibilityController;
   late StreamSubscription<bool> _keyboardSubscription;
 
+  /// Набор контроллеров анимации
   late AnimationController _animationController;
   late Animation<double> _slideAnimation;
 
@@ -78,6 +114,8 @@ class _BlocTextFieldState<B extends StateStreamable<S>, S>
     _controller = TextEditingController(text: widget.initialValue);
     _obscureText = widget.obscureText;
 
+
+    /// Настраиваем анимацию
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 200),
@@ -86,6 +124,7 @@ class _BlocTextFieldState<B extends StateStreamable<S>, S>
       CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
     );
 
+    /// Настраиваем фокус и его управление, отслеживание
     _focusNode = widget.focusNode ?? FocusNode();
     if (widget.autofocus) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -96,6 +135,7 @@ class _BlocTextFieldState<B extends StateStreamable<S>, S>
     }
     _focusNode.addListener(_onFocusChange);
 
+    /// Настраиваем управление/отслеживание клавиатуры
     _keyboardVisibilityController = KeyboardVisibilityController();
     _keyboardSubscription = _keyboardVisibilityController.onChange.listen((
       isVisible,
@@ -103,10 +143,14 @@ class _BlocTextFieldState<B extends StateStreamable<S>, S>
       if (mounted) _validate(errorPersist: !isVisible);
     });
 
+    /// Если есть форматеры - отслеживаем изменение текста для его преображения
+    /// через эти форматёры
     if (widget.inputFormatters != null) {
       _controller.addListener(_controllerListener);
     }
 
+    /// Заполняем наш [controller], чтобы можно было через него вызывать внутренние
+    /// функции поля (управлять им извне через этот контроллер)
     widget.controller?.attach(
       updateValue: _updateValue,
       validate: _validate,
@@ -152,17 +196,21 @@ class _BlocTextFieldState<B extends StateStreamable<S>, S>
     return field.wasInteracted;
   }
 
+  /// Валидация состояния поля
   bool _validate({bool errorPersist = true, FieldState? inputField}) {
     if (!mounted) return false;
     final state = context.read<B>().state;
     final field = inputField ?? widget.selector(state);
 
+    /// Валидируем
     FieldState newField = field.computeWithValidation(
       newValue: field.value,
       validator: widget.validator,
       forceErrorPersisted: errorPersist,
     );
 
+    /// Если есть фокус - показываем описание ошибки, иначе оставляем просто
+    /// пометку, что тут ошибка валидации
     newField = newField.copyWith(
       notification: !_focusNode.hasFocus && (newField.errorPersisted ?? false)
           ? const .error(.validator(type: .validator))
@@ -175,9 +223,11 @@ class _BlocTextFieldState<B extends StateStreamable<S>, S>
     return newField.canSubmit;
   }
 
+  /// Попытка подтвердить поле
   void _submit() {
     final state = context.read<B>().state;
     final field = widget.selector(state);
+    /// Подтверждаем если проходит валидацию
     if (_validate()) {
       widget.onFieldSubmitted?.call(field.value);
     }
@@ -189,11 +239,13 @@ class _BlocTextFieldState<B extends StateStreamable<S>, S>
     }
   }
 
+  /// При смене фокуса валидируем поле
   void _onFocusChange() {
     if (mounted) _validate(errorPersist: !_focusNode.hasFocus);
     setState(() {});
   }
 
+  /// Смена видимости текста через глазик
   void _toggleObscure() {
     setState(() {
       _obscureText = !_obscureText;
@@ -260,7 +312,7 @@ class _BlocTextFieldState<B extends StateStreamable<S>, S>
         /// --- СОЗДАНИЕ suffixIcon ---
         Widget? suffixIcon;
         if (widget.showToggleObscure) {
-          // Собираем Row из statusIcon и глазика
+          /// Собираем Row из statusIcon и глазика
           final List<Widget> children = [];
 
           if (statusIcon != null) {
@@ -327,8 +379,11 @@ class _BlocTextFieldState<B extends StateStreamable<S>, S>
             Row(
               crossAxisAlignment: .start,
               children: [
+                /// Виджет перед текстовым полем [leading]
                 if (widget.leading != null) widget.leading!,
                 if (widget.leading != null) const SizedBox(width: 12),
+
+                /// Текстовое поле
                 Expanded(
                   child: TextFormField(
                     controller: _controller,
@@ -357,6 +412,8 @@ class _BlocTextFieldState<B extends StateStreamable<S>, S>
                 ),
               ],
             ),
+
+            /// Текст ошибки/успеха/валидации поля
             AnimatedBuilder(
               animation: _animationController,
               builder: (context, child) {

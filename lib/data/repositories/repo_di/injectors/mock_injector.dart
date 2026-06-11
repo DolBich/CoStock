@@ -4,6 +4,7 @@ import 'package:co_stock/data/repositories/repos/auth_repo/mock_auth_repo.dart';
 import 'package:co_stock/data/repositories/repos/stock_repo/i_stock_repository.dart';
 import 'package:co_stock/data/repositories/repos/stock_repo/mock_stock_repository.dart';
 
+/// Набор репозиториев реализованных на основе mock
 class MockInjector implements IInjector {
   const MockInjector();
 

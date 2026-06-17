@@ -13,7 +13,7 @@ import 'package:co_stock/domain/screens_entities/auth_screen/auth_field.dart';
 import 'package:co_stock/domain/screens_entities/auth_screen/auth_method.dart';
 import 'package:co_stock/domain/screens_entities/auth_screen/auth_mode.dart';
 import 'package:co_stock/domain/screens_entities/auth_screen/auth_step.dart';
-import 'package:co_stock/domain/core/user.dart';
+import 'package:co_stock/domain/core/user/user.dart';
 import 'package:co_stock/domain/widget_entities/field_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';

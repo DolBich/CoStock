@@ -5,7 +5,7 @@ import 'package:co_stock/data/repositories/repo_di/injector_manager.dart';
 import 'package:co_stock/application/tools/cancel_token.dart';
 import 'package:co_stock/domain/notifications/snack/snack_notification.dart';
 import 'package:co_stock/domain/screens_entities/auth_screen/auth_method.dart';
-import 'package:co_stock/domain/core/user.dart';
+import 'package:co_stock/domain/core/user/user.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 

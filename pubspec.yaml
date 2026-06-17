@@ -26,6 +26,7 @@ dependencies:
   flutter_keyboard_visibility: ^6.0.0
   path_provider: ^2.1.5
   country_flags: ^4.1.2
+  http: ^1.6.0
   reorderable_grid:
     git:
       url: https://github.com/DolBich/reorderable_grid.git

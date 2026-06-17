@@ -7,5 +7,9 @@ sealed class UserSettings with _$UserSettings {
     /// Больше никогда не спрашивать/просить заполнить дополнительную
     /// информацию
     bool? dontAskDetails,
+
+    /// Какие [ProductTemplate] являются избранными у этого пользователя
+    /// чтобы каждый мог сам для себя выбрать нуные ему шаблоны
+    @Default([]) List<String> favoriteTemplateIds,
   }) = _UserSettings;
 }

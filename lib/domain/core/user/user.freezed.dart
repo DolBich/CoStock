@@ -309,7 +309,9 @@ mixin _$UserSettings {
 
 /// Больше никогда не спрашивать/просить заполнить дополнительную
 /// информацию
- bool? get dontAskDetails;
+ bool? get dontAskDetails;/// Какие [ProductTemplate] являются избранными у этого пользователя
+/// чтобы каждый мог сам для себя выбрать нуные ему шаблоны
+ List<String> get favoriteTemplateIds;
 /// Create a copy of UserSettings
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -320,16 +322,16 @@ $UserSettingsCopyWith<UserSettings> get copyWith => _$UserSettingsCopyWithImpl<U
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserSettings&&(identical(other.dontAskDetails, dontAskDetails) || other.dontAskDetails == dontAskDetails));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserSettings&&(identical(other.dontAskDetails, dontAskDetails) || other.dontAskDetails == dontAskDetails)&&const DeepCollectionEquality().equals(other.favoriteTemplateIds, favoriteTemplateIds));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,dontAskDetails);
+int get hashCode => Object.hash(runtimeType,dontAskDetails,const DeepCollectionEquality().hash(favoriteTemplateIds));
 
 @override
 String toString() {
-  return 'UserSettings(dontAskDetails: $dontAskDetails)';
+  return 'UserSettings(dontAskDetails: $dontAskDetails, favoriteTemplateIds: $favoriteTemplateIds)';
 }
 
 
@@ -340,7 +342,7 @@ abstract mixin class $UserSettingsCopyWith<$Res>  {
   factory $UserSettingsCopyWith(UserSettings value, $Res Function(UserSettings) _then) = _$UserSettingsCopyWithImpl;
 @useResult
 $Res call({
- bool? dontAskDetails
+ bool? dontAskDetails, List<String> favoriteTemplateIds
 });
 
 
@@ -357,10 +359,11 @@ class _$UserSettingsCopyWithImpl<$Res>
 
 /// Create a copy of UserSettings
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? dontAskDetails = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? dontAskDetails = freezed,Object? favoriteTemplateIds = null,}) {
   return _then(_self.copyWith(
 dontAskDetails: freezed == dontAskDetails ? _self.dontAskDetails : dontAskDetails // ignore: cast_nullable_to_non_nullable
-as bool?,
+as bool?,favoriteTemplateIds: null == favoriteTemplateIds ? _self.favoriteTemplateIds : favoriteTemplateIds // ignore: cast_nullable_to_non_nullable
+as List<String>,
   ));
 }
 
@@ -442,10 +445,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool? dontAskDetails)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool? dontAskDetails,  List<String> favoriteTemplateIds)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _UserSettings() when $default != null:
-return $default(_that.dontAskDetails);case _:
+return $default(_that.dontAskDetails,_that.favoriteTemplateIds);case _:
   return orElse();
 
 }
@@ -463,10 +466,10 @@ return $default(_that.dontAskDetails);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool? dontAskDetails)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool? dontAskDetails,  List<String> favoriteTemplateIds)  $default,) {final _that = this;
 switch (_that) {
 case _UserSettings():
-return $default(_that.dontAskDetails);}
+return $default(_that.dontAskDetails,_that.favoriteTemplateIds);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -480,10 +483,10 @@ return $default(_that.dontAskDetails);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool? dontAskDetails)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool? dontAskDetails,  List<String> favoriteTemplateIds)?  $default,) {final _that = this;
 switch (_that) {
 case _UserSettings() when $default != null:
-return $default(_that.dontAskDetails);case _:
+return $default(_that.dontAskDetails,_that.favoriteTemplateIds);case _:
   return null;
 
 }
@@ -495,12 +498,23 @@ return $default(_that.dontAskDetails);case _:
 
 
 class _UserSettings implements UserSettings {
-  const _UserSettings({this.dontAskDetails});
+  const _UserSettings({this.dontAskDetails, final  List<String> favoriteTemplateIds = const []}): _favoriteTemplateIds = favoriteTemplateIds;
   
 
 /// Больше никогда не спрашивать/просить заполнить дополнительную
 /// информацию
 @override final  bool? dontAskDetails;
+/// Какие [ProductTemplate] являются избранными у этого пользователя
+/// чтобы каждый мог сам для себя выбрать нуные ему шаблоны
+ final  List<String> _favoriteTemplateIds;
+/// Какие [ProductTemplate] являются избранными у этого пользователя
+/// чтобы каждый мог сам для себя выбрать нуные ему шаблоны
+@override@JsonKey() List<String> get favoriteTemplateIds {
+  if (_favoriteTemplateIds is EqualUnmodifiableListView) return _favoriteTemplateIds;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_favoriteTemplateIds);
+}
+
 
 /// Create a copy of UserSettings
 /// with the given fields replaced by the non-null parameter values.
@@ -512,16 +526,16 @@ _$UserSettingsCopyWith<_UserSettings> get copyWith => __$UserSettingsCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserSettings&&(identical(other.dontAskDetails, dontAskDetails) || other.dontAskDetails == dontAskDetails));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserSettings&&(identical(other.dontAskDetails, dontAskDetails) || other.dontAskDetails == dontAskDetails)&&const DeepCollectionEquality().equals(other._favoriteTemplateIds, _favoriteTemplateIds));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,dontAskDetails);
+int get hashCode => Object.hash(runtimeType,dontAskDetails,const DeepCollectionEquality().hash(_favoriteTemplateIds));
 
 @override
 String toString() {
-  return 'UserSettings(dontAskDetails: $dontAskDetails)';
+  return 'UserSettings(dontAskDetails: $dontAskDetails, favoriteTemplateIds: $favoriteTemplateIds)';
 }
 
 
@@ -532,7 +546,7 @@ abstract mixin class _$UserSettingsCopyWith<$Res> implements $UserSettingsCopyWi
   factory _$UserSettingsCopyWith(_UserSettings value, $Res Function(_UserSettings) _then) = __$UserSettingsCopyWithImpl;
 @override @useResult
 $Res call({
- bool? dontAskDetails
+ bool? dontAskDetails, List<String> favoriteTemplateIds
 });
 
 
@@ -549,10 +563,11 @@ class __$UserSettingsCopyWithImpl<$Res>
 
 /// Create a copy of UserSettings
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? dontAskDetails = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? dontAskDetails = freezed,Object? favoriteTemplateIds = null,}) {
   return _then(_UserSettings(
 dontAskDetails: freezed == dontAskDetails ? _self.dontAskDetails : dontAskDetails // ignore: cast_nullable_to_non_nullable
-as bool?,
+as bool?,favoriteTemplateIds: null == favoriteTemplateIds ? _self._favoriteTemplateIds : favoriteTemplateIds // ignore: cast_nullable_to_non_nullable
+as List<String>,
   ));
 }
 

@@ -4,7 +4,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:co_stock/application/blocs/groups_bloc/groups_bloc.dart';
 import 'package:co_stock/application/handlers/stock/stock_entity_searcher.dart';
 import 'package:co_stock/application/services/session_service.dart';
-import 'package:co_stock/application/services/stock_tree_service.dart';
+import 'package:co_stock/application/services/stock/stock_tree_service.dart';
 import 'package:co_stock/data/local_storage/local_storage_impl/local_storage_service.dart';
 import 'package:co_stock/data/repositories/repos/stock_repo/dto/stock_dtos.dart';
 import 'package:co_stock/domain/extensions/color_ext.dart';

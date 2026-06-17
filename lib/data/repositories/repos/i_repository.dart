@@ -2,7 +2,7 @@ import 'package:co_stock/application/tools/cancel_token.dart';
 
 abstract class IRepository {}
 
-mixin MockRepoDelay {
+mixin MockRepoDelay on IRepository {
   static const int millisecondsDelay = 600;
   static const int stepMillis = 101;
 
@@ -20,7 +20,7 @@ mixin MockRepoDelay {
         return true;
       }
     }
-    // Остаток от деления
+    /// Остаток от деления
     const int remainder = millisecondsDelay % stepMillis;
     if (remainder > 0) {
       await Future.delayed(const Duration(milliseconds: remainder));

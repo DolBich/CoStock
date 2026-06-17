@@ -1,5 +1,5 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:co_stock/domain/core/user.dart';
+import 'package:co_stock/domain/core/user/user.dart';
 import 'package:co_stock/presentation/navigation/guards/guards.dart';
 import 'package:co_stock/presentation/screens/auth_screen/auth_screen.dart';
 import 'package:co_stock/presentation/screens/auth_screen/welcome_screen.dart';

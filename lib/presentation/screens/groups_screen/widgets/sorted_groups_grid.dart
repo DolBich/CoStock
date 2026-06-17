@@ -1,5 +1,6 @@
 part of '../groups_screen.dart';
 
+/// Сетка [StockEntity] в режиме сортировки
 class _SortedGroupsGrid extends StatefulWidget {
   final List<StockEntity> groups;
   final List<StockEntity> stocks;

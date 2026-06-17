@@ -1,12 +1,13 @@
 import 'package:co_stock/application/tools/cancel_token.dart';
+import 'package:co_stock/data/repositories/repos/i_repository.dart';
 import 'package:co_stock/data/repositories/repos/stock_repo/dto/stock_dtos.dart';
 import 'package:co_stock/domain/notifications/snack/snack_notification.dart';
 import 'package:co_stock/domain/screens_entities/groups_screen/stock_entity.dart';
-import 'package:co_stock/domain/screens_entities/groups_screen/stock_item.dart';
+import 'package:co_stock/domain/screens_entities/stock_screen/stock_item.dart';
 import 'package:fpdart/fpdart.dart';
 
 ///Если возвращается [null] - отменён через [cancelToken]
-abstract class IStockRepository {
+abstract class IStockRepository implements IRepository {
   /// Узнать менялось ли дерево сущностей [StockEntity] с последнего раз
   /// когда мы получали данные
   /// right(null) - изменений не было

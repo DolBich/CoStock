@@ -1,6 +1,6 @@
 import 'package:co_stock/data/repositories/repos/stock_repo/dto/stock_dtos.dart';
 import 'package:co_stock/domain/screens_entities/groups_screen/stock_entity.dart';
-import 'package:co_stock/domain/screens_entities/groups_screen/stock_item.dart';
+import 'package:co_stock/domain/screens_entities/stock_screen/stock_item.dart';
 
 /// Инвентарь, который хранит в себе продукты/элементы [StockItem]
 /// [freezed] плохо работает с наследованиями, поэтому здесь без него

@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:co_stock/application/blocs/profile_bloc/profile_bloc.dart';
-import 'package:co_stock/domain/core/user.dart';
+import 'package:co_stock/domain/core/user/user.dart';
 import 'package:co_stock/presentation/navigation/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';

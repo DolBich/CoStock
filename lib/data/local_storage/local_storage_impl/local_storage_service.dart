@@ -4,6 +4,7 @@ import 'package:co_stock/data/local_storage/i_local_storage.dart';
 import 'package:co_stock/data/local_storage/local_storage_impl/local_storage_keys.dart';
 import 'package:co_stock/data/repositories/repos/stock_repo/dto/stock_dtos.dart';
 import 'package:co_stock/data/repositories/repos/stock_repo/dto/stock_mappers.dart';
+import 'package:co_stock/domain/core/image/image_asset.dart';
 import 'package:co_stock/domain/extensions/color_ext.dart';
 import 'package:co_stock/domain/extensions/iterable_ext.dart';
 import 'package:co_stock/domain/screens_entities/groups_screen/sort_filter/sort_filter.dart';
@@ -138,6 +139,53 @@ class LocalStorageService {
     final id = await getData<String>(key: LSKeys.userId);
 
     return id;
+  }
+
+  ///
+  /// Images
+  ///
+
+  /// Сохранить информацию об ImageAsset (без bytes).
+  static Future<void> saveImageAsset(ImageAsset asset) async {
+    final map = asset.toJson();
+    /// Сохраняем конкретный [ImageAsset]
+    await saveData(
+      key: '${LSKeys.imageAssetPrefix}${asset.id}',
+      value: jsonEncode(map),
+    );
+    /// Обновляем список id
+    final ids = await getData<List<String>>(key: LSKeys.imageAssetIds) ?? [];
+    if (!ids.contains(asset.id)) {
+      ids.add(asset.id);
+      await saveData<List<String>>(key: LSKeys.imageAssetIds, value: ids);
+    }
+  }
+
+  /// Загрузить информацию об ImageAsset (без bytes).
+  static Future<ImageAsset?> getImageAsset(String id) async {
+    final raw = await getData<String>(key: '${LSKeys.imageAssetPrefix}$id');
+    if (raw == null) return null;
+    final map = jsonDecode(raw) as Map<String, dynamic>;
+    return ImageAsset.fromJson(map);
+  }
+
+  /// Удалить информацию об ImageAsset и обновить список id.
+  static Future<void> removeImageAsset(String id) async {
+    await removeData(key: '${LSKeys.imageAssetPrefix}$id');
+    final ids = await getData<List<String>>(key: LSKeys.imageAssetIds) ?? [];
+    ids.remove(id);
+    await saveData<List<String>>(key: LSKeys.imageAssetIds, value: ids);
+  }
+
+  /// Загрузить список всех ImageAsset (без bytes).
+  static Future<List<ImageAsset>> getAllImageAssets() async {
+    final ids = await getData<List<String>>(key: LSKeys.imageAssetIds) ?? [];
+    final assets = <ImageAsset>[];
+    for (final id in ids) {
+      final asset = await getImageAsset(id);
+      if (asset != null) assets.add(asset);
+    }
+    return assets;
   }
 
   ///

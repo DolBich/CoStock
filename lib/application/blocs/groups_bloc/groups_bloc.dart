@@ -1,5 +1,5 @@
 import 'package:co_stock/application/services/session_service.dart';
-import 'package:co_stock/application/services/stock_tree_service.dart';
+import 'package:co_stock/application/services/stock/stock_tree_service.dart';
 import 'package:co_stock/application/tools/cancel_token.dart';
 import 'package:co_stock/application/tools/id_setter.dart';
 import 'package:co_stock/data/local_storage/local_storage_impl/local_storage_service.dart';

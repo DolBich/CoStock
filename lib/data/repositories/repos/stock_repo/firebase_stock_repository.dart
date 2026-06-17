@@ -4,7 +4,7 @@ import 'package:co_stock/data/repositories/repos/stock_repo/i_stock_repository.d
 import 'package:co_stock/domain/notifications/snack/snack_notification.dart';
 import 'package:co_stock/domain/screens_entities/groups_screen/stock.dart';
 import 'package:co_stock/domain/screens_entities/groups_screen/stock_entity.dart';
-import 'package:co_stock/domain/screens_entities/groups_screen/stock_item.dart';
+import 'package:co_stock/domain/screens_entities/stock_screen/stock_item.dart';
 import 'package:fpdart/fpdart.dart';
 
 class FirebaseStockRepository extends IStockRepository {

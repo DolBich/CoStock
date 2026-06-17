@@ -1,6 +1,6 @@
 import 'package:co_stock/domain/notifications/snack/snack_notification.dart';
 import 'package:co_stock/domain/screens_entities/auth_screen/auth_field.dart';
-import 'package:co_stock/domain/core/user.dart';
+import 'package:co_stock/domain/core/user/user.dart';
 
 /// Метода авторизации/регистрации
 enum AuthMethod { email, phone, login }

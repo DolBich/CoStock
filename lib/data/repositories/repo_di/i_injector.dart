@@ -1,4 +1,5 @@
 import 'package:co_stock/data/repositories/repos/auth_repo/i_auth_repo.dart';
+import 'package:co_stock/data/repositories/repos/image_repo/i_image_repository.dart';
 import 'package:co_stock/data/repositories/repos/stock_repo/i_stock_repository.dart';
 
 /// Содержит в себе все актуальные реализации репозиториев
@@ -11,4 +12,7 @@ abstract class IInjector {
 
   /// Репозиторий хранилищ и групп
   IStockRepository get stockRepository;
+
+  /// Репозиторий картинок
+  IImageRepository get imageRepository;
 }

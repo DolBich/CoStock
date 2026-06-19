@@ -1,331 +1,46 @@
-import 'package:co_stock/application/handlers/stock/stock_entity_searcher.dart';
 import 'package:co_stock/application/tools/cancel_token.dart';
-import 'package:co_stock/application/tools/id_setter.dart';
-import 'package:co_stock/data/local_storage/local_storage_impl/local_storage_service.dart';
 import 'package:co_stock/data/repositories/repos/i_repository.dart';
 import 'package:co_stock/data/repositories/repos/stock_repo/dto/stock_dtos.dart';
-import 'package:co_stock/data/repositories/repos/stock_repo/dto/stock_mappers.dart';
 import 'package:co_stock/data/repositories/repos/stock_repo/i_stock_repository.dart';
 import 'package:co_stock/domain/notifications/snack/snack_notification.dart';
-import 'package:co_stock/domain/screens_entities/groups_screen/stock_entity.dart';
-import 'package:co_stock/domain/screens_entities/groups_screen/stock_group.dart';
 import 'package:co_stock/domain/screens_entities/stock_screen/stock_item.dart';
 import 'package:fpdart/fpdart.dart';
 
 class MockStockRepository extends IStockRepository with MockRepoDelay {
-  /// Мы разделаем информацию на [_entities], [_parentMap], [_childrenMap],
-  /// [_items] для лучшей имитации бэкэнда, а также для избегания рекурсивного
-  /// перестраивания дерева - можем обойтись только изменением связей как например
-  /// в методах [addNode], [deleteNode], [updateNode]
-  /// А само дерево собирается только при возврате данных клиенту через [_buildRootEntities]
-
-  MockStockRepository() {
-    /// Получаем начальные данные репозитория из локального хранилища
-    init();
-  }
-
-  /// Инициализирует репозиторий данными из локального хранилища.
-  /// Вызовите этот метод перед началом использования.
-  Future<void> init() async {
-    final roots = await LocalStorageService.loadStockTree();
-    if (roots == null) return;
-
-    /// Рекурсивно обходим дерево и заполняем структуры
-    void traverse(StockEntity entity, String? parentId) {
-      /// [children] будут потом сохранены отдельно в [_childrenMap]
-      final dto = StockEntityDto.fromDomain(entity).copyWith(children: []);
-
-      /// обновляет [_entities], [_parentMap] и [_childrenMap[parentId]]
-      _saveEntity(dto, parentId);
-
-      if (entity is StockGroup) {
-        for (final child in entity.children) {
-          traverse(child, entity.id);
-        }
-      }
-    }
-
-    for (final root in roots) {
-      /// корни: parentId = null
-      traverse(root, null);
-    }
-  }
-
-  /// Данные DTO в плоском виде
-  final Map<String, StockEntityDto> _entities = {};
-
-  /// Хранит только связь того, чей это родитель id -> parentId
-  final Map<String, String?> _parentMap = {};
-
-  /// Связь какие у узла дети id -> [childId, ...]
-  final Map<String, List<String>> _childrenMap = {};
-
-  /// Хранилище элементов с привязкой к stockId
+  /// Имитация серверного хранилища элементов: stockId → список StockItemDto.
   final Map<String, List<StockItemDto>> _items = {};
 
-  /// Единая точка обновления наших разделённых данных
-  void _saveEntity(StockEntityDto dto, String? parentId) {
-    final id = dto.id;
-    _entities[id] = dto;
-    _parentMap[id] = parentId;
-    _childrenMap.putIfAbsent(id, () => []);
+  /// Имитация серверного хранилища шаблонов продуктов.
+  final Map<String, ProductTemplate> _serverTemplates = {};
 
-    if (parentId != null) {
-      _childrenMap.putIfAbsent(parentId, () => []);
-      if (!_childrenMap[parentId]!.contains(id)) {
-        _childrenMap[parentId]!.add(id);
-      }
-    }
+  /// Внутренний хелпер: по productId возвращает ProductTemplate из «серверного»
+  /// хранилища. В реальном репозитории такой метод не нужен – сервер сам вернёт
+  /// полную модель ProductTemplate внутри ответа на getStockItems / addStockItem.
+  ProductTemplate _getTemplate(String productId) {
+    return _serverTemplates[productId] ??
+        ProductTemplate(id: productId, name: 'Unknown product');
   }
 
-  /// Строит [StockEntityDto] для заданного id исходя из его связей с детьми
-  StockEntityDto _buildDtoWithChildren(String id) {
-    final dto = _entities[id]!;
-    final childIds = _childrenMap[id] ?? [];
-    final childrenDtos = childIds
-        .map((childId) => _buildDtoWithChildren(childId))
-        .toList();
-    return dto.copyWith(children: childrenDtos);
-  }
+  // ---------------------------------------------------------------------------
+  // StockItem CRUD
+  // ---------------------------------------------------------------------------
 
-  /// Возвращает список корневых DTO (с вложенными детьми).
-  List<StockEntityDto> _buildRootDtos() {
-    /// Находит корневые сущности (у них нет родителей)
-    final rootIds = _parentMap.entries
-        .where((entry) => entry.value == null)
-        .map((entry) => entry.key)
-        .toList();
-
-    /// Строим для них [StockEntityDto]
-    return rootIds.map((id) => _buildDtoWithChildren(id)).toList();
-  }
-
-  /// Возвращаем наше дерево [StockEntity]
-  List<StockEntity> _buildRootEntities() {
-    /// Строим дерево [StockEntityDto]
-    final rootDtos = _buildRootDtos();
-
-    /// Переводим дерево [StockEntityDto] в дерево [StockEntity]
-    final mapper = StockMapper();
-    return mapper(rootDtos);
-  }
-
-  /// Ищет узел среди всех корней и их потомков
-  StockEntity? _findEntityById(String id) =>
-      _buildRootEntities().findEntityById(id);
-
-  @override
-  Future<Either<AppError, List<StockEntity>?>?> getUserTreeIfChanged({
-    required String userId,
-    CancelToken? cancelToken,
-  }) async {
-    final canceled = await cancelableDelay(cancelToken);
-    if (canceled) return null;
-
-    /// всегда "изменений нет"
-    return right(null);
-  }
-
-  @override
-  Future<Either<AppError, List<StockEntity>>?> getUserTree({
-    required String userId,
-    CancelToken? cancelToken,
-  }) async {
-    /// Имитация задержки с возможностью отмены операции через cancelToken
-    final canceled = await cancelableDelay(cancelToken);
-    if (canceled) return null;
-
-    try {
-      /// Построение дерева [StockEntity]
-      final roots = _buildRootEntities();
-      return right(roots);
-    } catch (e, st) {
-      return left(.client(type: .smth, error: e, stackTrace: st));
-    }
-  }
-
-  @override
-  Future<Either<AppError, Unit>?> saveFullTree({
-    required String userId,
-    required List<StockEntity> roots,
-    CancelToken? cancelToken,
-  }) async {
-    ///Имитация задержки с возможной отменой
-    final canceled = await cancelableDelay(cancelToken);
-    if (canceled) return null;
-
-    try {
-      /// Очищаем текущее состояние
-      _entities.clear();
-      _parentMap.clear();
-      _childrenMap.clear();
-
-      /// Рекурсивно сохраняем дерево
-      void saveRecursive(StockEntityDto dto, String? parentId) {
-        _saveEntity(dto, parentId);
-        if (dto.children.isNotEmpty) {
-          for (final childDto in dto.children) {
-            saveRecursive(childDto, dto.id);
-          }
-        }
-      }
-
-      for (final root in roots) {
-        final dto = StockEntityDto.fromDomain(root);
-        saveRecursive(dto, null);
-      }
-
-      return right(unit);
-    } catch (e, st) {
-      return left(.client(type: .smth, error: e, stackTrace: st));
-    }
-  }
-
-  @override
-  Future<Either<AppError, StockEntity>?> addNode({
-    required String userId,
-    required String name,
-    required StockEntityType type,
-    String? parentId,
-    CancelToken? cancelToken,
-  }) async {
-    /// Имитация задержки с возможностью отмены операции через cancelToken
-    final canceled = await cancelableDelay(cancelToken);
-    if (canceled) return null;
-
-    try {
-      /// Добавление id сущности на сервере
-      final id = IdSetter()();
-      final dto = StockEntityDto(id: id, name: name, type: type, children: []);
-
-      /// Сохранение на сервере и проверка, что сохранилось корректно
-      _saveEntity(dto, parentId);
-      final created = _findEntityById(id);
-      if (created == null) {
-        return left(
-          .client(
-            type: .state,
-            error: Exception('Failed to create node'),
-            stackTrace: .current,
-          ),
-        );
-      }
-
-      return right(created);
-    } catch (e, st) {
-      return left(.client(type: .smth, error: e, stackTrace: st));
-    }
-  }
-
-  @override
-  Future<Either<AppError, StockEntity>?> updateNode({
-    required String userId,
-    required String nodeId,
-    required String newName,
-    CancelToken? cancelToken,
-  }) async {
-    /// Имитация задержки с возможностью отмены операции через cancelToken
-    final canceled = await cancelableDelay(cancelToken);
-    if (canceled) return null;
-
-    try {
-      /// Поиск изменяемой сущности [StockEntity]
-      final oldDto = _entities[nodeId];
-      if (oldDto == null) {
-        return left(
-          .client(
-            type: .state,
-            error: Exception('Node $nodeId not found on [updateNode]'),
-          ),
-        );
-      }
-
-      /// Обновляем только имя
-      final updatedDto = oldDto.copyWith(name: newName);
-      _entities[nodeId] = updatedDto;
-
-      /// Проверка на правильность измененения дерева
-      final updatedNode = _findEntityById(nodeId);
-      if (updatedNode == null) {
-        return left(
-          .client(
-            type: .state,
-            error: Exception('Failed to retrieve updated node'),
-          ),
-        );
-      }
-      return right(updatedNode);
-    } catch (e, st) {
-      return left(.client(type: .smth, error: e, stackTrace: st));
-    }
-  }
-
-  @override
-  Future<Either<AppError, Unit>?> deleteNode({
-    required String userId,
-    required String nodeId,
-    CancelToken? cancelToken,
-  }) async {
-    /// Имитация задержки с возможностью отмены операции через cancelToken
-    final canceled = await cancelableDelay(cancelToken);
-    if (canceled) return null;
-
-    try {
-      /// Проверка на наличие удаляемой сущности [StockEntity]
-      if (!_entities.containsKey(nodeId)) {
-        return left(
-          .server(type: .notFound, error: Exception('Node $nodeId not found')),
-        );
-      }
-
-      /// Удаление всей ветки сущностей [StockEntity] из всех зависимостей
-      /// Если удаляется не конечный элемент (isLeaf), то надо также удалить
-      /// его children
-      void deleteRecursive(String id) {
-        final children = List<String>.from(_childrenMap[id] ?? []);
-        for (final childId in children) {
-          deleteRecursive(childId);
-        }
-        _entities.remove(id);
-        _parentMap.remove(id);
-        _childrenMap.remove(id);
-        _items.remove(id);
-      }
-
-      /// Если удаляемая сущность [StockEntity] не корневая, то у его родителя
-      /// надо убрать его из списка детей
-      final parentId = _parentMap[nodeId];
-      if (parentId != null && _childrenMap.containsKey(parentId)) {
-        _childrenMap[parentId]!.remove(nodeId);
-      }
-
-      /// Удаляем [StockEntity], его ветки и всех зависимостей от это ветки
-      deleteRecursive(nodeId);
-      return right(unit);
-    } catch (e, st) {
-      return left(.client(type: .smth, error: e, stackTrace: st));
-    }
-  }
-
-  /// ---------- StockItem методы ----------
   @override
   Future<Either<AppError, List<StockItem>>?> getStockItems({
     required String stockId,
     CancelToken? cancelToken,
   }) async {
-    /// Имитация задержки с возможностью отмены операции через cancelToken
     final canceled = await cancelableDelay(cancelToken);
     if (canceled) return null;
 
     try {
-      /// Поиск элементов хранилища [Stock] и перевод их из DTO [StockItemDto] в
-      /// domain [StockItem]
-      final items = (_items[stockId] ?? [])
-          .map((dto) => dto.toDomain())
+      final dtos = _items[stockId] ?? [];
+      final items = dtos
+          .map((dto) => dto.toDomain(_getTemplate(dto.productId)))
           .toList();
       return right(items);
     } catch (e, st) {
-      return left(.client(type: .smth, error: e, stackTrace: st));
+      return left(AppError.client(type: ClientErrorType.smth, error: e, stackTrace: st));
     }
   }
 
@@ -335,19 +50,18 @@ class MockStockRepository extends IStockRepository with MockRepoDelay {
     required StockItem item,
     CancelToken? cancelToken,
   }) async {
-    /// Имитация задержки с возможностью отмены операции через cancelToken
     final canceled = await cancelableDelay(cancelToken);
     if (canceled) return null;
 
     try {
-      /// Перевод добавляемого [StockItem] в [StockItemDto] и добавление ключа
-      /// хранилища [Stock] в зависимость [_items], если это был первый его элемент
       final dto = StockItemDto.fromDomain(item);
       _items.putIfAbsent(stockId, () => []);
       _items[stockId]!.add(dto);
-      return right(dto.toDomain());
+      // Имитация ответа сервера: возвращаем тот же элемент, но с шаблоном,
+      // который уже должен быть в _serverTemplates (если нет – заглушка).
+      return right(dto.toDomain(_getTemplate(dto.productId)));
     } catch (e, st) {
-      return left(.client(type: .smth, error: e, stackTrace: st));
+      return left(AppError.client(type: ClientErrorType.smth, error: e, stackTrace: st));
     }
   }
 
@@ -357,40 +71,29 @@ class MockStockRepository extends IStockRepository with MockRepoDelay {
     required StockItem item,
     CancelToken? cancelToken,
   }) async {
-    /// Имитация задержки с возможностью отмены операции через cancelToken
     final canceled = await cancelableDelay(cancelToken);
     if (canceled) return null;
 
     try {
-      /// Проверка на наличие элементов [StockItem] в искомом хранилище [Stock]
-      final itemsList = _items[stockId];
-      if (itemsList == null) {
-        return left(
-          .client(
-            type: .state,
-            error: Exception('Stock $stockId not found in [updateStockItem]'),
-          ),
-        );
+      final list = _items[stockId];
+      if (list == null) {
+        return left(AppError.client(
+          type: ClientErrorType.state,
+          error: Exception('Stock $stockId not found'),
+        ));
       }
-
-      /// Поиск в найденном хранилище [Stock] искомого элемента [StockItem]
-      final index = itemsList.indexWhere((dto) => dto.id == item.id);
+      final index = list.indexWhere((dto) => dto.id == item.id);
       if (index == -1) {
-        return left(
-          .client(
-            type: .state,
-            error: Exception(
-              'StockItem ${item.id} not found in stock $stockId in [updateStockItem]',
-            ),
-          ),
-        );
+        return left(AppError.client(
+          type: ClientErrorType.state,
+          error: Exception('StockItem ${item.id} not found'),
+        ));
       }
-
-      /// Изменение параметров его полной заменой
-      itemsList[index] = StockItemDto.fromDomain(item);
-      return right(item);
+      list[index] = StockItemDto.fromDomain(item);
+      // Возвращаем обновлённый элемент с заполненным ProductTemplate
+      return right(item.copyWith(product: _getTemplate(item.product.id)));
     } catch (e, st) {
-      return left(.client(type: .smth, error: e, stackTrace: st));
+      return left(AppError.client(type: ClientErrorType.smth, error: e, stackTrace: st));
     }
   }
 
@@ -400,38 +103,100 @@ class MockStockRepository extends IStockRepository with MockRepoDelay {
     required String itemId,
     CancelToken? cancelToken,
   }) async {
-    /// Имитация задержки с возможностью отмены операции через cancelToken
     final canceled = await cancelableDelay(cancelToken);
     if (canceled) return null;
 
     try {
-      /// Поиск удаляемого [StockItem]
-      final itemsList = _items[stockId];
-      if (itemsList == null) {
-        return left(
-          .client(
-            type: .state,
-            error: Exception('Stock $stockId not found in [deleteStockItem]'),
-          ),
-        );
+      final list = _items[stockId];
+      if (list == null) {
+        return left(AppError.client(
+          type: ClientErrorType.state,
+          error: Exception('Stock $stockId not found'),
+        ));
       }
-
-      /// Удаление [StockItem] с проверкой удалилось ли что-то
-      final initialLength = itemsList.length;
-      itemsList.removeWhere((dto) => dto.id == itemId);
-      if (itemsList.length == initialLength) {
-        return left(
-          .client(
-            type: .state,
-            error: Exception(
-              'StockItem $itemId not found in stock $stockId in [deleteStockItem]',
-            ),
-          ),
-        );
+      final initialLength = list.length;
+      list.removeWhere((dto) => dto.id == itemId);
+      if (list.length == initialLength) {
+        return left(AppError.client(
+          type: ClientErrorType.state,
+          error: Exception('StockItem $itemId not found'),
+        ));
       }
       return right(unit);
     } catch (e, st) {
-      return left(.client(type: .smth, error: e, stackTrace: st));
+      return left(AppError.client(type: ClientErrorType.smth, error: e, stackTrace: st));
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // ProductTemplate CRUD (имитация серверного API)
+  // ---------------------------------------------------------------------------
+
+  @override
+  Future<Either<AppError, List<ProductTemplate>>?> getAllProductTemplates({
+    CancelToken? cancelToken,
+  }) async {
+    final canceled = await cancelableDelay(cancelToken);
+    if (canceled) return null;
+
+    try {
+      return right(_serverTemplates.values.toList());
+    } catch (e, st) {
+      return left(AppError.client(type: ClientErrorType.smth, error: e, stackTrace: st));
+    }
+  }
+
+  @override
+  Future<Either<AppError, ProductTemplate>?> createProductTemplate({
+    required ProductTemplate template,
+    CancelToken? cancelToken,
+  }) async {
+    final canceled = await cancelableDelay(cancelToken);
+    if (canceled) return null;
+
+    try {
+      _serverTemplates[template.id] = template;
+      return right(template);
+    } catch (e, st) {
+      return left(AppError.client(type: ClientErrorType.smth, error: e, stackTrace: st));
+    }
+  }
+
+  @override
+  Future<Either<AppError, ProductTemplate>?> updateProductTemplate({
+    required ProductTemplate template,
+    CancelToken? cancelToken,
+  }) async {
+    final canceled = await cancelableDelay(cancelToken);
+    if (canceled) return null;
+
+    try {
+      if (!_serverTemplates.containsKey(template.id)) {
+        return left(AppError.client(
+          type: ClientErrorType.state,
+          error: Exception('Template ${template.id} not found'),
+        ));
+      }
+      _serverTemplates[template.id] = template;
+      return right(template);
+    } catch (e, st) {
+      return left(AppError.client(type: ClientErrorType.smth, error: e, stackTrace: st));
+    }
+  }
+
+  @override
+  Future<Either<AppError, Unit>?> deleteProductTemplate({
+    required String productId,
+    CancelToken? cancelToken,
+  }) async {
+    final canceled = await cancelableDelay(cancelToken);
+    if (canceled) return null;
+
+    try {
+      _serverTemplates.remove(productId);
+      return right(unit);
+    } catch (e, st) {
+      return left(AppError.client(type: ClientErrorType.smth, error: e, stackTrace: st));
     }
   }
 }

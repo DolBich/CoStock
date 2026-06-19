@@ -3,6 +3,8 @@ import 'package:co_stock/data/repositories/repos/auth_repo/firebase_auth_repo.da
 import 'package:co_stock/data/repositories/repos/auth_repo/i_auth_repo.dart';
 import 'package:co_stock/data/repositories/repos/image_repo/firebase_image_repository.dart';
 import 'package:co_stock/data/repositories/repos/image_repo/i_image_repository.dart';
+import 'package:co_stock/data/repositories/repos/groups_repo/firebase_groups_repository.dart';
+import 'package:co_stock/data/repositories/repos/groups_repo/i_groups_repository.dart';
 import 'package:co_stock/data/repositories/repos/stock_repo/firebase_stock_repository.dart';
 import 'package:co_stock/data/repositories/repos/stock_repo/i_stock_repository.dart';
 
@@ -14,8 +16,11 @@ class FirebaseInjector implements IInjector {
   IAuthRepository get authRepository => FirebaseAuthRepository();
 
   @override
-  IStockRepository get stockRepository => FirebaseStockRepository();
+  IGroupsRepository get groupsRepository => FirebaseGroupsRepository();
 
   @override
   IImageRepository get imageRepository => FirebaseImageRepository();
+
+  @override
+  IStockRepository get stockRepository => FirebaseStockRepository();
 }

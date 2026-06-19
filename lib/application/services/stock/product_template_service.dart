@@ -1,6 +1,6 @@
 import 'package:co_stock/application/services/image_cache_service.dart';
 import 'package:co_stock/data/local_storage/local_storage_impl/local_storage_service.dart';
-import 'package:co_stock/data/repositories/repos/stock_repo/dto/stock_dtos.dart';
+import 'package:co_stock/data/repositories/repos/groups_repo/dto/stock_entities_dtos.dart';
 import 'package:co_stock/domain/core/image/image_asset.dart';
 import 'package:co_stock/domain/screens_entities/stock_screen/stock_item.dart';
 

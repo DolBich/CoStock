@@ -3,6 +3,8 @@ import 'package:co_stock/data/repositories/repos/auth_repo/i_auth_repo.dart';
 import 'package:co_stock/data/repositories/repos/auth_repo/mock_auth_repo.dart';
 import 'package:co_stock/data/repositories/repos/image_repo/i_image_repository.dart';
 import 'package:co_stock/data/repositories/repos/image_repo/mock_image_repository.dart';
+import 'package:co_stock/data/repositories/repos/groups_repo/i_groups_repository.dart';
+import 'package:co_stock/data/repositories/repos/groups_repo/mock_groups_repository.dart';
 import 'package:co_stock/data/repositories/repos/stock_repo/i_stock_repository.dart';
 import 'package:co_stock/data/repositories/repos/stock_repo/mock_stock_repository.dart';
 
@@ -14,8 +16,11 @@ class MockInjector implements IInjector {
   IAuthRepository get authRepository => MockAuthRepository();
 
   @override
-  IStockRepository get stockRepository => MockStockRepository();
+  IGroupsRepository get groupsRepository => MockGroupsRepository();
 
   @override
   IImageRepository get imageRepository => MockImageRepository();
+
+  @override
+  IStockRepository get stockRepository => MockStockRepository();
 }

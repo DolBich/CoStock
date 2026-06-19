@@ -1,4 +1,4 @@
-import 'package:co_stock/data/repositories/repos/stock_repo/dto/stock_dtos.dart';
+import 'package:co_stock/data/repositories/repos/groups_repo/dto/stock_entities_dtos.dart';
 import 'package:co_stock/domain/extensions/color_ext.dart';
 import 'package:flutter/material.dart';
 

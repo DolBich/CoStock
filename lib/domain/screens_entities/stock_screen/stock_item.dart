@@ -19,6 +19,9 @@ sealed class StockItem with _$StockItem {
     /// Продукт, который менеджментится в этом хранилище этим элементом
     required ProductTemplate product,
 
+    /// TODO: возможно стоит потом преобразовать поля нижу в отдельный класс
+    /// StockItemSettings
+
     /// [count] может превышать [preferredCount] и может быть ниже [lowLevelCount]
     /// Они служат исключительно в качестве индикаторов
     @Default(0) int count,

@@ -6,7 +6,7 @@ import 'package:co_stock/application/handlers/stock/stock_entity_searcher.dart';
 import 'package:co_stock/application/services/session_service.dart';
 import 'package:co_stock/application/services/stock/stock_tree_service.dart';
 import 'package:co_stock/data/local_storage/local_storage_impl/local_storage_service.dart';
-import 'package:co_stock/data/repositories/repos/stock_repo/dto/stock_dtos.dart';
+import 'package:co_stock/data/repositories/repos/groups_repo/dto/stock_entities_dtos.dart';
 import 'package:co_stock/domain/extensions/color_ext.dart';
 import 'package:co_stock/domain/screens_entities/groups_screen/sort_filter/sort_filter.dart';
 import 'package:co_stock/domain/screens_entities/groups_screen/stock.dart';

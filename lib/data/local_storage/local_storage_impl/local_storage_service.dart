@@ -2,8 +2,9 @@ import 'dart:convert';
 
 import 'package:co_stock/data/local_storage/i_local_storage.dart';
 import 'package:co_stock/data/local_storage/local_storage_impl/local_storage_keys.dart';
+import 'package:co_stock/data/repositories/repos/groups_repo/dto/stock_entities_dtos.dart';
+import 'package:co_stock/data/repositories/repos/groups_repo/dto/stock_mappers.dart';
 import 'package:co_stock/data/repositories/repos/stock_repo/dto/stock_dtos.dart';
-import 'package:co_stock/data/repositories/repos/stock_repo/dto/stock_mappers.dart';
 import 'package:co_stock/domain/core/image/image_asset.dart';
 import 'package:co_stock/domain/extensions/color_ext.dart';
 import 'package:co_stock/domain/extensions/iterable_ext.dart';
@@ -425,7 +426,7 @@ class LocalStorageService {
       );
       if (raw != null) {
         final json = jsonDecode(raw) as Map<String, dynamic>;
-        items.add(StockItemDto.fromJson(json));
+        items.add(.fromJson(json));
       }
     }
     return items;

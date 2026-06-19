@@ -1,5 +1,5 @@
 import 'package:co_stock/data/local_storage/local_storage_impl/local_storage_service.dart';
-import 'package:co_stock/data/repositories/repos/stock_repo/dto/stock_dtos.dart';
+import 'package:co_stock/data/repositories/repos/groups_repo/dto/stock_entities_dtos.dart';
 import 'package:co_stock/domain/screens_entities/groups_screen/stock_entity.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 

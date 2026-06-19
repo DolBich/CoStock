@@ -4,7 +4,7 @@ import 'package:co_stock/application/tools/cancel_token.dart';
 import 'package:co_stock/application/tools/id_setter.dart';
 import 'package:co_stock/data/local_storage/local_storage_impl/local_storage_service.dart';
 import 'package:co_stock/data/repositories/repo_di/injector_manager.dart';
-import 'package:co_stock/data/repositories/repos/stock_repo/dto/stock_dtos.dart';
+import 'package:co_stock/data/repositories/repos/groups_repo/dto/stock_entities_dtos.dart';
 import 'package:co_stock/domain/notifications/snack/snack_notification.dart';
 import 'package:co_stock/domain/screens_entities/groups_screen/sort_filter/sort_arrangement.dart';
 import 'package:co_stock/domain/screens_entities/groups_screen/sort_filter/sort_filter.dart';
@@ -46,7 +46,7 @@ class GroupsBloc extends Bloc<GroupsEvent, GroupsState> {
   }
 
   final _treeService = StockTreeService();
-  final _repository = InjectorManager().current.stockRepository;
+  final _repository = InjectorManager().current.groupsRepository;
 
   void _restartOperation() {
     _cancelCurrentRequest();

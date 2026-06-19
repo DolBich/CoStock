@@ -1,4 +1,4 @@
-part of 'stock_dtos.dart';
+part of 'stock_entities_dtos.dart';
 
 enum StockEntityType { group, stock }
 

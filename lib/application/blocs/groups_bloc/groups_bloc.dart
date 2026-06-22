@@ -11,6 +11,7 @@ import 'package:co_stock/domain/screens_entities/groups_screen/sort_filter/sort_
 import 'package:co_stock/domain/screens_entities/groups_screen/stock.dart';
 import 'package:co_stock/domain/screens_entities/groups_screen/stock_entity.dart';
 import 'package:co_stock/domain/screens_entities/groups_screen/stock_group.dart';
+import 'package:co_stock/domain/services/group_list_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -18,6 +19,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'groups_bloc.freezed.dart';
 
 part 'groups_event.dart';
+
 part 'groups_state.dart';
 
 part 'handlers/groups_error_handler.dart';
@@ -628,12 +630,18 @@ class GroupsBloc extends Bloc<GroupsEvent, GroupsState> {
   }
 
   void _onApplySortFilter(_ApplySortFilter event, Emitter<GroupsState> emit) {
+    final service = GroupListService();
+    final sort = event.sortMode;
+    final sorted = sort != null
+        ? service.sortEntities(state.currentChildren, sort)
+        : state.currentChildren;
     emit(
-      state.copyWith(sortMode: event.sortMode, filterMode: event.filterMode),
+      state.copyWith(
+        sortMode: sort,
+        filterMode: event.filterMode,
+        currentChildren: sorted,
+      ),
     );
-
-    /// Сохраняем выбранные режимы (можем не ждать)
-    LocalStorageService.saveSortMode(event.sortMode);
   }
 
   ///

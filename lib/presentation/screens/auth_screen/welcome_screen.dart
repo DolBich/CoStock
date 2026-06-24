@@ -33,6 +33,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   final Stopwatch _stopwatch = Stopwatch();
   bool _isLoadingComplete = false;
   bool _hasNavigated = false;
+  static const Duration _minDisplayDuration = Duration(milliseconds: 2000);
 
   @override
   void initState() {
@@ -70,8 +71,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     if (_hasNavigated) return;
     if (!_isLoadingComplete) return;
 
-    final elapsed = _stopwatch.elapsedMilliseconds;
-    final remaining = 2000 - elapsed; /// минимальное время показа 2 секунды
+    final  elapsed = _stopwatch.elapsedMilliseconds;
+    final remaining = _minDisplayDuration.inMilliseconds - elapsed; /// минимальное время показа 2 секунды
 
     if (remaining <= 0) {
       _navigateToNext();

@@ -102,13 +102,15 @@ class _GroupsForm extends StatelessWidget {
     if (entity is Stock) router.navigate(StockRoute(stockId: entity.id));
   }
 
+  static const _appBar = _GroupsAppBar();
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<GroupsBloc, GroupsState>(
       listenWhen: (p, c) => p.currentNodeId != c.currentNodeId,
       listener: _listener,
       child: Scaffold(
-        appBar: const _GroupsAppBar(),
+        appBar: _appBar,
         body: _body,
         floatingActionButton: _addButton(context),
       ),

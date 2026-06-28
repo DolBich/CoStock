@@ -7,6 +7,7 @@ class _Breadcrumbs extends StatelessWidget {
   final List<String> crumbs;
   final ValueChanged<int> onTap;
   const _Breadcrumbs({required this.crumbs, required this.onTap});
+  static const double _colorOpacity = 0.6;
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +41,7 @@ class _Breadcrumbs extends StatelessWidget {
             Text(
               ' > ',
               style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacityModern(0.6),
+                color: theme.colorScheme.onSurface.withOpacityModern(_colorOpacity),
               ),
             ),
         ];

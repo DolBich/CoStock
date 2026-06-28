@@ -108,24 +108,30 @@ class _AuthFormState extends State<AuthForm> {
       child: _isKeyboardVisible
           ? const SizedBox.shrink(key: ValueKey('empty'))
           : Container(
-        key: const ValueKey('logo'),
-        height: _bodyLogoHeight,
-        padding: const .only(bottom: 8.0),
-        alignment: .center,
-        child: _buildLogo(context, inAppBar: false),
-      ),
+              key: const ValueKey('logo'),
+              height: _bodyLogoHeight,
+              padding: const .only(bottom: 8.0),
+              alignment: .center,
+              child: _buildLogo(context, inAppBar: false),
+            ),
       transitionBuilder: (child, animation) {
         return SizeTransition(
           sizeFactor: animation,
           axis: .vertical,
-          child: FadeTransition(
-            opacity: animation,
-            child: child,
-          ),
+          child: FadeTransition(opacity: animation, child: child),
         );
       },
     );
   }
+
+  static const double _horizontalPadding = 24;
+  static const double _verticalPadding = 12;
+  static const EdgeInsets _padding = .only(
+    left: _horizontalPadding,
+    right: _horizontalPadding,
+    top: _verticalPadding,
+  );
+  static const BoxConstraints _width = BoxConstraints(maxWidth: 400);
 
   @override
   Widget build(BuildContext context) {
@@ -142,7 +148,7 @@ class _AuthFormState extends State<AuthForm> {
         ),
         body: SafeArea(
           child: Padding(
-            padding: const .only(left: 24.0, right: 24.0, top: 12),
+            padding: _padding,
             child: SingleChildScrollView(
               child: Column(
                 spacing: 4,
@@ -154,7 +160,7 @@ class _AuthFormState extends State<AuthForm> {
                   Align(
                     alignment: .topCenter,
                     child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 400),
+                      constraints: _width,
                       child: _buildFields(),
                     ),
                   ),

@@ -22,6 +22,8 @@ class __EnterNameViewState extends State<_EnterNameView> {
     super.dispose();
   }
 
+  static const _textNext = Text('Next');
+
   Widget get _nextButton {
     return BlocBuilder<AuthBloc, AuthState>(
       buildWhen: (p, c) =>
@@ -35,25 +37,31 @@ class __EnterNameViewState extends State<_EnterNameView> {
                     nameController.submit();
                   }
                 },
-          child: const Text('Next'),
+          child: _textNext,
         );
       },
     );
   }
 
+  static const _textInfo =
+      'Это имя будет видно другим пользователям. Оно не используется для входа в аккаунт.';
+  static const double _spacing8 = 8;
+  static const double _size16 = 16;
+  static const _icon = Icons.info_outline;
+
   Widget get _descriptionText {
     final theme = Theme.of(context);
     return Row(
-      spacing: 8,
+      spacing: _spacing8,
       children: [
         Icon(
-          Icons.info_outline,
-          size: 16,
+          _icon,
+          size: _size16,
           color: theme.colorScheme.onSurfaceVariant,
         ),
         Expanded(
           child: Text(
-            'Это имя будет видно другим пользователям. Оно не используется для входа в аккаунт.',
+            _textInfo,
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),
@@ -63,16 +71,19 @@ class __EnterNameViewState extends State<_EnterNameView> {
     );
   }
 
+  static const double _spacing24 = 24;
+  static const _hintText = 'Enter your name';
+
   @override
   Widget build(BuildContext context) {
     final bloc = context.read<AuthBloc>();
     return Column(
       crossAxisAlignment: .stretch,
-      spacing: 24,
+      spacing: _spacing24,
       children: [
         _descriptionText,
         BlocTextField<AuthBloc, AuthState>(
-          hintText: 'Enter your name',
+          hintText: _hintText,
           selector: (s) => s.nameField,
           controller: nameController,
           validator: Validators.name,

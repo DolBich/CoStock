@@ -17,7 +17,10 @@ mixin _$FieldState {
  String get value; bool get isLoading;/// [false] - не валидируем и не показываем ошибки
 /// Нужно чтобы ошибки и успехи не отображались сразу, а только если
 /// пользователь уже что-то сделал с полем
- bool get wasInteracted;/// null - пустая строка
+ bool get wasInteracted;/// Отображает ошибку поля всё то время, пока она не будет исправлена
+/// В основном работает с ошибками от сервера из разряда "Неправильный пароль"
+/// Тогда ошибка будет висеть (persisted) пока мы не получим успех или пока
+/// строка не станет пустой, тогда поле принимает значение null
  bool? get errorPersisted; ValidationResult? get validationResult; SnackNotification? get notification; bool get removing;
 /// Create a copy of FieldState
 /// with the given fields replaced by the non-null parameter values.
@@ -243,7 +246,10 @@ class _FieldState extends FieldState {
 /// Нужно чтобы ошибки и успехи не отображались сразу, а только если
 /// пользователь уже что-то сделал с полем
 @override@JsonKey() final  bool wasInteracted;
-/// null - пустая строка
+/// Отображает ошибку поля всё то время, пока она не будет исправлена
+/// В основном работает с ошибками от сервера из разряда "Неправильный пароль"
+/// Тогда ошибка будет висеть (persisted) пока мы не получим успех или пока
+/// строка не станет пустой, тогда поле принимает значение null
 @override@JsonKey() final  bool? errorPersisted;
 @override final  ValidationResult? validationResult;
 @override final  SnackNotification? notification;

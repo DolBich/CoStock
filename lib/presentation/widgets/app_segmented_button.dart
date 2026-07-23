@@ -13,14 +13,16 @@ class AppSegmentButton<T> {
 
 class AppSegmentedButton<T> extends StatelessWidget {
   final List<AppSegmentButton<T>> segments;
-  final T selected;
-  final ValueChanged<T> onChanged;
+  final T? selected;
+  final ValueChanged<T?> onChanged;
+  final bool allowDeselect;
 
   const AppSegmentedButton({
     super.key,
     required this.segments,
     required this.selected,
     required this.onChanged,
+    this.allowDeselect = false,
   });
 
   static const double _padding = 4;
@@ -66,7 +68,13 @@ class AppSegmentedButton<T> extends StatelessWidget {
                   return Expanded(
                     child: InkWell(
                       borderRadius: .circular(theme.borderRadius),
-                      onTap: () => onChanged(segment.value),
+                      onTap: () {
+                        if (allowDeselect && segment.value == selected) {
+                          onChanged(null);
+                        } else {
+                          onChanged(segment.value);
+                        }
+                      },
                       child: Padding(
                         padding: theme.padding,
                         child: Row(

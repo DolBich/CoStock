@@ -41,8 +41,10 @@ class __EnterIdentifierViewState extends State<_EnterIdentifierView> {
               .toList(),
           selected: state.method,
           onChanged: (method) {
-            bloc.add(.changeMethod(method));
-          },
+            if (method != null) {
+              bloc.add(.changeMethod(method));
+            }
+          }
         );
       },
     );

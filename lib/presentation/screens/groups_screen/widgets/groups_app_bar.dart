@@ -1,12 +1,42 @@
 part of '../groups_screen.dart';
 
-class _GroupsAppBar extends StatelessWidget implements PreferredSizeWidget {
+class _GroupsAppBar extends StatefulWidget implements PreferredSizeWidget {
   const _GroupsAppBar();
+
+  @override
+  State<_GroupsAppBar> createState() => _GroupsAppBarState();
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+}
+
+class _GroupsAppBarState extends State<_GroupsAppBar> {
+  bool _isSearching = false;
+  final _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _toggleSearch(BuildContext context) {
+    final bloc = context.read<GroupsBloc>();
+    setState(() {
+      if (_isSearching) {
+        _searchController.clear();
+        bloc.add(const .searchQuery(''));
+      }
+      _isSearching = !_isSearching;
+    });
+  }
 
   List<Widget> get _editActions {
     return [
+
       /// Объединение кнопки редактирования и удаления
       BlocBuilder<GroupsBloc, GroupsState>(
+
         /// Смотрим по ids, а не [selectedEntities], чтобы сравнивало по
         /// меньшему числу переменных
         buildWhen: (p, c) => p.selectedIds != c.selectedIds,
@@ -16,15 +46,17 @@ class _GroupsAppBar extends StatelessWidget implements PreferredSizeWidget {
           return Row(
             mainAxisSize: .min,
             children: [
+
               /// Редактирование выбранной сущности (только если одна выбрана)
               if (state.selectedEntities.length == 1)
                 IconButton(
                   icon: const Icon(Icons.edit),
                   tooltip: 'Редактировать',
-                  onPressed: () => _editSelectedEntity(
-                    context,
-                    state.selectedEntities.first,
-                  ),
+                  onPressed: () =>
+                      _editSelectedEntity(
+                        context,
+                        state.selectedEntities.first,
+                      ),
                 ),
 
               /// Удалить выбранные сущности
@@ -51,6 +83,7 @@ class _GroupsAppBar extends StatelessWidget implements PreferredSizeWidget {
           return Row(
             mainAxisSize: .min,
             children: [
+
               /// Сохранение изменений
               IconButton(
                 icon: const Icon(Icons.save),
@@ -89,12 +122,13 @@ class _GroupsAppBar extends StatelessWidget implements PreferredSizeWidget {
         final bloc = context.read<GroupsBloc>();
 
         return AppBar(
+
           /// Вовзрат к родителю
           leading: currentNode != null
               ? IconButton(
-                  icon: const Icon(Icons.arrow_back),
-                  onPressed: () => bloc.add(.navigateNode(parent)),
-                )
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => bloc.add(.navigateNode(parent)),
+          )
               : null,
 
           /// Показ названия группы и его умного пути
@@ -126,14 +160,18 @@ class _GroupsAppBar extends StatelessWidget implements PreferredSizeWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: Theme
+          .of(context)
+          .colorScheme
+          .surface,
       shape: const RoundedRectangleBorder(
         borderRadius: .vertical(top: .circular(24)),
       ),
-      builder: (_) => BlocProvider.value(
-        value: context.read<GroupsBloc>(),
-        child: _EntitySheet(entity),
-      ),
+      builder: (_) =>
+          BlocProvider.value(
+            value: context.read<GroupsBloc>(),
+            child: _EntitySheet(entity),
+          ),
     );
   }
 
@@ -150,37 +188,39 @@ class _GroupsAppBar extends StatelessWidget implements PreferredSizeWidget {
     /// ними делать
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Несохранённые изменения'),
-        content: const Text(
-          'У вас есть несохранённые изменения. Что вы хотите сделать?',
-        ),
-        actions: [
-          /// Вернуться к редактированию
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Продолжить редактирование'),
-          ),
+      builder: (ctx) =>
+          AlertDialog(
+            title: const Text('Несохранённые изменения'),
+            content: const Text(
+              'У вас есть несохранённые изменения. Что вы хотите сделать?',
+            ),
+            actions: [
 
-          /// Выйти без сохранения изменений
-          TextButton(
-            onPressed: () {
-              Navigator.pop(ctx);
-              bloc.add(const .toggleEditMode());
-            },
-            child: const Text('Отменить изменения и выйти'),
-          ),
+              /// Вернуться к редактированию
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('Продолжить редактирование'),
+              ),
 
-          /// Сохранить и выйти
-          TextButton(
-            onPressed: () {
-              Navigator.pop(ctx);
-              _saveAndExit(context);
-            },
-            child: const Text('Сохранить и выйти'),
+              /// Выйти без сохранения изменений
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(ctx);
+                  bloc.add(const .toggleEditMode());
+                },
+                child: const Text('Отменить изменения и выйти'),
+              ),
+
+              /// Сохранить и выйти
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(ctx);
+                  _saveAndExit(context);
+                },
+                child: const Text('Сохранить и выйти'),
+              ),
+            ],
           ),
-        ],
-      ),
     );
   }
 
@@ -204,7 +244,7 @@ class _GroupsAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget get _leading {
     return BlocBuilder<GroupsBloc, GroupsState>(
       buildWhen: (p, c) =>
-          p.currentNodeId != c.currentNodeId ||
+      p.currentNodeId != c.currentNodeId ||
           p.savedRootEntities != c.savedRootEntities,
       builder: (context, state) {
         final currentNodeId = state.currentNodeId;
@@ -217,7 +257,7 @@ class _GroupsAppBar extends StatelessWidget implements PreferredSizeWidget {
         return IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-              context.read<GroupsBloc>().add(.navigateNode(parent));
+            context.read<GroupsBloc>().add(.navigateNode(parent));
           },
         );
       },
@@ -228,7 +268,7 @@ class _GroupsAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget get _title {
     return BlocBuilder<GroupsBloc, GroupsState>(
       buildWhen: (p, c) =>
-          p.currentNodeId != c.currentNodeId ||
+      p.currentNodeId != c.currentNodeId ||
           p.savedRootEntities != c.savedRootEntities,
       builder: (context, state) {
         final currentNodeId = state.currentNodeId;
@@ -252,14 +292,18 @@ class _GroupsAppBar extends StatelessWidget implements PreferredSizeWidget {
 
     showModalBottomSheet(
       context: context,
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: Theme
+          .of(context)
+          .colorScheme
+          .surface,
       shape: const RoundedRectangleBorder(
         borderRadius: .vertical(top: .circular(24)),
       ),
-      builder: (_) => BlocProvider.value(
-        value: bloc,
-        child: const _GroupsSortFilterSheet(),
-      ),
+      builder: (_) =>
+          BlocProvider.value(
+            value: bloc,
+            child: const _GroupsSortFilterSheet(),
+          ),
     );
   }
 
@@ -273,10 +317,23 @@ class _GroupsAppBar extends StatelessWidget implements PreferredSizeWidget {
 
         /// Основная шапка страницы
         return AppBar(
-          leading: _leading,
-          title: _title,
+          leading: _isSearching ? IconButton(onPressed: () {
+            _toggleSearch(context);
+          }, icon: const Icon(Icons.arrow_back),) : _leading,
+          title: _isSearching ? TextField(
+            controller: _searchController,
+            autofocus: true,
+            decoration: const InputDecoration(
+              hintText: 'Поиск...',
+              border: InputBorder.none,
+            ),
+            onChanged: (query) {
+              context.read<GroupsBloc>().add(.searchQuery(query));
+            },
+          ) : _title,
           centerTitle: true,
-          actions: [
+          actions: _isSearching ? const[] : [
+
             /// Сортировка и фильтр
             IconButton(
               icon: const Icon(Icons.filter_list),
@@ -298,14 +355,13 @@ class _GroupsAppBar extends StatelessWidget implements PreferredSizeWidget {
 
             /// Глобальный поиск
             IconButton(
+              onPressed: () {
+                _toggleSearch(context);
+              },
               icon: const Icon(Icons.search),
               tooltip: 'Поиск',
-              onPressed: () {
-                // TODO: открыть экран поиска
-              },
             ),
 
-            /// TODO: убрать потом это на экран профиля
             IconButton(
               icon: const Icon(Icons.logout_outlined),
               tooltip: 'Выйти',
@@ -321,9 +377,9 @@ class _GroupsAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   /// TODO: убрать потом это на экран профиля
   void _logOut(BuildContext context) {
-      LocalStorageService.removeAuth();
-      SessionService.id = null;
-      context.router.replaceAll([const AuthRoute()]);
+    LocalStorageService.removeAuth();
+    SessionService.id = null;
+    context.router.replaceAll([const AuthRoute()]);
   }
 
   @override
@@ -338,7 +394,7 @@ class _RelocateButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<GroupsBloc, GroupsState>(
       buildWhen: (p, c) =>
-          p.movingIds != c.movingIds || p.selectedIds != c.selectedIds,
+      p.movingIds != c.movingIds || p.selectedIds != c.selectedIds,
       builder: (context, state) {
         final bloc = context.read<GroupsBloc>();
         final movingCount = state.movingEntities.length;
@@ -366,6 +422,7 @@ class _RelocateButton extends StatelessWidget {
           child: Stack(
             clipBehavior: .none,
             children: [
+
               /// Кнопка
               OutlinedButton.icon(
                 icon: const Icon(Icons.drive_file_move_outline, size: 20),
@@ -385,12 +442,12 @@ class _RelocateButton extends StatelessWidget {
                   right: -6,
                   top: -6,
                   child: Container(
-                    padding: const .symmetric(
-                      horizontal: 4,
-                      vertical: 2,
-                    ),
+                    padding: const .symmetric(horizontal: 4, vertical: 2),
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.error,
+                      color: Theme
+                          .of(context)
+                          .colorScheme
+                          .error,
                       borderRadius: .circular(10),
                     ),
                     child: DefaultTextStyle(
@@ -418,12 +475,10 @@ class _RelocateButton extends StatelessWidget {
   static const TextStyle _movingStyle = TextStyle(fontWeight: .bold);
   static const TextStyle _selectedStyle = TextStyle(fontWeight: .normal);
 
-  Widget _buildBadgeText(
-    int movingCount,
-    int selectedCount,
-    bool hasMoving,
-    bool hasSelected,
-  ) {
+  Widget _buildBadgeText(int movingCount,
+      int selectedCount,
+      bool hasMoving,
+      bool hasSelected,) {
     if (hasMoving && hasSelected) {
       return RichText(
         text: TextSpan(

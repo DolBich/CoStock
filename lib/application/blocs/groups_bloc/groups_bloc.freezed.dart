@@ -61,7 +61,7 @@ extension GroupsEventPatterns on GroupsEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _LoadTree value)?  loadTree,TResult Function( _NavigateNode value)?  navigateNode,TResult Function( _AddNode value)?  addNode,TResult Function( _DeleteNode value)?  deleteNode,TResult Function( _UpdateNode value)?  updateNode,TResult Function( _ApplySortFilter value)?  applySortFilter,TResult Function( _MoveNode value)?  moveNode,TResult Function( _ToggleEditMode value)?  toggleEditMode,TResult Function( _SelectEntity value)?  selectEntity,TResult Function( _ToggleMoveEntities value)?  toggleMoveEntities,TResult Function( _ConfirmMoveEntity value)?  confirmMoveEntity,TResult Function( _DeleteSelectedEntities value)?  deleteSelectedEntities,TResult Function( _SaveEditedTree value)?  saveEditedTree,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _LoadTree value)?  loadTree,TResult Function( _NavigateNode value)?  navigateNode,TResult Function( _AddNode value)?  addNode,TResult Function( _DeleteNode value)?  deleteNode,TResult Function( _UpdateNode value)?  updateNode,TResult Function( _ApplySortFilter value)?  applySortFilter,TResult Function( _MoveNode value)?  moveNode,TResult Function( _SearchQuery value)?  searchQuery,TResult Function( _ToggleEditMode value)?  toggleEditMode,TResult Function( _SelectEntity value)?  selectEntity,TResult Function( _ToggleMoveEntities value)?  toggleMoveEntities,TResult Function( _ConfirmMoveEntity value)?  confirmMoveEntity,TResult Function( _DeleteSelectedEntities value)?  deleteSelectedEntities,TResult Function( _SaveEditedTree value)?  saveEditedTree,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case _LoadTree() when loadTree != null:
@@ -71,7 +71,8 @@ return addNode(_that);case _DeleteNode() when deleteNode != null:
 return deleteNode(_that);case _UpdateNode() when updateNode != null:
 return updateNode(_that);case _ApplySortFilter() when applySortFilter != null:
 return applySortFilter(_that);case _MoveNode() when moveNode != null:
-return moveNode(_that);case _ToggleEditMode() when toggleEditMode != null:
+return moveNode(_that);case _SearchQuery() when searchQuery != null:
+return searchQuery(_that);case _ToggleEditMode() when toggleEditMode != null:
 return toggleEditMode(_that);case _SelectEntity() when selectEntity != null:
 return selectEntity(_that);case _ToggleMoveEntities() when toggleMoveEntities != null:
 return toggleMoveEntities(_that);case _ConfirmMoveEntity() when confirmMoveEntity != null:
@@ -95,7 +96,7 @@ return saveEditedTree(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _LoadTree value)  loadTree,required TResult Function( _NavigateNode value)  navigateNode,required TResult Function( _AddNode value)  addNode,required TResult Function( _DeleteNode value)  deleteNode,required TResult Function( _UpdateNode value)  updateNode,required TResult Function( _ApplySortFilter value)  applySortFilter,required TResult Function( _MoveNode value)  moveNode,required TResult Function( _ToggleEditMode value)  toggleEditMode,required TResult Function( _SelectEntity value)  selectEntity,required TResult Function( _ToggleMoveEntities value)  toggleMoveEntities,required TResult Function( _ConfirmMoveEntity value)  confirmMoveEntity,required TResult Function( _DeleteSelectedEntities value)  deleteSelectedEntities,required TResult Function( _SaveEditedTree value)  saveEditedTree,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _LoadTree value)  loadTree,required TResult Function( _NavigateNode value)  navigateNode,required TResult Function( _AddNode value)  addNode,required TResult Function( _DeleteNode value)  deleteNode,required TResult Function( _UpdateNode value)  updateNode,required TResult Function( _ApplySortFilter value)  applySortFilter,required TResult Function( _MoveNode value)  moveNode,required TResult Function( _SearchQuery value)  searchQuery,required TResult Function( _ToggleEditMode value)  toggleEditMode,required TResult Function( _SelectEntity value)  selectEntity,required TResult Function( _ToggleMoveEntities value)  toggleMoveEntities,required TResult Function( _ConfirmMoveEntity value)  confirmMoveEntity,required TResult Function( _DeleteSelectedEntities value)  deleteSelectedEntities,required TResult Function( _SaveEditedTree value)  saveEditedTree,}){
 final _that = this;
 switch (_that) {
 case _LoadTree():
@@ -105,7 +106,8 @@ return addNode(_that);case _DeleteNode():
 return deleteNode(_that);case _UpdateNode():
 return updateNode(_that);case _ApplySortFilter():
 return applySortFilter(_that);case _MoveNode():
-return moveNode(_that);case _ToggleEditMode():
+return moveNode(_that);case _SearchQuery():
+return searchQuery(_that);case _ToggleEditMode():
 return toggleEditMode(_that);case _SelectEntity():
 return selectEntity(_that);case _ToggleMoveEntities():
 return toggleMoveEntities(_that);case _ConfirmMoveEntity():
@@ -128,7 +130,7 @@ return saveEditedTree(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _LoadTree value)?  loadTree,TResult? Function( _NavigateNode value)?  navigateNode,TResult? Function( _AddNode value)?  addNode,TResult? Function( _DeleteNode value)?  deleteNode,TResult? Function( _UpdateNode value)?  updateNode,TResult? Function( _ApplySortFilter value)?  applySortFilter,TResult? Function( _MoveNode value)?  moveNode,TResult? Function( _ToggleEditMode value)?  toggleEditMode,TResult? Function( _SelectEntity value)?  selectEntity,TResult? Function( _ToggleMoveEntities value)?  toggleMoveEntities,TResult? Function( _ConfirmMoveEntity value)?  confirmMoveEntity,TResult? Function( _DeleteSelectedEntities value)?  deleteSelectedEntities,TResult? Function( _SaveEditedTree value)?  saveEditedTree,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _LoadTree value)?  loadTree,TResult? Function( _NavigateNode value)?  navigateNode,TResult? Function( _AddNode value)?  addNode,TResult? Function( _DeleteNode value)?  deleteNode,TResult? Function( _UpdateNode value)?  updateNode,TResult? Function( _ApplySortFilter value)?  applySortFilter,TResult? Function( _MoveNode value)?  moveNode,TResult? Function( _SearchQuery value)?  searchQuery,TResult? Function( _ToggleEditMode value)?  toggleEditMode,TResult? Function( _SelectEntity value)?  selectEntity,TResult? Function( _ToggleMoveEntities value)?  toggleMoveEntities,TResult? Function( _ConfirmMoveEntity value)?  confirmMoveEntity,TResult? Function( _DeleteSelectedEntities value)?  deleteSelectedEntities,TResult? Function( _SaveEditedTree value)?  saveEditedTree,}){
 final _that = this;
 switch (_that) {
 case _LoadTree() when loadTree != null:
@@ -138,7 +140,8 @@ return addNode(_that);case _DeleteNode() when deleteNode != null:
 return deleteNode(_that);case _UpdateNode() when updateNode != null:
 return updateNode(_that);case _ApplySortFilter() when applySortFilter != null:
 return applySortFilter(_that);case _MoveNode() when moveNode != null:
-return moveNode(_that);case _ToggleEditMode() when toggleEditMode != null:
+return moveNode(_that);case _SearchQuery() when searchQuery != null:
+return searchQuery(_that);case _ToggleEditMode() when toggleEditMode != null:
 return toggleEditMode(_that);case _SelectEntity() when selectEntity != null:
 return selectEntity(_that);case _ToggleMoveEntities() when toggleMoveEntities != null:
 return toggleMoveEntities(_that);case _ConfirmMoveEntity() when confirmMoveEntity != null:
@@ -161,7 +164,7 @@ return saveEditedTree(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  loadTree,TResult Function( StockEntity? entity)?  navigateNode,TResult Function( String name,  StockEntityType type)?  addNode,TResult Function( String nodeId)?  deleteNode,TResult Function( String nodeId,  String newName,  String? newParentId)?  updateNode,TResult Function( SortMode? sortMode,  FilterMode? filterMode)?  applySortFilter,TResult Function( StockEntity node,  String? newParentId,  int newIndex,  int oldIndex)?  moveNode,TResult Function()?  toggleEditMode,TResult Function( StockEntity entity)?  selectEntity,TResult Function()?  toggleMoveEntities,TResult Function( String id)?  confirmMoveEntity,TResult Function()?  deleteSelectedEntities,TResult Function()?  saveEditedTree,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  loadTree,TResult Function( StockEntity? entity)?  navigateNode,TResult Function( String name,  StockEntityType type)?  addNode,TResult Function( String nodeId)?  deleteNode,TResult Function( String nodeId,  String newName,  String? newParentId)?  updateNode,TResult Function( SortMode? sortMode,  FilterMode? filterMode)?  applySortFilter,TResult Function( StockEntity node,  String? newParentId,  int newIndex,  int oldIndex)?  moveNode,TResult Function( String query)?  searchQuery,TResult Function()?  toggleEditMode,TResult Function( StockEntity entity)?  selectEntity,TResult Function()?  toggleMoveEntities,TResult Function( String id)?  confirmMoveEntity,TResult Function()?  deleteSelectedEntities,TResult Function()?  saveEditedTree,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _LoadTree() when loadTree != null:
 return loadTree();case _NavigateNode() when navigateNode != null:
@@ -170,7 +173,8 @@ return addNode(_that.name,_that.type);case _DeleteNode() when deleteNode != null
 return deleteNode(_that.nodeId);case _UpdateNode() when updateNode != null:
 return updateNode(_that.nodeId,_that.newName,_that.newParentId);case _ApplySortFilter() when applySortFilter != null:
 return applySortFilter(_that.sortMode,_that.filterMode);case _MoveNode() when moveNode != null:
-return moveNode(_that.node,_that.newParentId,_that.newIndex,_that.oldIndex);case _ToggleEditMode() when toggleEditMode != null:
+return moveNode(_that.node,_that.newParentId,_that.newIndex,_that.oldIndex);case _SearchQuery() when searchQuery != null:
+return searchQuery(_that.query);case _ToggleEditMode() when toggleEditMode != null:
 return toggleEditMode();case _SelectEntity() when selectEntity != null:
 return selectEntity(_that.entity);case _ToggleMoveEntities() when toggleMoveEntities != null:
 return toggleMoveEntities();case _ConfirmMoveEntity() when confirmMoveEntity != null:
@@ -194,7 +198,7 @@ return saveEditedTree();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  loadTree,required TResult Function( StockEntity? entity)  navigateNode,required TResult Function( String name,  StockEntityType type)  addNode,required TResult Function( String nodeId)  deleteNode,required TResult Function( String nodeId,  String newName,  String? newParentId)  updateNode,required TResult Function( SortMode? sortMode,  FilterMode? filterMode)  applySortFilter,required TResult Function( StockEntity node,  String? newParentId,  int newIndex,  int oldIndex)  moveNode,required TResult Function()  toggleEditMode,required TResult Function( StockEntity entity)  selectEntity,required TResult Function()  toggleMoveEntities,required TResult Function( String id)  confirmMoveEntity,required TResult Function()  deleteSelectedEntities,required TResult Function()  saveEditedTree,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  loadTree,required TResult Function( StockEntity? entity)  navigateNode,required TResult Function( String name,  StockEntityType type)  addNode,required TResult Function( String nodeId)  deleteNode,required TResult Function( String nodeId,  String newName,  String? newParentId)  updateNode,required TResult Function( SortMode? sortMode,  FilterMode? filterMode)  applySortFilter,required TResult Function( StockEntity node,  String? newParentId,  int newIndex,  int oldIndex)  moveNode,required TResult Function( String query)  searchQuery,required TResult Function()  toggleEditMode,required TResult Function( StockEntity entity)  selectEntity,required TResult Function()  toggleMoveEntities,required TResult Function( String id)  confirmMoveEntity,required TResult Function()  deleteSelectedEntities,required TResult Function()  saveEditedTree,}) {final _that = this;
 switch (_that) {
 case _LoadTree():
 return loadTree();case _NavigateNode():
@@ -203,7 +207,8 @@ return addNode(_that.name,_that.type);case _DeleteNode():
 return deleteNode(_that.nodeId);case _UpdateNode():
 return updateNode(_that.nodeId,_that.newName,_that.newParentId);case _ApplySortFilter():
 return applySortFilter(_that.sortMode,_that.filterMode);case _MoveNode():
-return moveNode(_that.node,_that.newParentId,_that.newIndex,_that.oldIndex);case _ToggleEditMode():
+return moveNode(_that.node,_that.newParentId,_that.newIndex,_that.oldIndex);case _SearchQuery():
+return searchQuery(_that.query);case _ToggleEditMode():
 return toggleEditMode();case _SelectEntity():
 return selectEntity(_that.entity);case _ToggleMoveEntities():
 return toggleMoveEntities();case _ConfirmMoveEntity():
@@ -226,7 +231,7 @@ return saveEditedTree();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  loadTree,TResult? Function( StockEntity? entity)?  navigateNode,TResult? Function( String name,  StockEntityType type)?  addNode,TResult? Function( String nodeId)?  deleteNode,TResult? Function( String nodeId,  String newName,  String? newParentId)?  updateNode,TResult? Function( SortMode? sortMode,  FilterMode? filterMode)?  applySortFilter,TResult? Function( StockEntity node,  String? newParentId,  int newIndex,  int oldIndex)?  moveNode,TResult? Function()?  toggleEditMode,TResult? Function( StockEntity entity)?  selectEntity,TResult? Function()?  toggleMoveEntities,TResult? Function( String id)?  confirmMoveEntity,TResult? Function()?  deleteSelectedEntities,TResult? Function()?  saveEditedTree,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  loadTree,TResult? Function( StockEntity? entity)?  navigateNode,TResult? Function( String name,  StockEntityType type)?  addNode,TResult? Function( String nodeId)?  deleteNode,TResult? Function( String nodeId,  String newName,  String? newParentId)?  updateNode,TResult? Function( SortMode? sortMode,  FilterMode? filterMode)?  applySortFilter,TResult? Function( StockEntity node,  String? newParentId,  int newIndex,  int oldIndex)?  moveNode,TResult? Function( String query)?  searchQuery,TResult? Function()?  toggleEditMode,TResult? Function( StockEntity entity)?  selectEntity,TResult? Function()?  toggleMoveEntities,TResult? Function( String id)?  confirmMoveEntity,TResult? Function()?  deleteSelectedEntities,TResult? Function()?  saveEditedTree,}) {final _that = this;
 switch (_that) {
 case _LoadTree() when loadTree != null:
 return loadTree();case _NavigateNode() when navigateNode != null:
@@ -235,7 +240,8 @@ return addNode(_that.name,_that.type);case _DeleteNode() when deleteNode != null
 return deleteNode(_that.nodeId);case _UpdateNode() when updateNode != null:
 return updateNode(_that.nodeId,_that.newName,_that.newParentId);case _ApplySortFilter() when applySortFilter != null:
 return applySortFilter(_that.sortMode,_that.filterMode);case _MoveNode() when moveNode != null:
-return moveNode(_that.node,_that.newParentId,_that.newIndex,_that.oldIndex);case _ToggleEditMode() when toggleEditMode != null:
+return moveNode(_that.node,_that.newParentId,_that.newIndex,_that.oldIndex);case _SearchQuery() when searchQuery != null:
+return searchQuery(_that.query);case _ToggleEditMode() when toggleEditMode != null:
 return toggleEditMode();case _SelectEntity() when selectEntity != null:
 return selectEntity(_that.entity);case _ToggleMoveEntities() when toggleMoveEntities != null:
 return toggleMoveEntities();case _ConfirmMoveEntity() when confirmMoveEntity != null:
@@ -736,6 +742,78 @@ as int,
 /// @nodoc
 
 
+class _SearchQuery with DiagnosticableTreeMixin implements GroupsEvent {
+  const _SearchQuery(this.query);
+  
+
+ final  String query;
+
+/// Create a copy of GroupsEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$SearchQueryCopyWith<_SearchQuery> get copyWith => __$SearchQueryCopyWithImpl<_SearchQuery>(this, _$identity);
+
+
+@override
+void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+  properties
+    ..add(DiagnosticsProperty('type', 'GroupsEvent.searchQuery'))
+    ..add(DiagnosticsProperty('query', query));
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SearchQuery&&(identical(other.query, query) || other.query == query));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,query);
+
+@override
+String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
+  return 'GroupsEvent.searchQuery(query: $query)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$SearchQueryCopyWith<$Res> implements $GroupsEventCopyWith<$Res> {
+  factory _$SearchQueryCopyWith(_SearchQuery value, $Res Function(_SearchQuery) _then) = __$SearchQueryCopyWithImpl;
+@useResult
+$Res call({
+ String query
+});
+
+
+
+
+}
+/// @nodoc
+class __$SearchQueryCopyWithImpl<$Res>
+    implements _$SearchQueryCopyWith<$Res> {
+  __$SearchQueryCopyWithImpl(this._self, this._then);
+
+  final _SearchQuery _self;
+  final $Res Function(_SearchQuery) _then;
+
+/// Create a copy of GroupsEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? query = null,}) {
+  return _then(_SearchQuery(
+null == query ? _self.query : query // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
 class _ToggleEditMode with DiagnosticableTreeMixin implements GroupsEvent {
   const _ToggleEditMode();
   
@@ -1036,7 +1114,7 @@ mixin _$GroupsState implements DiagnosticableTreeMixin {
  StockEntity? get currentNode;/// Физические сущности из [_treeService]
  List<StockEntity> get currentChildren;/// Фильтрация + сортировка
  SortMode? get sortMode; FilterMode? get filterMode;/// Управление порядком отображения
- SortArrangement get arrangement;/// Режим редактирования
+ SortArrangement get arrangement; String get searchQuery;/// Режим редактирования
  bool get isEditMode; List<MovingEntityInfo> get movingEntities; List<StockEntity> get selectedEntities; List<StockEntity> get editRootEntities;
 /// Create a copy of GroupsState
 /// with the given fields replaced by the non-null parameter values.
@@ -1049,21 +1127,21 @@ $GroupsStateCopyWith<GroupsState> get copyWith => _$GroupsStateCopyWithImpl<Grou
 void debugFillProperties(DiagnosticPropertiesBuilder properties) {
   properties
     ..add(DiagnosticsProperty('type', 'GroupsState'))
-    ..add(DiagnosticsProperty('isLoading', isLoading))..add(DiagnosticsProperty('savedRootEntities', savedRootEntities))..add(DiagnosticsProperty('currentNode', currentNode))..add(DiagnosticsProperty('currentChildren', currentChildren))..add(DiagnosticsProperty('sortMode', sortMode))..add(DiagnosticsProperty('filterMode', filterMode))..add(DiagnosticsProperty('arrangement', arrangement))..add(DiagnosticsProperty('isEditMode', isEditMode))..add(DiagnosticsProperty('movingEntities', movingEntities))..add(DiagnosticsProperty('selectedEntities', selectedEntities))..add(DiagnosticsProperty('editRootEntities', editRootEntities));
+    ..add(DiagnosticsProperty('isLoading', isLoading))..add(DiagnosticsProperty('savedRootEntities', savedRootEntities))..add(DiagnosticsProperty('currentNode', currentNode))..add(DiagnosticsProperty('currentChildren', currentChildren))..add(DiagnosticsProperty('sortMode', sortMode))..add(DiagnosticsProperty('filterMode', filterMode))..add(DiagnosticsProperty('arrangement', arrangement))..add(DiagnosticsProperty('searchQuery', searchQuery))..add(DiagnosticsProperty('isEditMode', isEditMode))..add(DiagnosticsProperty('movingEntities', movingEntities))..add(DiagnosticsProperty('selectedEntities', selectedEntities))..add(DiagnosticsProperty('editRootEntities', editRootEntities));
 }
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is GroupsState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&const DeepCollectionEquality().equals(other.savedRootEntities, savedRootEntities)&&(identical(other.currentNode, currentNode) || other.currentNode == currentNode)&&const DeepCollectionEquality().equals(other.currentChildren, currentChildren)&&(identical(other.sortMode, sortMode) || other.sortMode == sortMode)&&(identical(other.filterMode, filterMode) || other.filterMode == filterMode)&&(identical(other.arrangement, arrangement) || other.arrangement == arrangement)&&(identical(other.isEditMode, isEditMode) || other.isEditMode == isEditMode)&&const DeepCollectionEquality().equals(other.movingEntities, movingEntities)&&const DeepCollectionEquality().equals(other.selectedEntities, selectedEntities)&&const DeepCollectionEquality().equals(other.editRootEntities, editRootEntities));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is GroupsState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&const DeepCollectionEquality().equals(other.savedRootEntities, savedRootEntities)&&(identical(other.currentNode, currentNode) || other.currentNode == currentNode)&&const DeepCollectionEquality().equals(other.currentChildren, currentChildren)&&(identical(other.sortMode, sortMode) || other.sortMode == sortMode)&&(identical(other.filterMode, filterMode) || other.filterMode == filterMode)&&(identical(other.arrangement, arrangement) || other.arrangement == arrangement)&&(identical(other.searchQuery, searchQuery) || other.searchQuery == searchQuery)&&(identical(other.isEditMode, isEditMode) || other.isEditMode == isEditMode)&&const DeepCollectionEquality().equals(other.movingEntities, movingEntities)&&const DeepCollectionEquality().equals(other.selectedEntities, selectedEntities)&&const DeepCollectionEquality().equals(other.editRootEntities, editRootEntities));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,isLoading,const DeepCollectionEquality().hash(savedRootEntities),currentNode,const DeepCollectionEquality().hash(currentChildren),sortMode,filterMode,arrangement,isEditMode,const DeepCollectionEquality().hash(movingEntities),const DeepCollectionEquality().hash(selectedEntities),const DeepCollectionEquality().hash(editRootEntities));
+int get hashCode => Object.hash(runtimeType,isLoading,const DeepCollectionEquality().hash(savedRootEntities),currentNode,const DeepCollectionEquality().hash(currentChildren),sortMode,filterMode,arrangement,searchQuery,isEditMode,const DeepCollectionEquality().hash(movingEntities),const DeepCollectionEquality().hash(selectedEntities),const DeepCollectionEquality().hash(editRootEntities));
 
 @override
 String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
-  return 'GroupsState(isLoading: $isLoading, savedRootEntities: $savedRootEntities, currentNode: $currentNode, currentChildren: $currentChildren, sortMode: $sortMode, filterMode: $filterMode, arrangement: $arrangement, isEditMode: $isEditMode, movingEntities: $movingEntities, selectedEntities: $selectedEntities, editRootEntities: $editRootEntities)';
+  return 'GroupsState(isLoading: $isLoading, savedRootEntities: $savedRootEntities, currentNode: $currentNode, currentChildren: $currentChildren, sortMode: $sortMode, filterMode: $filterMode, arrangement: $arrangement, searchQuery: $searchQuery, isEditMode: $isEditMode, movingEntities: $movingEntities, selectedEntities: $selectedEntities, editRootEntities: $editRootEntities)';
 }
 
 
@@ -1074,7 +1152,7 @@ abstract mixin class $GroupsStateCopyWith<$Res>  {
   factory $GroupsStateCopyWith(GroupsState value, $Res Function(GroupsState) _then) = _$GroupsStateCopyWithImpl;
 @useResult
 $Res call({
- bool isLoading, List<StockEntity> savedRootEntities, StockEntity? currentNode, List<StockEntity> currentChildren, SortMode? sortMode, FilterMode? filterMode, SortArrangement arrangement, bool isEditMode, List<MovingEntityInfo> movingEntities, List<StockEntity> selectedEntities, List<StockEntity> editRootEntities
+ bool isLoading, List<StockEntity> savedRootEntities, StockEntity? currentNode, List<StockEntity> currentChildren, SortMode? sortMode, FilterMode? filterMode, SortArrangement arrangement, String searchQuery, bool isEditMode, List<MovingEntityInfo> movingEntities, List<StockEntity> selectedEntities, List<StockEntity> editRootEntities
 });
 
 
@@ -1091,7 +1169,7 @@ class _$GroupsStateCopyWithImpl<$Res>
 
 /// Create a copy of GroupsState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,Object? savedRootEntities = null,Object? currentNode = freezed,Object? currentChildren = null,Object? sortMode = freezed,Object? filterMode = freezed,Object? arrangement = null,Object? isEditMode = null,Object? movingEntities = null,Object? selectedEntities = null,Object? editRootEntities = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,Object? savedRootEntities = null,Object? currentNode = freezed,Object? currentChildren = null,Object? sortMode = freezed,Object? filterMode = freezed,Object? arrangement = null,Object? searchQuery = null,Object? isEditMode = null,Object? movingEntities = null,Object? selectedEntities = null,Object? editRootEntities = null,}) {
   return _then(_self.copyWith(
 isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,savedRootEntities: null == savedRootEntities ? _self.savedRootEntities : savedRootEntities // ignore: cast_nullable_to_non_nullable
@@ -1100,7 +1178,8 @@ as StockEntity?,currentChildren: null == currentChildren ? _self.currentChildren
 as List<StockEntity>,sortMode: freezed == sortMode ? _self.sortMode : sortMode // ignore: cast_nullable_to_non_nullable
 as SortMode?,filterMode: freezed == filterMode ? _self.filterMode : filterMode // ignore: cast_nullable_to_non_nullable
 as FilterMode?,arrangement: null == arrangement ? _self.arrangement : arrangement // ignore: cast_nullable_to_non_nullable
-as SortArrangement,isEditMode: null == isEditMode ? _self.isEditMode : isEditMode // ignore: cast_nullable_to_non_nullable
+as SortArrangement,searchQuery: null == searchQuery ? _self.searchQuery : searchQuery // ignore: cast_nullable_to_non_nullable
+as String,isEditMode: null == isEditMode ? _self.isEditMode : isEditMode // ignore: cast_nullable_to_non_nullable
 as bool,movingEntities: null == movingEntities ? _self.movingEntities : movingEntities // ignore: cast_nullable_to_non_nullable
 as List<MovingEntityInfo>,selectedEntities: null == selectedEntities ? _self.selectedEntities : selectedEntities // ignore: cast_nullable_to_non_nullable
 as List<StockEntity>,editRootEntities: null == editRootEntities ? _self.editRootEntities : editRootEntities // ignore: cast_nullable_to_non_nullable
@@ -1195,10 +1274,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  List<StockEntity> savedRootEntities,  StockEntity? currentNode,  List<StockEntity> currentChildren,  SortMode? sortMode,  FilterMode? filterMode,  SortArrangement arrangement,  bool isEditMode,  List<MovingEntityInfo> movingEntities,  List<StockEntity> selectedEntities,  List<StockEntity> editRootEntities)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  List<StockEntity> savedRootEntities,  StockEntity? currentNode,  List<StockEntity> currentChildren,  SortMode? sortMode,  FilterMode? filterMode,  SortArrangement arrangement,  String searchQuery,  bool isEditMode,  List<MovingEntityInfo> movingEntities,  List<StockEntity> selectedEntities,  List<StockEntity> editRootEntities)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _GroupsState() when $default != null:
-return $default(_that.isLoading,_that.savedRootEntities,_that.currentNode,_that.currentChildren,_that.sortMode,_that.filterMode,_that.arrangement,_that.isEditMode,_that.movingEntities,_that.selectedEntities,_that.editRootEntities);case _:
+return $default(_that.isLoading,_that.savedRootEntities,_that.currentNode,_that.currentChildren,_that.sortMode,_that.filterMode,_that.arrangement,_that.searchQuery,_that.isEditMode,_that.movingEntities,_that.selectedEntities,_that.editRootEntities);case _:
   return orElse();
 
 }
@@ -1216,10 +1295,10 @@ return $default(_that.isLoading,_that.savedRootEntities,_that.currentNode,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  List<StockEntity> savedRootEntities,  StockEntity? currentNode,  List<StockEntity> currentChildren,  SortMode? sortMode,  FilterMode? filterMode,  SortArrangement arrangement,  bool isEditMode,  List<MovingEntityInfo> movingEntities,  List<StockEntity> selectedEntities,  List<StockEntity> editRootEntities)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  List<StockEntity> savedRootEntities,  StockEntity? currentNode,  List<StockEntity> currentChildren,  SortMode? sortMode,  FilterMode? filterMode,  SortArrangement arrangement,  String searchQuery,  bool isEditMode,  List<MovingEntityInfo> movingEntities,  List<StockEntity> selectedEntities,  List<StockEntity> editRootEntities)  $default,) {final _that = this;
 switch (_that) {
 case _GroupsState():
-return $default(_that.isLoading,_that.savedRootEntities,_that.currentNode,_that.currentChildren,_that.sortMode,_that.filterMode,_that.arrangement,_that.isEditMode,_that.movingEntities,_that.selectedEntities,_that.editRootEntities);}
+return $default(_that.isLoading,_that.savedRootEntities,_that.currentNode,_that.currentChildren,_that.sortMode,_that.filterMode,_that.arrangement,_that.searchQuery,_that.isEditMode,_that.movingEntities,_that.selectedEntities,_that.editRootEntities);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -1233,10 +1312,10 @@ return $default(_that.isLoading,_that.savedRootEntities,_that.currentNode,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  List<StockEntity> savedRootEntities,  StockEntity? currentNode,  List<StockEntity> currentChildren,  SortMode? sortMode,  FilterMode? filterMode,  SortArrangement arrangement,  bool isEditMode,  List<MovingEntityInfo> movingEntities,  List<StockEntity> selectedEntities,  List<StockEntity> editRootEntities)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  List<StockEntity> savedRootEntities,  StockEntity? currentNode,  List<StockEntity> currentChildren,  SortMode? sortMode,  FilterMode? filterMode,  SortArrangement arrangement,  String searchQuery,  bool isEditMode,  List<MovingEntityInfo> movingEntities,  List<StockEntity> selectedEntities,  List<StockEntity> editRootEntities)?  $default,) {final _that = this;
 switch (_that) {
 case _GroupsState() when $default != null:
-return $default(_that.isLoading,_that.savedRootEntities,_that.currentNode,_that.currentChildren,_that.sortMode,_that.filterMode,_that.arrangement,_that.isEditMode,_that.movingEntities,_that.selectedEntities,_that.editRootEntities);case _:
+return $default(_that.isLoading,_that.savedRootEntities,_that.currentNode,_that.currentChildren,_that.sortMode,_that.filterMode,_that.arrangement,_that.searchQuery,_that.isEditMode,_that.movingEntities,_that.selectedEntities,_that.editRootEntities);case _:
   return null;
 
 }
@@ -1248,7 +1327,7 @@ return $default(_that.isLoading,_that.savedRootEntities,_that.currentNode,_that.
 
 
 class _GroupsState extends GroupsState with DiagnosticableTreeMixin {
-  const _GroupsState({this.isLoading = false, final  List<StockEntity> savedRootEntities = const [], this.currentNode, final  List<StockEntity> currentChildren = const [], this.sortMode, this.filterMode, this.arrangement = const SortArrangement(), this.isEditMode = false, final  List<MovingEntityInfo> movingEntities = const [], final  List<StockEntity> selectedEntities = const [], final  List<StockEntity> editRootEntities = const []}): _savedRootEntities = savedRootEntities,_currentChildren = currentChildren,_movingEntities = movingEntities,_selectedEntities = selectedEntities,_editRootEntities = editRootEntities,super._();
+  const _GroupsState({this.isLoading = false, final  List<StockEntity> savedRootEntities = const [], this.currentNode, final  List<StockEntity> currentChildren = const [], this.sortMode, this.filterMode, this.arrangement = const SortArrangement(), this.searchQuery = '', this.isEditMode = false, final  List<MovingEntityInfo> movingEntities = const [], final  List<StockEntity> selectedEntities = const [], final  List<StockEntity> editRootEntities = const []}): _savedRootEntities = savedRootEntities,_currentChildren = currentChildren,_movingEntities = movingEntities,_selectedEntities = selectedEntities,_editRootEntities = editRootEntities,super._();
   
 
 @override@JsonKey() final  bool isLoading;
@@ -1275,6 +1354,7 @@ class _GroupsState extends GroupsState with DiagnosticableTreeMixin {
 @override final  FilterMode? filterMode;
 /// Управление порядком отображения
 @override@JsonKey() final  SortArrangement arrangement;
+@override@JsonKey() final  String searchQuery;
 /// Режим редактирования
 @override@JsonKey() final  bool isEditMode;
  final  List<MovingEntityInfo> _movingEntities;
@@ -1310,21 +1390,21 @@ _$GroupsStateCopyWith<_GroupsState> get copyWith => __$GroupsStateCopyWithImpl<_
 void debugFillProperties(DiagnosticPropertiesBuilder properties) {
   properties
     ..add(DiagnosticsProperty('type', 'GroupsState'))
-    ..add(DiagnosticsProperty('isLoading', isLoading))..add(DiagnosticsProperty('savedRootEntities', savedRootEntities))..add(DiagnosticsProperty('currentNode', currentNode))..add(DiagnosticsProperty('currentChildren', currentChildren))..add(DiagnosticsProperty('sortMode', sortMode))..add(DiagnosticsProperty('filterMode', filterMode))..add(DiagnosticsProperty('arrangement', arrangement))..add(DiagnosticsProperty('isEditMode', isEditMode))..add(DiagnosticsProperty('movingEntities', movingEntities))..add(DiagnosticsProperty('selectedEntities', selectedEntities))..add(DiagnosticsProperty('editRootEntities', editRootEntities));
+    ..add(DiagnosticsProperty('isLoading', isLoading))..add(DiagnosticsProperty('savedRootEntities', savedRootEntities))..add(DiagnosticsProperty('currentNode', currentNode))..add(DiagnosticsProperty('currentChildren', currentChildren))..add(DiagnosticsProperty('sortMode', sortMode))..add(DiagnosticsProperty('filterMode', filterMode))..add(DiagnosticsProperty('arrangement', arrangement))..add(DiagnosticsProperty('searchQuery', searchQuery))..add(DiagnosticsProperty('isEditMode', isEditMode))..add(DiagnosticsProperty('movingEntities', movingEntities))..add(DiagnosticsProperty('selectedEntities', selectedEntities))..add(DiagnosticsProperty('editRootEntities', editRootEntities));
 }
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GroupsState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&const DeepCollectionEquality().equals(other._savedRootEntities, _savedRootEntities)&&(identical(other.currentNode, currentNode) || other.currentNode == currentNode)&&const DeepCollectionEquality().equals(other._currentChildren, _currentChildren)&&(identical(other.sortMode, sortMode) || other.sortMode == sortMode)&&(identical(other.filterMode, filterMode) || other.filterMode == filterMode)&&(identical(other.arrangement, arrangement) || other.arrangement == arrangement)&&(identical(other.isEditMode, isEditMode) || other.isEditMode == isEditMode)&&const DeepCollectionEquality().equals(other._movingEntities, _movingEntities)&&const DeepCollectionEquality().equals(other._selectedEntities, _selectedEntities)&&const DeepCollectionEquality().equals(other._editRootEntities, _editRootEntities));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GroupsState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&const DeepCollectionEquality().equals(other._savedRootEntities, _savedRootEntities)&&(identical(other.currentNode, currentNode) || other.currentNode == currentNode)&&const DeepCollectionEquality().equals(other._currentChildren, _currentChildren)&&(identical(other.sortMode, sortMode) || other.sortMode == sortMode)&&(identical(other.filterMode, filterMode) || other.filterMode == filterMode)&&(identical(other.arrangement, arrangement) || other.arrangement == arrangement)&&(identical(other.searchQuery, searchQuery) || other.searchQuery == searchQuery)&&(identical(other.isEditMode, isEditMode) || other.isEditMode == isEditMode)&&const DeepCollectionEquality().equals(other._movingEntities, _movingEntities)&&const DeepCollectionEquality().equals(other._selectedEntities, _selectedEntities)&&const DeepCollectionEquality().equals(other._editRootEntities, _editRootEntities));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,isLoading,const DeepCollectionEquality().hash(_savedRootEntities),currentNode,const DeepCollectionEquality().hash(_currentChildren),sortMode,filterMode,arrangement,isEditMode,const DeepCollectionEquality().hash(_movingEntities),const DeepCollectionEquality().hash(_selectedEntities),const DeepCollectionEquality().hash(_editRootEntities));
+int get hashCode => Object.hash(runtimeType,isLoading,const DeepCollectionEquality().hash(_savedRootEntities),currentNode,const DeepCollectionEquality().hash(_currentChildren),sortMode,filterMode,arrangement,searchQuery,isEditMode,const DeepCollectionEquality().hash(_movingEntities),const DeepCollectionEquality().hash(_selectedEntities),const DeepCollectionEquality().hash(_editRootEntities));
 
 @override
 String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
-  return 'GroupsState(isLoading: $isLoading, savedRootEntities: $savedRootEntities, currentNode: $currentNode, currentChildren: $currentChildren, sortMode: $sortMode, filterMode: $filterMode, arrangement: $arrangement, isEditMode: $isEditMode, movingEntities: $movingEntities, selectedEntities: $selectedEntities, editRootEntities: $editRootEntities)';
+  return 'GroupsState(isLoading: $isLoading, savedRootEntities: $savedRootEntities, currentNode: $currentNode, currentChildren: $currentChildren, sortMode: $sortMode, filterMode: $filterMode, arrangement: $arrangement, searchQuery: $searchQuery, isEditMode: $isEditMode, movingEntities: $movingEntities, selectedEntities: $selectedEntities, editRootEntities: $editRootEntities)';
 }
 
 
@@ -1335,7 +1415,7 @@ abstract mixin class _$GroupsStateCopyWith<$Res> implements $GroupsStateCopyWith
   factory _$GroupsStateCopyWith(_GroupsState value, $Res Function(_GroupsState) _then) = __$GroupsStateCopyWithImpl;
 @override @useResult
 $Res call({
- bool isLoading, List<StockEntity> savedRootEntities, StockEntity? currentNode, List<StockEntity> currentChildren, SortMode? sortMode, FilterMode? filterMode, SortArrangement arrangement, bool isEditMode, List<MovingEntityInfo> movingEntities, List<StockEntity> selectedEntities, List<StockEntity> editRootEntities
+ bool isLoading, List<StockEntity> savedRootEntities, StockEntity? currentNode, List<StockEntity> currentChildren, SortMode? sortMode, FilterMode? filterMode, SortArrangement arrangement, String searchQuery, bool isEditMode, List<MovingEntityInfo> movingEntities, List<StockEntity> selectedEntities, List<StockEntity> editRootEntities
 });
 
 
@@ -1352,7 +1432,7 @@ class __$GroupsStateCopyWithImpl<$Res>
 
 /// Create a copy of GroupsState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? isLoading = null,Object? savedRootEntities = null,Object? currentNode = freezed,Object? currentChildren = null,Object? sortMode = freezed,Object? filterMode = freezed,Object? arrangement = null,Object? isEditMode = null,Object? movingEntities = null,Object? selectedEntities = null,Object? editRootEntities = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? isLoading = null,Object? savedRootEntities = null,Object? currentNode = freezed,Object? currentChildren = null,Object? sortMode = freezed,Object? filterMode = freezed,Object? arrangement = null,Object? searchQuery = null,Object? isEditMode = null,Object? movingEntities = null,Object? selectedEntities = null,Object? editRootEntities = null,}) {
   return _then(_GroupsState(
 isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,savedRootEntities: null == savedRootEntities ? _self._savedRootEntities : savedRootEntities // ignore: cast_nullable_to_non_nullable
@@ -1361,7 +1441,8 @@ as StockEntity?,currentChildren: null == currentChildren ? _self._currentChildre
 as List<StockEntity>,sortMode: freezed == sortMode ? _self.sortMode : sortMode // ignore: cast_nullable_to_non_nullable
 as SortMode?,filterMode: freezed == filterMode ? _self.filterMode : filterMode // ignore: cast_nullable_to_non_nullable
 as FilterMode?,arrangement: null == arrangement ? _self.arrangement : arrangement // ignore: cast_nullable_to_non_nullable
-as SortArrangement,isEditMode: null == isEditMode ? _self.isEditMode : isEditMode // ignore: cast_nullable_to_non_nullable
+as SortArrangement,searchQuery: null == searchQuery ? _self.searchQuery : searchQuery // ignore: cast_nullable_to_non_nullable
+as String,isEditMode: null == isEditMode ? _self.isEditMode : isEditMode // ignore: cast_nullable_to_non_nullable
 as bool,movingEntities: null == movingEntities ? _self._movingEntities : movingEntities // ignore: cast_nullable_to_non_nullable
 as List<MovingEntityInfo>,selectedEntities: null == selectedEntities ? _self._selectedEntities : selectedEntities // ignore: cast_nullable_to_non_nullable
 as List<StockEntity>,editRootEntities: null == editRootEntities ? _self._editRootEntities : editRootEntities // ignore: cast_nullable_to_non_nullable

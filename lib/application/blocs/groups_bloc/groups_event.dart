@@ -44,6 +44,8 @@ abstract class GroupsEvent with _$GroupsEvent {
   /// Режим редактирования
   ///
 
+  const factory GroupsEvent.searchQuery(String query) = _SearchQuery;
+
   /// Смена режима рабочий/редактирования
   const factory GroupsEvent.toggleEditMode() = _ToggleEditMode;
 

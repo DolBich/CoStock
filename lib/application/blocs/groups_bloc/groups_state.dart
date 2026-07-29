@@ -21,6 +21,8 @@ sealed class GroupsState with _$GroupsState {
     /// Управление порядком отображения
     @Default(SortArrangement()) SortArrangement arrangement,
 
+    @Default('') String searchQuery,
+
     /// Режим редактирования
     @Default(false) bool isEditMode,
     @Default([]) List<MovingEntityInfo> movingEntities,
@@ -60,6 +62,14 @@ sealed class GroupsState with _$GroupsState {
     }
 
     return baseChildren;
+  }
+
+  List<StockEntity> applySearch(List<StockEntity> entities) {
+    if (searchQuery.isEmpty) return entities;
+    final query = searchQuery.toLowerCase();
+    return entities
+        .where((e) => e.name.toLowerCase().contains(query))
+        .toList();
   }
 
   /// Отображаемый список для кастомного режима (без сортировки).
@@ -103,6 +113,8 @@ sealed class GroupsState with _$GroupsState {
     return true;
   }
 }
+
+
 
 /// Нужен исключительно для того, чтобы отслеживать на какое место в новом списке
 /// детей вставить перемещаемый объект

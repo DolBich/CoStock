@@ -1,8 +1,13 @@
 part of 'groups_screen.dart';
 
-class _GroupsForm extends StatelessWidget {
+class _GroupsForm extends StatefulWidget {
   const _GroupsForm();
 
+  @override
+  State<_GroupsForm> createState() => _GroupsFormState();
+}
+
+class _GroupsFormState extends State<_GroupsForm> {
   /// Добавление новой сущности
   Widget _addButton(BuildContext context) {
     final bloc = context.read<GroupsBloc>();
@@ -35,16 +40,23 @@ class _GroupsForm extends StatelessWidget {
           p.children != c.children ||
           p.sortMode != c.sortMode ||
           p.filterMode != c.filterMode ||
-          p.arrangement != c.arrangement,
+          p.arrangement != c.arrangement ||
+          p.searchQuery != c.searchQuery,
       builder: (context, state) {
         if (state.isLoading) {
           return const Center(child: CircularProgressIndicator());
         }
 
-        /// Кастомная расстановка
-        final entities = state.customOrderedChildren;
+        /// Кастомная расстановка + поиск
+        final entities = state.applySearch(state.customOrderedChildren);
         if (entities.isEmpty) {
-          return const Center(child: Text('Пока ничего нет'));
+          return Center(
+            child: Text(
+              state.searchQuery.isNotEmpty
+                  ? 'Ничего не найдено'
+                  : 'Пока ничего нет',
+            ),
+          );
         }
 
         /// Режим редактирования — всегда единый список с moving entities
@@ -60,12 +72,12 @@ class _GroupsForm extends StatelessWidget {
 
           if (state.filterMode != null) {
             /// Проверка на наличие нужных сущностей
-            if(state.filterMode == .groupsOnly && groups.isEmpty) {
+            if (state.filterMode == .groupsOnly && groups.isEmpty) {
               return const Center(child: Text('Здесь нет никаких групп'));
             }
 
             /// Проверка на наличие нужных сущностей
-            if(state.filterMode == .stocksOnly && stocks.isEmpty) {
+            if (state.filterMode == .stocksOnly && stocks.isEmpty) {
               return const Center(child: Text('Здесь нет никаких хранилищ'));
             }
 

@@ -33,6 +33,7 @@ class GroupsBloc extends Bloc<GroupsEvent, GroupsState> {
     on<_UpdateNode>(_onUpdateNode);
     on<_MoveNode>(_onMoveNode);
     on<_ApplySortFilter>(_onApplySortFilter);
+    on<_SearchQuery>(_onSearchQuery);
 
     /// Редактирование
     on<_ToggleEditMode>(_onToggleEditMode);
@@ -41,6 +42,7 @@ class GroupsBloc extends Bloc<GroupsEvent, GroupsState> {
     on<_ConfirmMoveEntity>(_onConfirmMoveEntity);
     on<_DeleteSelectedEntities>(_onDeleteSelectedEntities);
     on<_SaveEditedTree>(_onSaveEditedTree);
+
 
     add(const .loadTree());
   }
@@ -72,6 +74,10 @@ class GroupsBloc extends Bloc<GroupsEvent, GroupsState> {
         ? node.children
         : _treeService.rootEntities;
     return (node, children);
+  }
+
+  void _onSearchQuery(_SearchQuery event, Emitter<GroupsState> emit) {
+    emit(state.copyWith(searchQuery: event.query));
   }
 
   /// TODO[2t375t5832985]: В будущем вероятно через что-то такое мы будем периодически обновлять информацию

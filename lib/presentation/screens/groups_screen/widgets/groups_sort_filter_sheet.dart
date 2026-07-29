@@ -62,20 +62,35 @@ class _GroupsSortFilterSheetState extends State<_GroupsSortFilterSheet> {
           ),
 
           /// Кнопка применения фильтров и сортировки
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () {
-                context.read<GroupsBloc>().add(
-                  .applySortFilter(
-                    sortMode: _sortMode,
-                    filterMode: _filterMode,
-                  ),
-                );
-                Navigator.of(context).pop();
-              },
-              child: const Text('Применить'),
-            ),
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {
+                    context.read<GroupsBloc>().add(
+                      .applySortFilter(
+                        sortMode: _sortMode,
+                        filterMode: _filterMode,
+                      ),
+                    );
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Применить'),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: () {
+                    context.read<GroupsBloc>().add(
+                      const .applySortFilter(sortMode: null, filterMode: null),
+                    );
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Сбросить'),
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -125,15 +140,12 @@ class _GroupsSortFilterTileState<T> extends State<_GroupsSortFilterTile<T>> {
 
         AppSegmentedButton(
           segments: widget.values.map((e) {
-            return AppSegmentButton(
-              value: e,
-              label: Text(widget.toName(e)),
-            );
+            return AppSegmentButton(value: e, label: Text(widget.toName(e)));
           }).toList(),
           selected: selected,
           onChanged: (value) {
-            if(value == null) return;
-            if(selected == value) value = null;
+            if (value == null) return;
+            if (selected == value) value = null;
             widget.onSelectionChanged(value);
             setState(() => selected = value);
           },

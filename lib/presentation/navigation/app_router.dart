@@ -11,7 +11,12 @@ part 'app_router.gr.dart';
 
 @AutoRouterConfig()
 class AppRouter extends RootStackRouter {
-  AppRouter({super.navigatorKey});
+
+  AppRouter._internal();
+
+  static final AppRouter _instance = AppRouter._internal();
+
+  static AppRouter get instance => _instance;
 
   @override
   List<AutoRoute> get routes => [

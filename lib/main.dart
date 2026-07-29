@@ -54,7 +54,7 @@ class MyApp extends StatelessWidget {
 class _App extends StatelessWidget {
   const _App();
 
-  static final _appRouter = AppRouter();
+  static final _appRouter = AppRouter.instance;
 
   @override
   Widget build(BuildContext context) {

@@ -33,10 +33,8 @@ class _GroupsAppBarState extends State<_GroupsAppBar> {
 
   List<Widget> get _editActions {
     return [
-
       /// Объединение кнопки редактирования и удаления
       BlocBuilder<GroupsBloc, GroupsState>(
-
         /// Смотрим по ids, а не [selectedEntities], чтобы сравнивало по
         /// меньшему числу переменных
         buildWhen: (p, c) => p.selectedIds != c.selectedIds,
@@ -46,17 +44,15 @@ class _GroupsAppBarState extends State<_GroupsAppBar> {
           return Row(
             mainAxisSize: .min,
             children: [
-
               /// Редактирование выбранной сущности (только если одна выбрана)
               if (state.selectedEntities.length == 1)
                 IconButton(
                   icon: const Icon(Icons.edit),
                   tooltip: 'Редактировать',
-                  onPressed: () =>
-                      _editSelectedEntity(
-                        context,
-                        state.selectedEntities.first,
-                      ),
+                  onPressed: () => _editSelectedEntity(
+                    context,
+                    state.selectedEntities.first,
+                  ),
                 ),
 
               /// Удалить выбранные сущности
@@ -83,7 +79,6 @@ class _GroupsAppBarState extends State<_GroupsAppBar> {
           return Row(
             mainAxisSize: .min,
             children: [
-
               /// Сохранение изменений
               IconButton(
                 icon: const Icon(Icons.save),
@@ -122,13 +117,12 @@ class _GroupsAppBarState extends State<_GroupsAppBar> {
         final bloc = context.read<GroupsBloc>();
 
         return AppBar(
-
           /// Вовзрат к родителю
           leading: currentNode != null
               ? IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () => bloc.add(.navigateNode(parent)),
-          )
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () => bloc.add(.navigateNode(parent)),
+                )
               : null,
 
           /// Показ названия группы и его умного пути
@@ -160,18 +154,14 @@ class _GroupsAppBarState extends State<_GroupsAppBar> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Theme
-          .of(context)
-          .colorScheme
-          .surface,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: .vertical(top: .circular(24)),
       ),
-      builder: (_) =>
-          BlocProvider.value(
-            value: context.read<GroupsBloc>(),
-            child: _EntitySheet(entity),
-          ),
+      builder: (_) => BlocProvider.value(
+        value: context.read<GroupsBloc>(),
+        child: _EntitySheet(entity),
+      ),
     );
   }
 
@@ -188,39 +178,37 @@ class _GroupsAppBarState extends State<_GroupsAppBar> {
     /// ними делать
     showDialog(
       context: context,
-      builder: (ctx) =>
-          AlertDialog(
-            title: const Text('Несохранённые изменения'),
-            content: const Text(
-              'У вас есть несохранённые изменения. Что вы хотите сделать?',
-            ),
-            actions: [
-
-              /// Вернуться к редактированию
-              TextButton(
-                onPressed: () => Navigator.pop(ctx),
-                child: const Text('Продолжить редактирование'),
-              ),
-
-              /// Выйти без сохранения изменений
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(ctx);
-                  bloc.add(const .toggleEditMode());
-                },
-                child: const Text('Отменить изменения и выйти'),
-              ),
-
-              /// Сохранить и выйти
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(ctx);
-                  _saveAndExit(context);
-                },
-                child: const Text('Сохранить и выйти'),
-              ),
-            ],
+      builder: (ctx) => AlertDialog(
+        title: const Text('Несохранённые изменения'),
+        content: const Text(
+          'У вас есть несохранённые изменения. Что вы хотите сделать?',
+        ),
+        actions: [
+          /// Вернуться к редактированию
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Продолжить редактирование'),
           ),
+
+          /// Выйти без сохранения изменений
+          TextButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              bloc.add(const .toggleEditMode());
+            },
+            child: const Text('Отменить изменения и выйти'),
+          ),
+
+          /// Сохранить и выйти
+          TextButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              _saveAndExit(context);
+            },
+            child: const Text('Сохранить и выйти'),
+          ),
+        ],
+      ),
     );
   }
 
@@ -244,7 +232,7 @@ class _GroupsAppBarState extends State<_GroupsAppBar> {
   Widget get _leading {
     return BlocBuilder<GroupsBloc, GroupsState>(
       buildWhen: (p, c) =>
-      p.currentNodeId != c.currentNodeId ||
+          p.currentNodeId != c.currentNodeId ||
           p.savedRootEntities != c.savedRootEntities,
       builder: (context, state) {
         final currentNodeId = state.currentNodeId;
@@ -268,7 +256,7 @@ class _GroupsAppBarState extends State<_GroupsAppBar> {
   Widget get _title {
     return BlocBuilder<GroupsBloc, GroupsState>(
       buildWhen: (p, c) =>
-      p.currentNodeId != c.currentNodeId ||
+          p.currentNodeId != c.currentNodeId ||
           p.savedRootEntities != c.savedRootEntities,
       builder: (context, state) {
         final currentNodeId = state.currentNodeId;
@@ -292,18 +280,14 @@ class _GroupsAppBarState extends State<_GroupsAppBar> {
 
     showModalBottomSheet(
       context: context,
-      backgroundColor: Theme
-          .of(context)
-          .colorScheme
-          .surface,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: .vertical(top: .circular(24)),
       ),
-      builder: (_) =>
-          BlocProvider.value(
-            value: bloc,
-            child: const _GroupsSortFilterSheet(),
-          ),
+      builder: (_) => BlocProvider.value(
+        value: bloc,
+        child: const _GroupsSortFilterSheet(),
+      ),
     );
   }
 
@@ -317,59 +301,67 @@ class _GroupsAppBarState extends State<_GroupsAppBar> {
 
         /// Основная шапка страницы
         return AppBar(
-          leading: _isSearching ? IconButton(onPressed: () {
-            _toggleSearch(context);
-          }, icon: const Icon(Icons.arrow_back),) : _leading,
-          title: _isSearching ? TextField(
-            controller: _searchController,
-            autofocus: true,
-            decoration: const InputDecoration(
-              hintText: 'Поиск...',
-              border: InputBorder.none,
-            ),
-            onChanged: (query) {
-              context.read<GroupsBloc>().add(.searchQuery(query));
-            },
-          ) : _title,
+          leading: _isSearching
+              ? IconButton(
+                  onPressed: () {
+                    _toggleSearch(context);
+                  },
+                  icon: const Icon(Icons.arrow_back),
+                )
+              : _leading,
+          title: _isSearching
+              ? TextField(
+                  controller: _searchController,
+                  autofocus: true,
+                  decoration: const InputDecoration(
+                    hintText: 'Поиск...',
+                    border: InputBorder.none,
+                  ),
+                  onChanged: (query) {
+                    context.read<GroupsBloc>().add(.searchQuery(query));
+                  },
+                )
+              : _title,
           centerTitle: true,
-          actions: _isSearching ? const[] : [
+          actions: _isSearching
+              ? const []
+              : [
+                  /// Сортировка и фильтр
+                  IconButton(
+                    icon: const Icon(Icons.filter_list),
+                    tooltip: 'Сортировка и фильтр',
+                    onPressed: () => _showSortFilterSheet(context),
+                  ),
 
-            /// Сортировка и фильтр
-            IconButton(
-              icon: const Icon(Icons.filter_list),
-              tooltip: 'Сортировка и фильтр',
-              onPressed: () => _showSortFilterSheet(context),
-            ),
+                  ///TODO: Пока режим редактирования полностью вырезаю через просто
+                  ///невозможность в него перейти через эту кнопку.
+                  ///Планируется совсем другая обновлённая логика режима редактирования
+                  /// Она уже описана в задачах
+                  // /// Перевод в режим редактирования
+                  // IconButton(
+                  //   icon: const Icon(Icons.edit_outlined),
+                  //   tooltip: 'Режим редактирования',
+                  //   onPressed: () =>
+                  //       context.read<GroupsBloc>().add(const .toggleEditMode()),
+                  // ),
 
-            ///TODO: Пока режим редактирования полностью вырезаю через просто
-            ///невозможность в него перейти через эту кнопку.
-            ///Планируется совсем другая обновлённая логика режима редактирования
-            /// Она уже описана в задачах
-            // /// Перевод в режим редактирования
-            // IconButton(
-            //   icon: const Icon(Icons.edit_outlined),
-            //   tooltip: 'Режим редактирования',
-            //   onPressed: () =>
-            //       context.read<GroupsBloc>().add(const .toggleEditMode()),
-            // ),
+                  /// Глобальный поиск
+                  IconButton(
+                    onPressed: () {
+                      _toggleSearch(context);
+                    },
+                    icon: const Icon(Icons.search),
+                    tooltip: 'Поиск',
+                  ),
 
-            /// Глобальный поиск
-            IconButton(
-              onPressed: () {
-                _toggleSearch(context);
-              },
-              icon: const Icon(Icons.search),
-              tooltip: 'Поиск',
-            ),
-
-            IconButton(
-              icon: const Icon(Icons.logout_outlined),
-              tooltip: 'Выйти',
-              onPressed: () {
-                _logOut(context);
-              },
-            ),
-          ],
+                  IconButton(
+                    icon: const Icon(Icons.logout_outlined),
+                    tooltip: 'Выйти',
+                    onPressed: () {
+                      _logOut(context);
+                    },
+                  ),
+                ],
         );
       },
     );
@@ -394,7 +386,7 @@ class _RelocateButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<GroupsBloc, GroupsState>(
       buildWhen: (p, c) =>
-      p.movingIds != c.movingIds || p.selectedIds != c.selectedIds,
+          p.movingIds != c.movingIds || p.selectedIds != c.selectedIds,
       builder: (context, state) {
         final bloc = context.read<GroupsBloc>();
         final movingCount = state.movingEntities.length;
@@ -422,7 +414,6 @@ class _RelocateButton extends StatelessWidget {
           child: Stack(
             clipBehavior: .none,
             children: [
-
               /// Кнопка
               OutlinedButton.icon(
                 icon: const Icon(Icons.drive_file_move_outline, size: 20),
@@ -444,10 +435,7 @@ class _RelocateButton extends StatelessWidget {
                   child: Container(
                     padding: const .symmetric(horizontal: 4, vertical: 2),
                     decoration: BoxDecoration(
-                      color: Theme
-                          .of(context)
-                          .colorScheme
-                          .error,
+                      color: Theme.of(context).colorScheme.error,
                       borderRadius: .circular(10),
                     ),
                     child: DefaultTextStyle(
@@ -475,10 +463,12 @@ class _RelocateButton extends StatelessWidget {
   static const TextStyle _movingStyle = TextStyle(fontWeight: .bold);
   static const TextStyle _selectedStyle = TextStyle(fontWeight: .normal);
 
-  Widget _buildBadgeText(int movingCount,
-      int selectedCount,
-      bool hasMoving,
-      bool hasSelected,) {
+  Widget _buildBadgeText(
+    int movingCount,
+    int selectedCount,
+    bool hasMoving,
+    bool hasSelected,
+  ) {
     if (hasMoving && hasSelected) {
       return RichText(
         text: TextSpan(

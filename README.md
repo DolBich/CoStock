@@ -34,19 +34,19 @@ The project was started from scratch, including product planning, database desig
 
 The main workspace combines groups and storage spaces in a single customizable layout.
 
-![CoStock workspace](screenshots/workspace.jpg)
+<img src="screenshots/workspace.jpg" width="360">
 
 ### Custom organization with drag & drop
 
 Groups and storage spaces can be reordered directly through drag and drop. The application uses a custom fork of [`reorderable_grid`](https://github.com/DolBich/reorderable_grid) for this interaction.
 
-![Drag and drop organization](screenshots/drag-and-drop.jpg)
+<img src="screenshots/drag-and-drop.jpg" width="360">
 
 ### Filtering and sorting
 
 The workspace provides predefined sorting modes and filters for quickly changing how groups and storages are presented.
 
-![Filtering and sorting](screenshots/filtering-and-sorting.jpg)
+<img src="screenshots/filtering-and-sorting.jpg" width="360">
 
 ### Authentication
 
